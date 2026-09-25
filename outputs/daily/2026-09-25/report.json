@@ -1,0 +1,36 @@
+{
+  "post_id": "daily-2026-09-25",
+  "date": "2026-09-25",
+  "pillar": "Construction update",
+  "layout": "hero",
+  "palette": "maroon",
+  "hook": "Limited SCO spaces available on SH-11, Dhuri.",
+  "caption": "Construction is nearing completion and limited premium commercial SCO spaces are available at Shrih Plaza on SH-11, Dhuri, with retail shops, offices and central parking. RERA approved. Book a site visit: +91 90564 53575",
+  "hashtags": [
+    "#ShrihPlaza",
+    "#Dhuri",
+    "#CommercialProperty",
+    "#SCOSpaces",
+    "#PunjabRealEstate"
+  ],
+  "lessons_applied": 0,
+  "banned_phrases": [],
+  "status": "approved_internal_review",
+  "design_status": "approved",
+  "visual_checks": {
+    "size_1080x1350": true,
+    "no_black_bars": true,
+    "only_approved_brand_logos": true,
+    "no_unapproved_brand_text": true,
+    "safe_source_render": true,
+    "no_forbidden_claims": true,
+    "correct_phone": true,
+    "artists_impression_note": true,
+    "logo_present": true,
+    "min_font_size_14": true,
+    "not_a_denied_combination": true
+  },
+  "trend_mode": "manual_brief+scout",
+  "llm": "local fallback (same default copy every day)",
+  "email": "not configured (set SMTP_USER, SMTP_PASSWORD, DAILY_EMAIL_TO)"
+}
