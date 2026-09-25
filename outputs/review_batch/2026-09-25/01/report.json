@@ -65,5 +65,12 @@
     "reviewer": "Claude (visual review of the rendered post)",
     "decision": "approved",
     "reason": "One message and a true urgency line; the cleanest post in the batch."
+  },
+  "owner_review": {
+    "decision": "denied",
+    "reason": "one time vview only not upto mark use extreme graphi c designing this is so low quality i",
+    "category": "other",
+    "banned_phrase": "",
+    "created": "2026-09-26T00:07:17"
   }
 }

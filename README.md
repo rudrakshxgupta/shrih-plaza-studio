@@ -221,3 +221,9 @@ What the pipeline does with them (`memory/decisions.json`, `shrih_agent/decision
 - Each denial is also written to `memory/mistake_memory.json`.
 
 From the command line: `python run_agent.py decide --id daily-2026-09-25 --decision deny --reason "..." --category copy --ban "phrase"`.
+
+## Poster redesigns in Adobe Express
+
+When you deny a poster for its design (image, look, quality or layout), it goes to `memory/redesign_queue.json`. In a Claude session with the Adobe connector, each queued poster is rebuilt as a premium design (golden-hour renders from the AI image set, gold frame, RERA seal, strong typography) and exported to Adobe Express, and the Express link is recorded in the queue. `build_web/poster_premium.py` is the first redesign (poster #1).
+
+Joint review: `python ui/server.py`, then open http://127.0.0.1:8787/compare. You review each post blind; the self-review agent's and Claude's verdicts appear after you save yours.

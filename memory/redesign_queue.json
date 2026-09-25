@@ -1,11 +1,8 @@
 {
-  "decisions": [
+  "queue": [
     {
       "post_id": "batch-2026-09-25-01",
-      "decision": "denied",
       "reason": "one time vview only not upto mark use extreme graphi c designing this is so low quality i",
-      "category": "other",
-      "banned_phrase": "",
       "context": {
         "hook": "Limited SCO spaces available.",
         "caption": "Construction is nearing completion at SHRIH PLAZA on SH-11, Dhuri. Limited SCO spaces are available. Book a site visit: +91 90564 53575",
@@ -14,7 +11,11 @@
         "pillar": "Construction update",
         "date": "2026-09-25"
       },
-      "created": "2026-09-26T00:07:17"
+      "status": "done",
+      "created": "2026-09-26T00:20:29",
+      "express_url": "https://new.express.adobe.com/id/urn:aaid:sc:AP:0a46490f-6e88-4635-88cc-e2087cf139ee",
+      "png": "outputs/redesign/batch-2026-09-25-01_v2.png",
+      "done": "2026-09-26T00:20:29"
     }
   ]
 }

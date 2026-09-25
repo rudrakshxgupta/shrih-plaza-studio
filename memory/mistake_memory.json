@@ -31,6 +31,14 @@
       "description": "Headline was too long and got cut off.",
       "avoid_instruction": "Keep the hook to about 6 words so the headline fits in three lines.",
       "source": "visual_reviewer_auto"
+    },
+    {
+      "id": "mistake_0005",
+      "timestamp": "2026-09-26T00:07:17",
+      "category": "other",
+      "description": "Owner denied batch-2026-09-25-01: one time vview only not upto mark use extreme graphi c designing this is so low quality i",
+      "avoid_instruction": "Owner feedback, do not repeat: one time vview only not upto mark use extreme graphi c designing this is so low quality i",
+      "source": "owner_decision"
     }
   ]
 }

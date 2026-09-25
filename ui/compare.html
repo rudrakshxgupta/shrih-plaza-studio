@@ -123,7 +123,7 @@ function card(p){
       <label class="sr" for="r${p.number}" style="position:absolute;left:-9999px">Reason</label>
       <textarea id="r${p.number}" placeholder="Why? Required when you deny."></textarea>
       <div class="extra" ${pick[p.number]==="deny"?"":"hidden"} id="x${p.number}">
-        <select id="c${p.number}" aria-label="What was wrong"><option value="copy">Wording</option><option value="design">Design or colour</option><option value="layout">Layout</option><option value="claim">A claim or fact</option><option value="other">Other</option></select>
+        <select id="c${p.number}" aria-label="What was wrong"><option value="design">Poster design (image, look, quality)</option><option value="copy">Wording</option><option value="layout">Layout</option><option value="claim">A claim or fact</option><option value="other">Other</option></select>
         <input type="text" id="b${p.number}" placeholder="Ban a phrase (optional)" aria-label="Ban a phrase">
       </div>
       <div class="err" id="e${p.number}"></div>

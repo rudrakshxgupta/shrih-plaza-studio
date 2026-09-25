@@ -17,6 +17,8 @@ from .io import read_json, write_json
 from .paths import MEMORY_DIR
 
 DECISIONS_PATH = MEMORY_DIR / "decisions.json"
+REDESIGN_QUEUE_PATH = MEMORY_DIR / "redesign_queue.json"
+POSTER_CATEGORIES = {"design", "layout", "other"}
 CATEGORIES = {"copy", "design", "claim", "layout", "other"}
 _MISTAKE_CATEGORY = {"copy": "other", "design": "design_defect", "claim": "misleading_completion",
                      "layout": "design_defect", "other": "other"}
@@ -59,6 +61,8 @@ def add_decision(
     decisions = [d for d in load_decisions() if d.get("post_id") != post_id]
     decisions.append(entry)
     _save(decisions)
+    if decision == "denied" and category in POSTER_CATEGORIES:
+        queue_redesign(post_id, reason, context or {})
     if decision == "denied":
         mistake_memory.append_mistake(
             category=_MISTAKE_CATEGORY[category],
@@ -119,3 +123,26 @@ def rejected_combos() -> set[tuple[str, str]]:
         if d["decision"] == "denied" and d.get("category") in {"design", "layout"} and ctx.get("layout") and ctx.get("palette"):
             combos.add((ctx["layout"], ctx["palette"]))
     return combos
+
+
+def load_redesign_queue() -> list[dict[str, Any]]:
+    if not REDESIGN_QUEUE_PATH.exists():
+        return []
+    return list(read_json(REDESIGN_QUEUE_PATH).get("queue", []))
+
+
+def queue_redesign(post_id: str, reason: str, context: dict[str, Any]) -> None:
+    """A denied poster goes to the Adobe Express redesign queue, handled in a Claude session."""
+    queue = [q for q in load_redesign_queue() if q.get("post_id") != post_id or q.get("status") == "done"]
+    queue.append({"post_id": post_id, "reason": reason, "context": context, "status": "pending",
+                  "created": datetime.now().isoformat(timespec="seconds"), "express_url": None})
+    write_json(REDESIGN_QUEUE_PATH, {"queue": queue})
+
+
+def complete_redesign(post_id: str, express_url: str, png_path: str = "") -> None:
+    queue = load_redesign_queue()
+    for item in queue:
+        if item.get("post_id") == post_id and item.get("status") == "pending":
+            item.update({"status": "done", "express_url": express_url, "png": png_path,
+                         "done": datetime.now().isoformat(timespec="seconds")})
+    write_json(REDESIGN_QUEUE_PATH, {"queue": queue})
