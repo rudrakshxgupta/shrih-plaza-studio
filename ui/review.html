@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shrih Plaza Review</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap">
+<style>
+:root{--bg:#F2F3F8;--panel:#FFFFFF;--line:#D9DDEA;--ink:#0B1237;--muted:#5A6288;--navy:#0B1237;--navy2:#1B2F62;--gold:#D7B469;--gold-ink:#7A5A14;
+--good:#1F7A52;--good-bg:#DDF1E8;--bad:#B93248;--bad-bg:#F8DDE2;--wait:#8A6A10;--wait-bg:#F6EBCF}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 'Poppins',system-ui,sans-serif}
+button,select,textarea,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--navy2);outline-offset:2px}
+header{background:var(--navy);color:#EEF0F8;padding:14px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header h1{margin:0;font-weight:300;font-size:20px;letter-spacing:.14em;text-transform:uppercase}
+header h1 b{font-weight:500;color:var(--gold)}
+header .stats{display:flex;gap:18px;margin-left:auto;font-size:12px;color:#B7BEDA}
+header .stats strong{display:block;color:#fff;font-size:18px;font-weight:500}
+.sync{background:var(--gold);color:var(--navy);border:0;padding:9px 16px;font-weight:600;cursor:pointer}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr) 340px;min-height:calc(100vh - 64px)}
+@media(max-width:1100px){.layout{grid-template-columns:240px minmax(0,1fr)}.learn{grid-column:1/-1}}
+@media(max-width:720px){.layout{grid-template-columns:1fr}}
+aside.list{background:var(--panel);border-right:1px solid var(--line);overflow-y:auto}
+.filter{display:flex;gap:4px;padding:12px;border-bottom:1px solid var(--line)}
+.filter button{flex:1;border:1px solid var(--line);background:none;padding:6px 4px;font-size:12px;cursor:pointer}
+.filter button[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.item{display:grid;grid-template-columns:56px 1fr;gap:10px;padding:12px;border-bottom:1px solid var(--line);cursor:pointer;background:none;border-left:3px solid transparent;width:100%;text-align:left;border-top:0;border-right:0}
+.item[aria-current="true"]{background:#EEF1FA;border-left-color:var(--gold)}
+.item img{width:56px;height:70px;object-fit:cover;background:var(--navy)}
+.item .d{font-weight:500;font-size:13px}.item .p{font-size:12px;color:var(--muted)}
+.pill{display:inline-block;font-size:11px;font-weight:500;padding:1px 9px;border-radius:99px;margin-top:4px}
+.pill.approved{background:var(--good-bg);color:var(--good)}.pill.denied{background:var(--bad-bg);color:var(--bad)}.pill.pending{background:var(--wait-bg);color:var(--wait)}
+main{padding:24px;display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;align-content:start}
+@media(max-width:1300px){main{grid-template-columns:1fr}}
+.post img{width:100%;display:block;box-shadow:0 1px 0 var(--line)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.tag{font-size:12px;border:1px solid var(--line);padding:2px 8px;background:var(--panel)}
+.card{background:var(--panel);border:1px solid var(--line);padding:18px;margin-bottom:16px}
+.card h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:0 0 10px}
+.caption{white-space:pre-wrap;font-size:14px}
+.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px;font-size:12px}
+.checks li::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;background:var(--good)}
+.checks li.fail::before{background:var(--bad)}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.choice button{padding:12px;border:1px solid var(--line);background:var(--panel);font-weight:600;cursor:pointer}
+.choice button.ap[aria-pressed="true"]{background:var(--good);color:#fff;border-color:var(--good)}
+.choice button.dn[aria-pressed="true"]{background:var(--bad);color:#fff;border-color:var(--bad)}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px;font-weight:500}
+textarea,select,input[type=text]{width:100%;border:1px solid var(--line);background:#FBFBFE;padding:10px;border-radius:0}
+textarea{min-height:96px;resize:vertical}
+.err{color:var(--bad);font-size:12px;min-height:18px;margin-top:4px}
+.save{margin-top:14px;width:100%;background:var(--navy);color:#fff;border:0;padding:12px;font-weight:600;cursor:pointer}
+.save:disabled{opacity:.5;cursor:not-allowed}
+.past{font-size:13px;border-left:3px solid var(--line);padding-left:10px}
+aside.learn{background:var(--panel);border-left:1px solid var(--line);padding:20px;overflow-y:auto}
+aside.learn h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:0 0 8px}
+aside.learn ul{margin:0 0 20px;padding-left:18px;font-size:13px}
+aside.learn li{margin:4px 0}
+.empty{color:var(--muted);font-size:13px;margin:0 0 20px}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--navy);color:#fff;padding:12px 16px;border-left:4px solid var(--gold);max-width:380px}
+.hint{font-size:11px;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Shrih Plaza <b>Review</b></h1>
+  <div class="stats">
+    <span><strong id="stPending">0</strong>Waiting</span>
+    <span><strong id="stApproved">0</strong>Approved</span>
+    <span><strong id="stDenied">0</strong>Denied</span>
+    <span><strong id="stLessons">0</strong>Lessons learned</span>
+  </div>
+  <button class="sync" id="sync" title="Get new posts from GitHub and send your decisions back">Sync with GitHub</button>
+</header>
+<div class="layout">
+  <aside class="list" aria-label="Daily posts">
+    <div class="filter" role="group" aria-label="Filter">
+      <button data-f="pending" aria-pressed="true">Waiting</button>
+      <button data-f="all" aria-pressed="false">All</button>
+      <button data-f="approved" aria-pressed="false">Approved</button>
+      <button data-f="denied" aria-pressed="false">Denied</button>
+    </div>
+    <div id="list"></div>
+  </aside>
+  <main id="main"><p class="empty">Loading posts…</p></main>
+  <aside class="learn" aria-label="What the system has learned">
+    <h2>Rules learned from you</h2><ul id="lessons"></ul>
+    <h2>Banned phrases</h2><ul id="banned"></ul>
+    <h2>Designs you turned down</h2><ul id="combos"></ul>
+    <h2>Approved examples it imitates</h2><ul id="examples"></ul>
+  </aside>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let posts=[],filter="pending",current=null,choice=null;
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>e.hidden=true,4000)}
+const state=p=>p.decision?p.decision.decision:"pending";
+async function api(path,opt={}){const r=await fetch(path,{headers:{"Content-Type":"application/json"},...opt});const d=await r.json();if(!r.ok)throw new Error(d.error||"Request failed");return d}
+
+async function load(keep){
+  posts=(await api("/api/review/posts")).posts;
+  const c={pending:0,approved:0,denied:0};posts.forEach(p=>c[state(p)]++);
+  $("stPending").textContent=c.pending;$("stApproved").textContent=c.approved;$("stDenied").textContent=c.denied;
+  renderList();
+  const next=keep&&posts.find(p=>p.post_id===keep)||posts.find(p=>state(p)==="pending")||posts[0];
+  if(next)select(next.post_id);else $("main").innerHTML='<p class="empty">No daily posts yet. Press "Sync with GitHub" to fetch them, or run <code>python scripts/daily_run.py</code>.</p>';
+  learning();
+}
+function renderList(){
+  const shown=posts.filter(p=>filter==="all"||state(p)===filter);
+  $("list").innerHTML=shown.length?shown.map(p=>`<button class="item" data-id="${esc(p.post_id)}" aria-current="${p.post_id===current}">
+    ${p.image?`<img src="/api/file?path=${encodeURIComponent(p.image)}" alt="">`:"<span></span>"}
+    <span><span class="d">${esc(p.date)}</span><br><span class="p">${esc(p.pillar)}</span><br><span class="pill ${state(p)}">${state(p)==="pending"?"Waiting":state(p)[0].toUpperCase()+state(p).slice(1)}</span></span></button>`).join(""):'<p class="empty" style="padding:12px">Nothing here.</p>';
+  document.querySelectorAll(".item").forEach(b=>b.onclick=()=>select(b.dataset.id));
+}
+function select(id){
+  current=id;choice=null;const p=posts.find(x=>x.post_id===id);if(!p)return;renderList();
+  const checks=Object.entries(p.visual_checks||{});
+  const d=p.decision;
+  $("main").innerHTML=`
+  <section class="post">
+    ${p.image?`<img src="/api/file?path=${encodeURIComponent(p.image)}" alt="Post for ${esc(p.date)}">`:'<div class="card">No image was produced for this day.</div>'}
+    <div class="meta"><span class="tag">${esc(p.pillar)}</span><span class="tag">Layout: ${esc(p.layout)}</span><span class="tag">Colour: ${esc(p.palette)}</span><span class="tag">Writer: ${esc(p.llm)}</span></div>
+  </section>
+  <section>
+    <div class="card"><h2>Caption</h2><div class="caption">${esc(p.caption_text||p.caption)}</div></div>
+    <div class="card"><h2>Automatic checks</h2><ul class="checks">${checks.map(([k,v])=>`<li class="${v?"":"fail"}">${esc(k.replace(/_/g," "))}</li>`).join("")||"<li>No check data</li>"}</ul>
+      <p class="hint">Pipeline status: ${esc(p.status)}${p.lessons_applied?` · lessons applied: ${p.lessons_applied}`:""}</p></div>
+    <div class="card">
+      <h2>Your decision</h2>
+      ${d?`<p class="past"><b>${d.decision==="approved"?"Approved":"Denied"}</b> on ${esc((d.created||"").slice(0,10))}${d.reason?`: ${esc(d.reason)}`:""}${d.banned_phrase?`<br>Banned: “${esc(d.banned_phrase)}”`:""}</p><p class="hint">You can change it below.</p>`:""}
+      <div class="choice"><button class="ap" id="bAp" aria-pressed="false">Approve <small>(A)</small></button><button class="dn" id="bDn" aria-pressed="false">Deny <small>(D)</small></button></div>
+      <label for="reason">Why? <span id="reqNote">(optional for approval, required for denial)</span></label>
+      <textarea id="reason" placeholder="e.g. Headline is strong, keep this style. / Colour too dark, caption repeats the phone number."></textarea>
+      <div id="denyExtra" hidden>
+        <label for="category">What was wrong?</label>
+        <select id="category"><option value="copy">Wording</option><option value="design">Design or colour</option><option value="layout">Layout</option><option value="claim">A claim or fact</option><option value="other">Other</option></select>
+        <label for="ban">Never use this phrase again (optional)</label>
+        <input type="text" id="ban" placeholder="e.g. central parking">
+      </div>
+      <div class="err" id="err"></div>
+      <button class="save" id="save" disabled>Save decision</button>
+      <p class="hint">Saved to memory/decisions.json. Press "Sync with GitHub" so tomorrow's run learns from it.</p>
+    </div>
+  </section>`;
+  $("bAp").onclick=()=>pick("approve");$("bDn").onclick=()=>pick("deny");
+  $("reason").oninput=()=>{$("err").textContent=""};
+  $("save").onclick=save;
+}
+function pick(c){choice=c;$("bAp").setAttribute("aria-pressed",c==="approve");$("bDn").setAttribute("aria-pressed",c==="deny");$("denyExtra").hidden=c!=="deny";$("save").disabled=false;$("err").textContent="";(c==="deny"?$("reason"):$("save")).focus()}
+async function save(){
+  const reason=$("reason").value.trim();
+  if(choice==="deny"&&reason.length<5){$("err").textContent="Write why you are denying it (at least 5 characters). The pipeline learns from this.";$("reason").focus();return}
+  $("save").disabled=true;
+  try{
+    const r=await api("/api/review/decide",{method:"POST",body:JSON.stringify({post_id:current,decision:choice,reason,category:choice==="deny"?$("category").value:"other",banned_phrase:choice==="deny"?$("ban").value.trim():""})});
+    toast(choice==="approve"?"Approved and remembered.":`Denied. ${r.lessons} lesson${r.lessons===1?"":"s"} now guide the writer.`);
+    await load(current);
+  }catch(e){$("err").textContent=e.message;$("save").disabled=false}
+}
+async function learning(){
+  const l=await api("/api/review/learning");
+  $("stLessons").textContent=l.lessons.length;
+  const li=(a,f)=>a.length?a.map(x=>`<li>${esc(f?f(x):x)}</li>`).join(""):'<li class="empty" style="list-style:none;margin-left:-18px">Nothing yet.</li>';
+  $("lessons").innerHTML=li(l.lessons,x=>x.replace("The owner denied a ","").replace(" on a past post:"," —"));
+  $("banned").innerHTML=li(l.banned);
+  $("combos").innerHTML=li(l.denied_combos,c=>`${c[0]} layout in ${c[1]} colours`);
+  $("examples").innerHTML=li(l.approved_examples);
+}
+document.querySelectorAll(".filter button").forEach(b=>b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll(".filter button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderList()});
+$("sync").onclick=async()=>{const b=$("sync");b.disabled=true;b.textContent="Syncing…";
+  try{const r=await fetch("/api/review/sync",{method:"POST"});const d=await r.json();
+    toast(d.ok?"Synced: new posts pulled, your decisions pushed to GitHub.":"Sync failed at: "+d.steps.filter(s=>!s.ok).map(s=>s.step).join(", "));await load(current)}
+  catch(e){toast("Sync failed: "+e.message)}finally{b.disabled=false;b.textContent="Sync with GitHub"}};
+document.addEventListener("keydown",e=>{if(["TEXTAREA","INPUT","SELECT"].includes(e.target.tagName))return;if(e.ctrlKey||e.metaKey||e.altKey||!current)return;if(e.key==="a"||e.key==="A"){e.preventDefault();pick("approve")}if(e.key==="d"||e.key==="D"){e.preventDefault();pick("deny")}});
+load().catch(e=>$("main").innerHTML=`<p class="empty">Could not load posts: ${esc(e.message)}</p>`);
+</script>
+</body>
+</html>

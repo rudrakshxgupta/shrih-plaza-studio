@@ -17,10 +17,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from shrih_agent import decisions as owner_decisions  # noqa: E402
 from shrih_agent.paths import INPUTS_DIR, OUTPUTS_DIR  # noqa: E402
 from shrih_agent.pipeline import ContentPipeline  # noqa: E402
 
 # The seven content pillars from the brand kit. Layout and palette rotate with them.
+PALETTE_ORDER = ["navy", "emerald", "charcoal", "plum", "maroon"]
+
 PILLARS = [
     ("Highway visibility", "Highlight the high-visibility SH-11 highway address in Dhuri for retail brands.", "hero", "navy"),
     ("Retail and SCO opportunity", "Invite retailers and investors to the premium SCO spaces and retail shops. Limited SCO spaces are available.", "hero", "emerald"),
@@ -51,6 +54,9 @@ def send_email(folder: Path, subject: str, body: str) -> str:
 def main() -> int:
     today = date.today()
     name, brief, layout, palette = PILLARS[today.toordinal() % len(PILLARS)]
+    denied = owner_decisions.rejected_combos()
+    if (layout, palette) in denied:
+        palette = next((p for p in PALETTE_ORDER if (layout, p) not in denied), palette)
     brief_path = INPUTS_DIR / "trends" / "daily_brief.md"
     brief_path.write_text(f"# Daily brief {today.isoformat()}\n\nPillar: {name}\n\n{brief}\n", encoding="utf-8")
 
@@ -71,7 +77,10 @@ def main() -> int:
     else:
         llm = "local fallback (same default copy every day)"
     report = {
+        "post_id": f"daily-{today.isoformat()}",
         "date": today.isoformat(), "pillar": name, "layout": layout, "palette": palette,
+        "hook": content["hook"], "caption": content["caption"], "hashtags": content.get("hashtags", []),
+        "lessons_applied": len(owner_decisions.lessons()), "banned_phrases": owner_decisions.banned_phrases(),
         "status": result["status"], "design_status": design.get("status"),
         "visual_checks": review.get("checks"), "trend_mode": (result.get("trend_report") or {}).get("mode"),
         "llm": llm,

@@ -10,6 +10,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+import subprocess
+
+from shrih_agent import decisions as owner_decisions
 from shrih_agent import mistake_memory
 from shrih_agent.agents import PreferenceLearningAgent
 from shrih_agent.image_prompt import CHECKLIST_ITEMS, category_for_checklist_key
@@ -33,6 +36,14 @@ class AgentUIHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/":
             return self._send_file(UI_DIR / "index.html")
+        if parsed.path == "/review":
+            return self._send_file(UI_DIR / "review.html")
+        if parsed.path == "/api/review/posts":
+            return self._send_json(self._review_posts())
+        if parsed.path == "/api/review/learning":
+            return self._send_json({"lessons": owner_decisions.lessons(), "banned": owner_decisions.banned_phrases(),
+                                    "denied_combos": sorted(list(c) for c in owner_decisions.rejected_combos()),
+                                    "approved_examples": owner_decisions.approved_examples()})
         if parsed.path.startswith("/static/"):
             return self._send_file(UI_DIR / parsed.path.lstrip("/"))
         if parsed.path == "/api/memory":
@@ -68,6 +79,10 @@ class AgentUIHandler(BaseHTTPRequestHandler):
             return self._handle_render_post()
         if parsed.path == "/api/save-memory":
             return self._handle_save_memory()
+        if parsed.path == "/api/review/decide":
+            return self._handle_review_decide()
+        if parsed.path == "/api/review/sync":
+            return self._handle_review_sync()
         if parsed.path == "/api/upload-reference-image":
             return self._handle_upload_reference_image()
         if parsed.path == "/api/regenerate":
@@ -201,6 +216,59 @@ class AgentUIHandler(BaseHTTPRequestHandler):
             "review": str(review_path),
             "policy": result["architecture_policy"],
         })
+
+    def _review_posts(self):
+        by_id = {d["post_id"]: d for d in owner_decisions.load_decisions()}
+        posts = []
+        for folder in sorted((OUTPUTS_DIR / "daily").glob("*"), reverse=True):
+            report_path = folder / "report.json"
+            if not report_path.exists():
+                continue
+            report = read_json(report_path)
+            post_id = report.get("post_id") or f"daily-{folder.name}"
+            caption_path = folder / "caption.txt"
+            posts.append({
+                **report, "post_id": post_id,
+                "image": str(folder / "post.png") if (folder / "post.png").exists() else None,
+                "caption_text": caption_path.read_text(encoding="utf-8") if caption_path.exists() else "",
+                "decision": by_id.get(post_id),
+            })
+        return {"posts": posts}
+
+    def _handle_review_decide(self):
+        data = self._read_json_body()
+        post_id = str(data.get("post_id", "")).strip()
+        folder = OUTPUTS_DIR / "daily" / post_id.removeprefix("daily-")
+        context = {}
+        if (folder / "report.json").exists():
+            report = read_json(folder / "report.json")
+            context = {k: report.get(k) for k in ("hook", "caption", "layout", "palette", "pillar", "date")}
+        try:
+            entry = owner_decisions.add_decision(post_id, str(data.get("decision", "")), str(data.get("reason", "")),
+                                                 str(data.get("category", "other")), str(data.get("banned_phrase", "")), context)
+        except ValueError as exc:
+            return self._send_error(400, str(exc))
+        return self._send_json({"saved": entry, "lessons": len(owner_decisions.lessons()),
+                                "banned": owner_decisions.banned_phrases()})
+
+    def _handle_review_sync(self):
+        """Pull new daily posts from GitHub and push decisions back so the next run learns."""
+        def git(*args):
+            out = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, timeout=90)
+            return out.returncode, (out.stdout + out.stderr).strip()
+        steps = []
+        code, msg = git("add", "memory/decisions.json", "memory/mistake_memory.json")
+        steps.append(("stage", code, msg))
+        code, msg = git("commit", "-m", "Owner review decisions")
+        steps.append(("commit", code, "nothing new" if "nothing to commit" in msg else msg[-200:]))
+        code, msg = git("pull", "--rebase", "--autostash")
+        steps.append(("pull", code, msg[-300:]))
+        pull_ok = code == 0
+        code, msg = git("push")
+        steps.append(("push", code, msg[-200:]))
+        ok = pull_ok and code == 0
+        return self._send_json({"ok": ok, "steps": [{"step": a, "ok": b == 0, "detail": c} for a, b, c in steps]},
+                               status=200 if ok else 502)
 
     def _handle_upload_reference_image(self):
         upload = self._read_multipart_file("image")

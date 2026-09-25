@@ -10,6 +10,7 @@ from .image_prompt import CHECKLIST_ITEMS, build_architecture_checklist_prompt, 
 from .llm import LLMClient
 from .memory import BrandMemory, approved_facts
 from .models import ContentDraft
+from . import decisions as owner_decisions
 from .trend_scout import merged_scout_notes
 
 
@@ -90,6 +91,9 @@ class ContentStrategistAgent:
             "approved_facts": facts,
             "preferences": preferences,
             "trend_report": trend_report or {},
+            "owner_lessons_never_repeat": owner_decisions.lessons(),
+            "owner_banned_phrases": owner_decisions.banned_phrases(),
+            "owner_approved_examples": owner_decisions.approved_examples(),
             "required_json_fields": list(fallback.keys()),
         }, ensure_ascii=False)
         result = context.llm.complete_json(system, user, fallback)
@@ -213,6 +217,9 @@ class LegalReraAgent:
         for pattern in FORBIDDEN_PATTERNS:
             if re.search(pattern, text):
                 issues.append(pattern)
+        for phrase in owner_decisions.banned_phrases():
+            if phrase.lower() in text:
+                issues.append(f"owner_banned: {phrase}")
 
         approved = not issues
         return {
@@ -371,6 +378,10 @@ class AutoFixAgent:
         for pattern in FORBIDDEN_PATTERNS:
             data["caption"] = re.sub(pattern, "premium commercial opportunity", data["caption"], flags=re.IGNORECASE)
 
+        for phrase in owner_decisions.banned_phrases():
+            for key in ("hook", "caption"):
+                data[key] = _remove_phrase(data[key], phrase)
+
         if "RERA approved" not in data["caption"] and context.memory.project.get("approval_status", {}).get("rera_approved"):
             data["caption"] = "RERA approved. " + data["caption"]
 
@@ -383,6 +394,20 @@ class AutoFixAgent:
             value,
             flags=re.IGNORECASE,
         )
+
+
+def _remove_phrase(text: str, phrase: str) -> str:
+    """Remove a banned phrase with its joining word, then repair the leftover punctuation."""
+    p = re.escape(phrase)
+    text = re.sub(rf"(,\s*|\s+(and|with|or)\s+)(an?\s+|the\s+)?{p}", "", text, flags=re.IGNORECASE)
+    text = re.sub(rf"(an?\s+|the\s+)?{p}[!?.]?(\s*,|\s+and\b)?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r",(\s*,)+", ",", text)
+    text = re.sub(r"(,|\s+(and|with|or))\s*([.!?])", r"\3", text)
+    text = re.sub(r"\s+([.,!?])", r"\1", text)
+    text = re.sub(r"^[\s.,!?]+", "", text)
+    text = re.sub(r"([.!?])\s*[.!?]+", r"\1", text)
+    text = re.sub(r"\s{2,}", " ", text).strip()
+    return text[:1].upper() + text[1:] if text else text
 
 
 class PreferenceLearningAgent:

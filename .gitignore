@@ -9,7 +9,6 @@ outputs/final/*
 outputs/reviews/*
 outputs/generated/*
 outputs/design/*
-outputs/daily/*
 !outputs/**/.gitkeep
 
 # built by build_web/ from the assets, rebuilt on demand

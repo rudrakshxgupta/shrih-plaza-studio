@@ -2,6 +2,7 @@ import argparse
 import json
 from pathlib import Path
 
+from . import decisions as owner_decisions
 from .agents import ArchitectureGuardAgent, PreferenceLearningAgent
 from .image_tools import enhance_image_safe
 from .io import write_json
@@ -43,6 +44,26 @@ def cmd_regenerate(args: argparse.Namespace) -> None:
         reference_image_path=Path(args.image).resolve() if args.image else None,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
+
+
+def cmd_decide(args: argparse.Namespace) -> None:
+    context = {}
+    if args.post:
+        report = Path(args.post)
+        if report.exists():
+            context = {k: v for k, v in json.loads(report.read_text(encoding="utf-8")).items()
+                       if k in ("hook", "caption", "layout", "palette", "pillar", "date")}
+    entry = owner_decisions.add_decision(args.id, args.decision, args.reason or "", args.category,
+                                         args.ban or "", context)
+    print(json.dumps({"saved": entry, "lessons_now": owner_decisions.lessons(),
+                      "banned_phrases_now": owner_decisions.banned_phrases()}, indent=2, ensure_ascii=False))
+
+
+def cmd_import_decisions(args: argparse.Namespace) -> None:
+    data = json.loads(Path(args.file).read_text(encoding="utf-8"))
+    items = data.get("decisions", data) if isinstance(data, dict) else data
+    changed = owner_decisions.import_decisions(items)
+    print(json.dumps({"imported": changed, "total": len(owner_decisions.load_decisions())}, indent=2))
 
 
 def cmd_check_architecture(args: argparse.Namespace) -> None:
@@ -155,6 +176,19 @@ def build_parser() -> argparse.ArgumentParser:
     regenerate.add_argument("--feedback", required=True)
     regenerate.add_argument("--image", help="Reference photo, if the image should also be regenerated")
     regenerate.set_defaults(func=cmd_regenerate)
+
+    decide = sub.add_parser("decide", help="Approve or deny a post; the reason is learned by the pipeline")
+    decide.add_argument("--id", required=True, help="Post id, e.g. daily-2026-09-25")
+    decide.add_argument("--decision", choices=["approve", "deny"], required=True)
+    decide.add_argument("--reason", help="Required for deny")
+    decide.add_argument("--category", default="other", choices=["copy", "design", "claim", "layout", "other"])
+    decide.add_argument("--ban", help="A phrase that must never appear again")
+    decide.add_argument("--post", help="Path to the post's report.json, to remember what was decided on")
+    decide.set_defaults(func=cmd_decide)
+
+    imp = sub.add_parser("import-decisions", help="Merge decisions exported from the web review page")
+    imp.add_argument("--file", required=True)
+    imp.set_defaults(func=cmd_import_decisions)
 
     check_architecture = sub.add_parser("check-architecture", help="Run the architecture guard on an existing image pair")
     check_architecture.add_argument("--original", required=True)

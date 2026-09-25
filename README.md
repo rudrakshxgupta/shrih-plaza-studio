@@ -202,3 +202,22 @@ python run_agent.py run --brief inputs/trends/sample_trend_brief.md --design ten
 - The **visual reviewer** (`shrih_agent/visual_review.py`) checks the PNG: size, black bars, only the 12 approved brands, no unapproved brand names, forbidden claims, the phone number, the "Artist's impression" note, the logo and minimum text size. A failed review retries once, and every defect is logged to `memory/mistake_memory.json`.
 - The **trend scout** (`agents/instagram_trend_scout_agent.md`) runs in a Claude session: it browses Explore and hashtag pages in your signed-in browser, looks only, and writes a snapshot to `inputs/trends/scout/`. The pipeline's trend agent reads snapshots from the last 30 days. It is not an unattended script, because scripted scraping of Instagram breaks its terms.
 - Adobe Express export is done in a Claude session with the Adobe connector. The design HTML in `outputs/design/` is the source for it.
+
+## Daily Review (approve or deny, and the pipeline learns)
+
+Every morning the GitHub workflow makes a post and saves it to `outputs/daily/<date>/` in the repo.
+
+```powershell
+python ui/server.py
+```
+
+Open http://127.0.0.1:8787/review, press **Sync with GitHub** to pull new posts, then approve or deny each one (keys A / D). A denial needs a reason; you can also pick what was wrong and ban a phrase. Press **Sync with GitHub** again to push your decisions.
+
+What the pipeline does with them (`memory/decisions.json`, `shrih_agent/decisions.py`):
+
+- The strategist is told every denial reason, your banned phrases and your approved examples.
+- The legal guard rejects banned phrases, and auto-fix removes them cleanly.
+- A layout and colour pair you denied for design reasons is skipped by the daily rotation and flagged by the visual reviewer.
+- Each denial is also written to `memory/mistake_memory.json`.
+
+From the command line: `python run_agent.py decide --id daily-2026-09-25 --decision deny --reason "..." --category copy --ban "phrase"`.

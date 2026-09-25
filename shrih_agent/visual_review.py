@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from . import decisions as owner_decisions
 from . import mistake_memory
 from .agents import FORBIDDEN_PATTERNS
 from .design_agent import BRAND_LOGO_FILES, CANVAS, SIGNAGE_RISK_PREFIXES
@@ -135,6 +136,11 @@ class VisualReviewerAgent:
         checks["min_font_size_14"] = not sizes or min(sizes) >= 14
         if not checks["min_font_size_14"]:
             issues.append(f"Text as small as {min(sizes)}px will not read on a phone.")
+
+        combo = (design.get("layout"), design.get("palette"))
+        checks["not_a_denied_combination"] = combo not in owner_decisions.rejected_combos()
+        if not checks["not_a_denied_combination"]:
+            issues.append(f"The owner denied the {combo[0]} layout in {combo[1]} colours before.")
 
         approved = all(checks.values())
         return {"agent": "visual_reviewer", "approved": approved, "score": 10 if approved else 0,
