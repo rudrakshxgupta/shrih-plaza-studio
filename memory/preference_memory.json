@@ -1,0 +1,28 @@
+{
+  "approved_patterns": [],
+  "rejected_patterns": [
+    "Too generic, mention the SH-11 highway location more prominently."
+  ],
+  "style_preferences": [
+    "premium",
+    "minimal",
+    "clean",
+    "not too much text"
+  ],
+  "caption_preferences": [
+    "short hooks",
+    "clear CTA",
+    "no unsupported numbers"
+  ],
+  "learned_lessons": [
+    {
+      "decision": "needs_changes",
+      "feedback": "Too generic, mention the SH-11 highway location more prominently.",
+      "lesson": "Avoid repeating this rejected direction unless the user asks for it.",
+      "applies_to": [
+        "real estate social content"
+      ],
+      "confidence": 0.65
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "project_name": "Shrih Plaza",
+  "location": "",
+  "project_type": "Commercial project with SCO spaces, retail shops and office spaces",
+  "developer_name": "Shrih Plaza City Centre LLP",
+  "rera_number": "",
+  "approved_claims": [
+    "Shrih Plaza is a commercial real estate project.",
+    "SHRIH PLAZA is located on the SH-11 highway in Dhuri, Punjab.",
+    "SHRIH PLAZA offers premium SCO spaces, retail shops and office spaces.",
+    "The project includes central surface parking.",
+    "The project is positioned as a premium commercial destination for shopping, food, leisure, offices and services.",
+    "SHRIH PLAZA is planned as a fully approved commercial development.",
+    "SHRIH PLAZA is a venture of Shrih Plaza City Centre LLP.",
+    "The brands listed on the official SHRIH PLAZA website are real signed brand associations.",
+    "SHRIH PLAZA is RERA approved.",
+    "Construction is nearing completion.",
+    "Limited SCO spaces are available."
+  ],
+  "construction_and_availability": {
+    "confirmed_by_owner": "2026-09-25",
+    "construction_status": "Nearing completion. No completion date, month or percentage is approved for use.",
+    "availability": "Limited SCO spaces available. No unit count is approved for use.",
+    "keep_true": "The owner must remove or update these two lines as soon as construction completes or the SCOs are fully allotted.",
+    "still_forbidden_wording": [
+      "possession soon",
+      "possession date",
+      "only N units left",
+      "hurry",
+      "sold out soon"
+    ]
+  },
+  "approval_status": {
+    "rera_approved": true,
+    "rera_number": "needs confirmation",
+    "public_wording_confirmed_2026_09_25": "Owner confirms posts say 'RERA approved' and 'fully approved commercial project' without the RERA number, and that everything is approved. Phone for posts: +91 90564 53575.",
+    "status_confirmed_by_user": "2026-09-25: owner confirms RERA approved and holds a RERA number. The brochure's 'RERA APPLIED' is out of date. RERA number still to be supplied.",
+    "approved_public_wording": [
+      "RERA approved commercial project",
+      "SHRIH PLAZA is RERA approved"
+    ],
+    "requires_confirmation_before_using": [
+      "RERA registration number",
+      "exact approval certificate wording"
+    ]
+  },
+  "brand_list_final": "2026-09-25: owner confirms these 12 are the FINAL and only approved brand associations. Do not add any other brand, including names seen on renders or in the old brochure.",
+  "brand_usage_permission": "2026-09-25: owner confirms every listed brand is already leased and permission is held to use their names and logos in marketing. Use only the 12 listed brands. Signage on the 3D renders that is not on this list (e.g. Bigg Bazzar, Jio Bazar, Burger King, Subway) is not approved.",
+  "signed_brand_associations": [
+    "Domino's Pizza",
+    "The Brew Estate",
+    "Basant Ice Cream & Dessert Bar",
+    "VW Mart 24x7 Cafe & Grocery Store",
+    "Octave",
+    "Barista",
+    "Sagar Ratna",
+    "Tress Lounge Salon",
+    "Jockey",
+    "Elini",
+    "Purple Kids",
+    "Baba's Chicken"
+  ],
+  "amenities": [],
+  "nearby_landmarks": [
+    "SH-11 highway",
+    "Dhuri, Punjab"
+  ],
+  "unit_details": [],
+  "pricing": {
+    "status": "not approved for AI use",
+    "approved_price_lines": []
+  },
+  "possession": {
+    "status": "not approved for AI use",
+    "approved_possession_lines": []
+  },
+  "offers": [],
+  "contact": {
+    "phone": "+91 90564 53575",
+    "email": "shrih.plaza@hotmail.com",
+    "website": "",
+    "address": ""
+  },
+  "forbidden_claims": [
+    "guaranteed returns",
+    "assured profit",
+    "100% appreciation",
+    "lowest price guaranteed",
+    "best project in city",
+    "possession soon",
+    "only a few units left",
+    "hurry, last units"
+  ],
+  "source_notes": [
+    {
+      "source_name": "Manual starter record",
+      "facts_covered": [
+        "project_name"
+      ],
+      "verified_by": "user",
+      "date": ""
+    },
+    {
+      "source_name": "Official website",
+      "source_url": "https://www.shrihplaza.in/",
+      "facts_covered": [
+        "location",
+        "project_type",
+        "facilities",
+        "contact",
+        "developer_name",
+        "brand positioning",
+        "signed brand associations"
+      ],
+      "verified_by": "website extraction",
+      "date": "2026-09-21"
+    }
+  ]
+}

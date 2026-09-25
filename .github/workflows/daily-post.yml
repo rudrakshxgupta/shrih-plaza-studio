@@ -1,0 +1,30 @@
+name: Daily Shrih Plaza post
+
+on:
+  schedule:
+    - cron: "30 3 * * *"   # 09:00 India time
+  workflow_dispatch:
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Make today's post
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          DAILY_EMAIL_TO: ${{ secrets.DAILY_EMAIL_TO }}
+        run: python scripts/daily_run.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: daily-post
+          path: outputs/daily/
+          retention-days: 30

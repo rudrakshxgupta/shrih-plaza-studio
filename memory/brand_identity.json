@@ -1,0 +1,78 @@
+{
+  "brand_name": "Shrih Plaza",
+  "brand_positioning": "premium commercial landmark on SH-11 highway in Dhuri, Punjab",
+  "tone_of_voice": [
+    "premium",
+    "clear",
+    "trustworthy",
+    "aspirational",
+    "business-focused",
+    "family destination",
+    "not exaggerated"
+  ],
+  "visual_style": [
+    "clean premium layouts",
+    "high-quality architectural elevation imagery",
+    "strong whitespace",
+    "high-street commercial feel",
+    "premium but not flashy",
+    "clear CTA-led social creatives"
+  ],
+  "colors": {
+    "primary": "#0B1237",
+    "secondary": "#D7B469",
+    "accent": "#1B2F62",
+    "neutral": "#FFFFFF",
+    "ink": "#171717",
+    "muted": "#6B6B6B"
+  },
+  "fonts": {
+    "heading": "Poppins Light",
+    "body": "Poppins Regular",
+    "numeric": "Poppins SemiBold"
+  },
+  "logo_rules": [
+    "Use approved logo only.",
+    "Do not stretch, recolor, or distort logo.",
+    "Keep logo readable on every creative."
+  ],
+  "cta_preferences": [
+    "Book a site visit",
+    "Request details",
+    "Call for project information"
+  ],
+  "brand_messages": [
+    "Premium commercial destination on SH-11, Dhuri.",
+    "Gateway to family entertainment and shopping.",
+    "Retail shops, SCO spaces, offices and entertainment under one roof.",
+    "Built for footfall, frontage and flexible commercial use.",
+    "High-visibility commercial address with SH-11 connectivity.",
+    "Construction is nearing completion.",
+    "Limited SCO spaces are available."
+  ],
+  "target_audiences": [
+    "retail brands",
+    "food and beverage operators",
+    "office buyers and tenants",
+    "service businesses",
+    "clinics",
+    "cafes",
+    "investors",
+    "families and shoppers"
+  ],
+  "avoid": [
+    "overcrowded poster layouts",
+    "unsupported superlatives",
+    "fake urgency",
+    "claims that are not in project facts"
+  ],
+  "source": "https://www.shrihplaza.in/",
+  "palette_rule": "Owner (2026-09-25): navy and gold is the default but any colour may be used for posts and the Studio. Keep a dark ground behind the gold logo and 4.5:1 text contrast.",
+  "palette_presets": [
+    "navy",
+    "emerald",
+    "maroon",
+    "charcoal",
+    "plum"
+  ]
+}

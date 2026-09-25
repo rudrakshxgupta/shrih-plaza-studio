@@ -1,0 +1,78 @@
+{
+  "brand": "Shrih Plaza",
+  "version": "1.0",
+  "positioning": "Premium commercial landmark on SH-11 highway in Dhuri, Punjab",
+  "colors": {
+    "primary_deep_navy": "#0B1237",
+    "primary_navy_gradient_end": "#1B2F62",
+    "secondary_brochure_gold": "#D7B469",
+    "logo_gold_reference": "#C8A24A",
+    "neutral_white": "#FFFFFF",
+    "ink_charcoal": "#1A1A18",
+    "muted_grey": "#6B6B6B"
+  },
+  "typography": {
+    "heading": [
+      "Poppins Light"
+    ],
+    "body": [
+      "Poppins Regular"
+    ],
+    "numeric": [
+      "Poppins SemiBold"
+    ],
+    "secondary_body_in_brochure": [
+      "Gilroy Medium"
+    ]
+  },
+  "source": "SHRIH PLAZA BROCHURE.pdf (colours and fonts read from the file, 2026-09-25)",
+  "layout": {
+    "instagram_post": "1080x1350",
+    "instagram_story_reel_cover": "1080x1920",
+    "whatsapp_square": "1080x1080",
+    "rules": [
+      "Use one strong elevation or render image as hero.",
+      "Use minimal overlay text.",
+      "Keep CTA visible at bottom.",
+      "Use gold as accent, not main background.",
+      "Do not crowd with too many brand names in one design."
+    ]
+  },
+  "tone": [
+    "premium",
+    "clear",
+    "trustworthy",
+    "commercial",
+    "business-focused",
+    "not exaggerated"
+  ],
+  "approved_ctas": [
+    "Book a site visit",
+    "Schedule a site visit",
+    "WhatsApp for project details",
+    "Call for leasing information",
+    "Request project details"
+  ],
+  "approved_claims": [
+    "RERA approved commercial project",
+    "Located on SH-11 highway in Dhuri, Punjab",
+    "Premium SCO spaces, retail shops and office spaces",
+    "Central surface parking",
+    "Signed brand associations across food, retail, lifestyle and daily convenience",
+    "Construction is nearing completion",
+    "Limited SCO spaces available"
+  ],
+  "forbidden": [
+    "guaranteed returns",
+    "assured profit",
+    "100% appreciation",
+    "lowest price guaranteed",
+    "best project in city",
+    "unverified price",
+    "unverified possession date",
+    "unverified ROI",
+    "possession date",
+    "unit counts or 'only N left'",
+    "fake urgency"
+  ]
+}

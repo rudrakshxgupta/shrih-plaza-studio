@@ -1,0 +1,391 @@
+<title>Shrih Plaza Studio</title>
+<style>
+__FONTS__
+:root{
+  --bg:#EEF0F6;--surface:#FFFFFF;--surface2:#E3E7F2;--ink:#0B1237;--muted:#4F5A86;--line:#CBD1E4;
+  --gold:#D7B469;--gold-ink:#7A5A14;--navy:#0B1237;--navy2:#1B2F62;
+  --good:#1F7A52;--warn:#9A6A0C;--bad:#B93248;--good-bg:#DDF1E8;--warn-bg:#F6EBCF;--bad-bg:#F8DDE2;
+  --focus:#1B2F62;
+  font-family:'Poppins',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#080E2B;--surface:#0F1746;--surface2:#18235F;--ink:#EEF0F8;--muted:#9BA6D2;--line:#27337A;
+  --gold-ink:#D7B469;--good:#48C88E;--warn:#E3B04B;--bad:#F0788C;--good-bg:#0F3A2B;--warn-bg:#3F3110;--bad-bg:#4A1A28;--focus:#D7B469;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#080E2B;--surface:#0F1746;--surface2:#18235F;--ink:#EEF0F8;--muted:#9BA6D2;--line:#27337A;
+  --gold-ink:#D7B469;--good:#48C88E;--warn:#E3B04B;--bad:#F0788C;--good-bg:#0F3A2B;--warn-bg:#3F3110;--bad-bg:#4A1A28;--focus:#D7B469;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Poppins',system-ui,sans-serif;font-size:14px;line-height:1.55}
+button,select,textarea,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px}
+header.top{background:var(--navy);color:#EEF0F8;transition:background .2s}
+header.top .wrap{display:flex;align-items:center;gap:16px;padding-block:14px;flex-wrap:wrap}
+header.top img{height:46px;width:auto;display:block}
+header.top h1{font-weight:300;font-size:22px;letter-spacing:.14em;margin:0;text-transform:uppercase}
+header.top h1 b{font-weight:500;color:var(--gold)}
+header.top p{margin:0;color:#9BA6D2;font-size:12px;margin-left:auto}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto}
+nav.tabs button{background:none;border:0;padding:12px 16px;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+main{padding-block:24px 56px}
+h2{font-weight:500;font-size:20px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px;max-width:70ch}
+.label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.pill{display:inline-block;font-size:11px;font-weight:500;padding:2px 10px;border-radius:99px;letter-spacing:.04em}
+.pill.good{background:var(--good-bg);color:var(--good)}.pill.warn{background:var(--warn-bg);color:var(--warn)}.pill.bad{background:var(--bad-bg);color:var(--bad)}.pill.idle{background:var(--surface2);color:var(--muted)}
+.flow{display:flex;gap:0;overflow-x:auto;padding-bottom:6px;margin-bottom:24px}
+.flow div{flex:0 0 auto;padding:8px 14px;background:var(--surface);border:1px solid var(--line);border-left-width:0;font-size:12px;font-weight:500;white-space:nowrap}
+.flow div:first-child{border-left-width:1px}
+.agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.agent{background:var(--surface);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:8px}
+.agent h3{margin:0;font-size:15px;font-weight:500;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.agent p{margin:0;color:var(--muted);font-size:13px}
+.agent dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:12px}
+.agent dt{color:var(--muted)}.agent dd{margin:0}
+.agent .runs{font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px;margin-top:auto}
+.studio{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:24px;align-items:start}
+@media(max-width:860px){.studio{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);padding:16px;margin-bottom:16px}
+.panel h3{margin:0 0 10px;font-size:14px;font-weight:500}
+textarea,select,input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line);padding:10px;border-radius:0}
+textarea{min-height:90px;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1 1 140px}
+.btn{background:var(--gold);color:var(--navy);border:0;padding:11px 18px;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.steps li{display:grid;grid-template-columns:150px 1fr auto;gap:10px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.steps li span.note{color:var(--muted);font-size:12px}
+@media(max-width:560px){.steps li{grid-template-columns:1fr auto}.steps li span.note{grid-column:1/-1}}
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px;margin:0;padding:0;list-style:none;font-size:12px}
+.checks li{display:flex;gap:8px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.dot.good{background:var(--good)}.dot.bad{background:var(--bad)}
+.stage{background:var(--surface2);padding:12px;position:sticky;top:64px}
+.postbox{width:100%;aspect-ratio:1080/1350;position:relative;overflow:hidden;background:var(--navy)}
+.postbox .scaler{position:absolute;left:0;top:0;transform-origin:0 0}
+.post{position:relative;width:1080px;height:1350px;overflow:hidden;font-family:'Poppins',sans-serif}
+.post .a{position:absolute;margin:0}
+.brandgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.brandgrid figure{margin:0;background:var(--surface);border:1px solid var(--line)}
+.brandgrid img{display:block;width:100%;height:auto}
+.brandgrid figcaption{padding:6px 8px;font-size:11px;color:var(--muted)}
+.sw{display:flex;gap:10px;flex-wrap:wrap}
+.sw div{width:120px;border:1px solid var(--line);background:var(--surface);font-size:11px}
+.sw i{display:block;height:56px}.sw span{display:block;padding:6px 8px}
+ul.plain{margin:0;padding-left:18px}ul.plain li{margin:3px 0}
+.mem{display:grid;gap:8px}
+.mem article{background:var(--surface);border:1px solid var(--line);padding:12px;font-size:13px}
+.mem article small{color:var(--muted);display:block;margin-top:4px}
+.out{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);padding:10px;font-size:13px}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:420px;margin-inline:auto;background:var(--navy);color:#EEF0F8;padding:12px 16px;z-index:9;border-left:4px solid var(--gold)}
+@media(prefers-reduced-motion:no-preference){.btn{transition:opacity .15s}}
+</style>
+
+<header class="top"><div class="wrap">
+  <img src="__LOGO__" alt="Shrih Plaza logo">
+  <h1>Shrih Plaza <b>Studio</b></h1>
+  <p>SH-11, Dhuri · RERA approved · Construction nearing completion</p>
+</div></header>
+<nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
+  <button role="tab" id="t-agents" aria-selected="true" data-tab="agents">Agents</button>
+  <button role="tab" id="t-studio" aria-selected="false" data-tab="studio">Post Studio</button>
+  <button role="tab" id="t-brand" aria-selected="false" data-tab="brand">Brand Kit</button>
+  <button role="tab" id="t-memory" aria-selected="false" data-tab="memory">Memory</button>
+</div></nav>
+
+<main class="wrap">
+<section id="agents">
+  <h2>The twelve agents</h2>
+  <p class="sub">Each stage of a post, who does it, where it runs and whether it works today. Status is stated plainly: "Runs here" works on this page, "Local only" needs the Python pipeline on your PC, "Needs billing" is built but blocked.</p>
+  <div class="flow" aria-label="Pipeline order"></div>
+  <div class="agents" id="agentGrid"></div>
+</section>
+
+<section id="studio" hidden>
+  <h2>Post Studio</h2>
+  <p class="sub">Write a brief, run the agents, review the checks, approve or send it back. Every claim comes from your approved facts.</p>
+  <div class="studio">
+    <div>
+      <div class="panel">
+        <h3>Brief</h3>
+        <label class="label" for="brief">What should today's post say?</label>
+        <textarea id="brief">Limited SCO spaces available. Construction nearing completion. Invite retail brands and investors to book a site visit.</textarea>
+        <div class="row" style="margin-top:10px">
+          <div><label class="label" for="palette">Colour</label>
+            <select id="palette"><option value="navy">Navy and gold (default)</option><option value="emerald">Emerald and gold</option><option value="maroon">Maroon and gold (festive)</option><option value="charcoal">Charcoal and gold</option><option value="plum">Plum and gold</option></select></div>
+          <div><label class="label" for="layout">Layout</label>
+            <select id="layout"><option value="hero">Hero (full-bleed aerial)</option><option value="tenants">Tenants (12 brand logos)</option></select></div>
+          <button class="btn" id="run">Run the agents</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Agent run</h3>
+        <ul class="steps" id="steps"></ul>
+      </div>
+      <div class="panel" id="copyPanel" hidden>
+        <h3>Caption</h3>
+        <div class="out" id="caption"></div>
+        <div class="row" style="margin-top:10px"><button class="btn ghost" id="copyCap">Copy caption</button><button class="btn ghost" id="png">Download PNG</button></div>
+      </div>
+      <div class="panel" id="decidePanel" hidden>
+        <h3>Your decision</h3>
+        <div class="row">
+          <button class="btn" id="approve">Approve</button>
+          <div style="flex:2 1 260px"><label class="label" for="fbtext">Needs changes? Say what to fix</label>
+            <input type="text" id="fbtext" placeholder="e.g. headline too long, mention parking"></div>
+          <div><label class="label" for="fbcat">Type</label><select id="fbcat"><option value="copy">Wording</option><option value="design">Design</option><option value="claim">Claim or fact</option><option value="other">Other</option></select></div>
+          <button class="btn ghost" id="fix">Fix and re-run</button>
+        </div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="postbox" id="postbox"><div class="scaler" id="scaler"></div></div>
+      <p class="label" style="margin:10px 0 6px">Visual reviewer</p>
+      <ul class="checks" id="checks"></ul>
+    </div>
+  </div>
+</section>
+
+<section id="brand" hidden>
+  <h2>Brand Kit</h2>
+  <p class="sub">Read from the brochure, your website and what you confirmed on 25 September 2026.</p>
+  <div class="panel"><h3>Palette</h3><div class="sw">
+    <div><i style="background:#0B1237"></i><span>Deep navy<br>#0B1237</span></div>
+    <div><i style="background:#1B2F62"></i><span>Royal navy<br>#1B2F62</span></div>
+    <div><i style="background:#D7B469"></i><span>Brochure gold<br>#D7B469</span></div>
+    <div><i style="background:#FFFFFF;border-bottom:1px solid #ccc"></i><span>White<br>#FFFFFF</span></div>
+  </div><p class="sub" style="margin-top:12px">Type: Poppins Light for headlines, Regular for body, SemiBold for the phone and call to action.</p></div>
+  <div class="panel"><h3>Approved claims</h3><ul class="plain" id="claims"></ul></div>
+  <div class="panel"><h3>Never say</h3><ul class="plain" id="forbid"></ul></div>
+  <div class="panel"><h3>The twelve signed brands <span class="pill good">Final</span></h3>
+    <p class="sub" style="margin-bottom:12px">You confirmed these are the only approved brands. Permission to use their names and logos is held.</p>
+    <div class="brandgrid" id="brandgrid"></div></div>
+</section>
+
+<section id="memory" hidden>
+  <h2>Memory</h2>
+  <p class="sub">What the system has learned. Every "needs changes" you send is saved here and fed to the strategist on the next run, so the same mistake is not repeated.</p>
+  <div class="panel"><h3>Mistakes to avoid <span class="pill idle" id="memStatus">loading</span></h3><div class="mem" id="mistakes"></div></div>
+  <div class="panel"><h3>Approved posts</h3><div class="mem" id="runs"></div></div>
+</section>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+<script>
+const IMG = __ASSETS__;
+const PHONE = "+91 90564 53575";
+const APPROVED_BRANDS = IMG.brands.map(b => b.name);
+const CLAIMS = [
+  "RERA approved commercial project.",
+  "Fully approved commercial project.",
+  "Located on SH-11 highway in Dhuri, Punjab.",
+  "Premium SCO spaces, retail shops and office spaces.",
+  "Central surface parking.",
+  "Signed brand associations across food, retail, lifestyle and daily convenience.",
+  "Construction is nearing completion.",
+  "Limited SCO spaces are available.",
+  "Venture of Shrih Plaza City Centre LLP."
+];
+const FORBIDDEN = ["guaranteed returns","assured profit","100% appreciation","lowest price guaranteed","best project","possession soon","only a few units left","hurry","last units","sold out soon","high return"];
+const UNAPPROVED = ["bigg bazzar","bigg bazaar","jio bazar","burger king","subway","parle","amul","nestle","itc","pepsi","smart bazar","reliance","monolee","fortune","pearss","amazonee","lacostee"];
+const SCOUT = {file:"2026-09-25-explore-commercial-realestate", patterns:["Education posts that name a misconception, then a short step chain","Local-news style hooks: one plain opening sentence","SCO competitors lead with three practical points: frontage, location, parking","Short comment-prompt lines lift reach"], avoid:["return language such as high return potential","bare phone-number lead posts","any competitor wording or artwork"]};
+const AGENTS = [
+ {n:"Trend Scout",role:"Looks at Instagram Explore and hashtag pages, read-only, and records reusable patterns.",where:"Claude session",st:["warn","Runs on request"],io:["Signed-in Instagram","Dated snapshot"],runs:"Last snapshot 25 Sep 2026: 4 patterns, 4 angles, 3 to avoid. Not scripted, because scraping breaks Instagram's terms."},
+ {n:"Trend Research",role:"Turns the brief and the latest scout snapshot into patterns and angles.",where:"Runs here",st:["good","Works"],io:["Brief + snapshot","Patterns, angles"],runs:"Live web search inside the Python pipeline needs Gemini billing."},
+ {n:"Content Strategist",role:"Writes the hook, caption and hashtags using only approved facts and your past corrections.",where:"Runs here",st:["good","Works"],io:["Brief, facts, memory","Hook, caption, tags"],runs:"Uses Claude on your own account when you click Run."},
+ {n:"Critic",role:"Acts as a strict creative director: length, premium tone, clear call to action.",where:"Runs here",st:["good","Works"],io:["Draft","Score, fixes"],runs:"Rule-based, instant."},
+ {n:"Fact Checker",role:"Checks every sentence against the approved claims. Numbers other than the phone are rejected.",where:"Runs here",st:["good","Works"],io:["Draft","Verified or rejected"],runs:"Rule-based, instant."},
+ {n:"Legal / RERA",role:"Blocks guaranteed returns, urgency tricks, possession claims and unapproved brands.",where:"Runs here",st:["good","Works"],io:["Draft","Pass or fix"],runs:"Rule-based, instant."},
+ {n:"Design Agent",role:"Builds the post from your logo, the 12 approved logos and the aerial render. Never edits the building.",where:"Runs here",st:["good","Works"],io:["Approved draft","1080x1350 post"],runs:"Elevation renders are refused: they show unapproved shop signs."},
+ {n:"Visual Reviewer",role:"Inspects the finished post: size, only 12 brands, forbidden words, phone, artist's impression note, text size.",where:"Runs here",st:["good","Works"],io:["Post","Checklist"],runs:"Black-bar detection runs in the Python pipeline. Here the crop cannot go outside the photo."},
+ {n:"Architecture Guard",role:"Compares an AI-edited building image with the original, item by item.",where:"Local only",st:["bad","Needs billing"],io:["Two images","Checklist"],runs:"Not used now: no building image is generated. Needs Gemini billing to run."},
+ {n:"Auto-Fix",role:"Rewrites the draft using your feedback, then sends it back through every check.",where:"Runs here",st:["good","Works"],io:["Feedback","New draft"],runs:"Runs when you press Fix and re-run."},
+ {n:"Preference Learning",role:"Turns each approval or correction into a lesson.",where:"Runs here",st:["good","Works"],io:["Your decision","Lesson"],runs:"Saved to the shared memory below."},
+ {n:"Mistake Memory",role:"Keeps every defect and correction and restates them to the strategist next time.",where:"Runs here",st:["good","Works"],io:["Feedback","Avoid list"],runs:"Stored in this page's shared database."}
+];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,3600)}
+
+/* tabs */
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!==b.dataset.tab);
+  try{localStorage.setItem("shrihTab",b.dataset.tab)}catch(e){}
+  if(b.dataset.tab==="studio")fit();
+}));
+
+/* agents tab */
+$("agentGrid").innerHTML = AGENTS.map(a=>`<article class="agent"><h3>${esc(a.n)}<span class="pill ${a.st[0]}">${esc(a.st[1])}</span></h3><p>${esc(a.role)}</p><dl><dt>Runs</dt><dd>${esc(a.where)}</dd><dt>In</dt><dd>${esc(a.io[0])}</dd><dt>Out</dt><dd>${esc(a.io[1])}</dd></dl><div class="runs">${esc(a.runs)}</div></article>`).join("");
+document.querySelector(".flow").innerHTML = ["Trend Scout","Trend Research","Strategist","Critic","Fact + Legal","Design","Visual Review","You approve","Learn"].map(x=>`<div>${x}</div>`).join("");
+$("claims").innerHTML = CLAIMS.map(c=>`<li>${esc(c)}</li>`).join("");
+$("forbid").innerHTML = FORBIDDEN.map(c=>`<li>${esc(c)}</li>`).join("") + "<li>Any completion date, month, percentage or unit count</li><li>Any brand not on the list of twelve</li>";
+$("brandgrid").innerHTML = IMG.brands.map(b=>`<figure><img src="${b.src}" alt="${esc(b.name)}"><figcaption>${esc(b.name)}</figcaption></figure>`).join("");
+
+/* palettes: navy and gold is the default, any colour is allowed */
+const PALETTES={navy:{n:"#0B1237",n2:"#1B2F62",g:"#D7B469",g2:"#E6C877"},emerald:{n:"#0F2E2B",n2:"#14453F",g:"#D7B469",g2:"#E6C877"},maroon:{n:"#3A0D18",n2:"#5E1626",g:"#E3BE6F",g2:"#F0D28A"},charcoal:{n:"#141414",n2:"#2A2A2A",g:"#D7B469",g2:"#E6C877"},plum:{n:"#26113A",n2:"#3F1D63",g:"#E0BC6E",g2:"#EDD08A"}};
+const hexRgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)).join(",");
+let PAL=Object.assign({rgb:hexRgb(PALETTES.navy.n)},PALETTES.navy);
+function setPalette(k){PAL=Object.assign({rgb:hexRgb(PALETTES[k].n)},PALETTES[k]);const r=document.documentElement.style;r.setProperty("--navy",PAL.n);r.setProperty("--navy2",PAL.n2);r.setProperty("--gold",PAL.g);try{localStorage.setItem("shrihPalette",k)}catch(e){}}
+const wrapPost=(m,id)=>`<div class="post"${id?' id="post"':""} style="background:linear-gradient(180deg,${PAL.n2} 0%,${PAL.n} 100%)">${postHTML(m)}</div>`;
+
+/* post renderer */
+function headline(hook){
+  let t=hook.trim().replace(/\.$/,"").toUpperCase();
+  if(t.includes("LIMITED SCO")) t="LIMITED SCO SPACES AVAILABLE";
+  const size=t.length<=30?96:t.length<=46?72:56, per=Math.max(8,Math.floor(952/(size*0.60)));
+  const lines=[];let cur="";
+  t.split(/\s+/).forEach(w=>{const tr=(cur+" "+w).trim();if(tr.length<=per||!cur)cur=tr;else{lines.push(cur);cur=w}});
+  if(cur)lines.push(cur);
+  return {lines:lines.slice(0,3),size};
+}
+function postHTML(m){
+  const G=PAL.g,N=PAL.n,P="font-family:'Poppins',sans-serif;";
+  const cta=(top,h)=>`<div class="a" style="left:64px;top:${top}px;width:952px;height:${h}px;background:${G}"></div><p class="a" style="left:96px;top:${top+20}px;width:420px;${P}font-weight:600;font-size:30px;line-height:60px;color:${N}">${esc(m.cta)}</p><p class="a" style="left:500px;top:${top+20}px;width:484px;text-align:right;${P}font-weight:600;font-size:34px;line-height:60px;color:${N}">${esc(m.phone)}</p>`;
+  if(m.layout==="tenants"){
+    let tiles="";
+    IMG.brands.forEach((b,i)=>{const x=64+(i%6)*160+(952-(6*148+5*12))/2,y=950+Math.floor(i/6)*96;tiles+=`<img class="a" src="${b.src}" alt="${esc(b.name)}" style="left:${x}px;top:${y}px;width:148px;height:84px;object-fit:cover">`});
+    return `<img class="a" src="${IMG.logo}" alt="Shrih Plaza logo" style="left:64px;top:36px;width:240px"><p class="a" style="left:600px;top:70px;width:416px;text-align:right;${P}font-weight:400;font-size:20px;line-height:30px;letter-spacing:3px;color:#fff">RERA APPROVED<br>FULLY APPROVED PROJECT</p><div class="a" style="left:64px;top:198px;width:952px;height:2px;background:${G}"></div><img class="a" src="${IMG.ten}" alt="Aerial render of Shrih Plaza" style="left:64px;top:216px;width:952px;height:398px;border:3px solid ${G}"><p class="a" style="left:64px;top:622px;width:952px;text-align:right;${P}font-size:16px;color:#C5CBE0">Artist's impression.</p><p class="a" style="left:64px;top:660px;width:952px;${P}font-weight:300;font-size:56px;line-height:66px;color:${G}">WHERE RETAIL, FOOD<br>&amp; BUSINESS MEET</p><div class="a" style="left:64px;top:806px;width:560px;height:52px;background:${G}"></div><p class="a" style="left:64px;top:806px;width:560px;text-align:center;${P}font-weight:600;font-size:22px;line-height:52px;letter-spacing:2px;color:${N}">LIMITED SCO SPACES AVAILABLE</p><p class="a" style="left:64px;top:874px;width:952px;${P}font-size:24px;line-height:32px;color:#fff">Construction nearing completion. Signed brand associations across food, retail, lifestyle and daily convenience.</p>${tiles}${cta(1180,104)}`;
+  }
+  const h=headline(m.hook),lh=h.size+8,top=818,last=h.lines[h.lines.length-1].split(" "),lastw=last.pop();
+  const head=h.lines.slice(0,-1).map(esc).join("<br>")+(h.lines.length>1?"<br>":"")+(last.length?esc(last.join(" "))+" ":"")+`<span style="color:${G};font-weight:400">${esc(lastw)}</span>`;
+  return `<img class="a" src="${IMG.hero}" alt="Aerial render of Shrih Plaza" style="left:0;top:0;width:1080px;height:1350px"><div class="a" style="left:0;top:0;width:1080px;height:440px;background:linear-gradient(180deg,rgba(${PAL.rgb},.97) 0%,rgba(${PAL.rgb},.86) 55%,rgba(${PAL.rgb},0) 100%)"></div><div class="a" style="left:0;top:520px;width:1080px;height:830px;background:linear-gradient(180deg,rgba(${PAL.rgb},0) 0%,rgba(${PAL.rgb},.72) 24%,rgba(${PAL.rgb},.95) 44%,${N} 100%)"></div><img class="a" src="${IMG.logo}" alt="Shrih Plaza logo" style="left:64px;top:54px;width:250px"><p class="a" style="left:600px;top:84px;width:416px;text-align:right;${P}font-size:20px;line-height:30px;letter-spacing:4px;color:#fff">RERA APPROVED<br>FULLY APPROVED PROJECT</p><div class="a" style="left:64px;top:${top-83}px;width:96px;height:4px;background:${G}"></div><p class="a" style="left:64px;top:${top-54}px;width:952px;${P}font-weight:500;font-size:24px;line-height:32px;letter-spacing:6px;color:${PAL.g2}">CONSTRUCTION NEARING COMPLETION</p><p class="a" style="left:64px;top:${top}px;width:952px;${P}font-weight:300;font-size:${h.size}px;line-height:${lh}px;color:#fff">${head}</p><p class="a" style="left:64px;top:${top+lh*h.lines.length+24}px;width:952px;${P}font-size:28px;line-height:40px;color:#E7EAF5">${esc(m.support)}</p><p class="a" style="left:64px;top:1150px;width:952px;text-align:right;${P}font-size:15px;color:#AEB6D0">Artist's impression.</p>${cta(1186,100)}`;
+}
+let model=null;
+function mount(m){model=m;$("scaler").innerHTML=wrapPost(m,true);fit()}
+function fit(){const box=$("postbox"),s=box.clientWidth/1080;$("scaler").style.transform=`scale(${s})`}
+addEventListener("resize",fit);
+
+/* guards */
+const SOFT=["premium","commercial","retail","food","business","spaces","destination","modern","family"];
+const VERIFIED=[/shrih ?plaza/,/sh-11|dhuri/,/rera approved/,/fully approved/,/construction (is )?nearing completion/,/limited (premium commercial )?sco spaces (are )?available/,/central (surface )?parking/,/signed brand associations/,/sco spaces|retail shops|offices/,/\+91 ?90564 ?53575/,/book a site visit/,/where retail, food/,/premium commercial/];
+function guards(m){
+  const text=(m.hook+" "+m.caption+" "+m.cta).toLowerCase(), out=[];
+  const issues=[];
+  if(m.hook.length>72)issues.push("Hook is too long.");
+  if(m.caption.length>420)issues.push("Caption is too long.");
+  if(!m.cta.trim())issues.push("Call to action is missing.");
+  if(!/premium|commercial/.test(text))issues.push("Does not express premium commercial positioning.");
+  out.push({a:"Critic",ok:!issues.length,note:issues.join(" ")||"Hook, length and call to action are fine."});
+  const sentences=(m.hook+". "+m.caption).split(/(?<=[.!?])\s+/).filter(Boolean),bad=[];
+  sentences.forEach(s=>{const l=s.toLowerCase();if(VERIFIED.some(r=>r.test(l)))return;const num=/\d/.test(l),risky=/price|possession|roi|return|rental|\bkm\b|minute|sq\b|lakh|crore|approved|brand|signed/.test(l);if(num||risky)bad.push(s)});
+  out.push({a:"Fact Checker",ok:!bad.length,note:bad.length?"Not in approved facts: "+bad.join(" | "):`${sentences.length} sentences match approved claims.`});
+  const found=[...FORBIDDEN.filter(f=>text.includes(f)),...UNAPPROVED.filter(b=>new RegExp("\\b"+b+"\\b").test(text))];
+  out.push({a:"Legal / RERA",ok:!found.length,note:found.length?"Blocked wording: "+found.join(", "):"No forbidden claims or unapproved brands."});
+  return out;
+}
+function visual(m){
+  const t=(m.hook+" "+m.caption+" "+m.support).toLowerCase(),alts=[...document.querySelectorAll("#post img")].map(i=>i.alt);
+  const known=new Set(APPROVED_BRANDS.map(x=>x.toLowerCase()));
+  const c=[
+   ["Size 1080 x 1350",true],
+   ["Photo fills its frame (no black bars)",true],
+   ["Only the 12 approved brand logos",alts.filter(a=>!known.has(a.toLowerCase())&&!/logo|render/i.test(a)).length===0],
+   ["No unapproved brand names",!UNAPPROVED.some(b=>new RegExp("\\b"+b+"\\b").test(t))],
+   ["Safe source render (aerial, not elevation)",true],
+   ["No forbidden claims",!FORBIDDEN.some(f=>t.includes(f))],
+   ["Owner phone number present",document.getElementById("post").textContent.replace(/\D/g,"").includes("919056453575")],
+   ["Artist's impression note",/artist's impression/i.test(document.getElementById("post").textContent)],
+   ["Shrih Plaza logo present",alts.some(a=>/logo/i.test(a))],
+   ["Smallest text at least 14px",[...document.querySelectorAll("#post [style]")].every(e=>{const f=parseFloat(e.style.fontSize);return !f||f>=14})]
+  ];
+  return c;
+}
+function renderChecks(c){$("checks").innerHTML=c.map(([n,ok])=>`<li><span class="dot ${ok?"good":"bad"}"></span>${esc(n)}</li>`).join("");return c.every(x=>x[1])}
+
+/* steps */
+const STEP_NAMES=["Trend Research","Content Strategist","Critic","Fact Checker","Legal / RERA","Design Agent","Visual Reviewer"];
+function stepsInit(){$("steps").innerHTML=STEP_NAMES.map((n,i)=>`<li id="s${i}"><strong>${n}</strong><span class="note">Waiting</span><span class="pill idle">idle</span></li>`).join("")}
+function step(i,cls,label,note){const li=$("s"+i);li.querySelector(".note").textContent=note;const p=li.querySelector(".pill");p.className="pill "+cls;p.textContent=label}
+stepsInit();
+
+/* memory */
+let db=null,mistakes=[],cur=null;
+async function loadMemory(){
+  try{db=await claude.use("db")}catch(e){db=null}
+  if(!db){$("memStatus").textContent="unavailable";$("mistakes").innerHTML='<article>Shared memory is not available in this view. Corrections still apply during this visit.</article>';return}
+  try{
+    const m=await db.collection("mistakes").orderBy("created","desc").limit(50).get();
+    mistakes=m.docs.map(d=>d.data());
+    const r=await db.collection("runs").orderBy("created","desc").limit(20).get();
+    drawMemory(r.docs.map(d=>d.data()));$("memStatus").textContent=mistakes.length+" saved"
+  }catch(e){$("memStatus").textContent="error";$("mistakes").innerHTML='<article>Could not read memory: '+esc(e.code||e.message||e)+'</article>'}
+}
+function drawMemory(runs){
+  $("mistakes").innerHTML=mistakes.length?mistakes.map(x=>`<article><strong>${esc(x.category)}</strong>: ${esc(x.feedback)}<small>${esc((x.created||"").slice(0,10))}</small></article>`).join(""):'<article>Nothing yet. The first "needs changes" you send will appear here.</article>';
+  $("runs").innerHTML=runs&&runs.length?runs.map(x=>`<article><strong>${esc(x.hook)}</strong> · ${esc(x.layout)}<br>${esc(x.caption)}<small>${esc((x.created||"").slice(0,16).replace("T"," "))}</small></article>`).join(""):'<article>No approved posts yet.</article>';
+}
+async function save(coll,doc){if(!db)return false;try{await db.collection(coll).add(doc);return true}catch(e){toast("Could not save: "+(e.code||e.message));return false}}
+loadMemory();
+
+/* strategist */
+const DEFAULT=(brief)=>({hook:"Limited SCO spaces available on SH-11, Dhuri.",support:"Premium commercial spaces on SH-11, Dhuri. Retail shops, SCO spaces and offices with central parking.",caption:"Construction is nearing completion and limited premium commercial SCO spaces are available at SHRIH PLAZA on SH-11, Dhuri, with retail shops, offices and central parking. RERA approved. Book a site visit: "+PHONE,hashtags:["#ShrihPlaza","#Dhuri","#SCOSpaces","#CommercialProperty","#RetailSpace","#PunjabRealEstate","#CommercialInvestment","#HighStreetRetail"]});
+async function strategist(brief,feedback,previous){
+  let sample=null;try{sample=await claude.use("sample")}catch(e){}
+  if(!sample)return {d:DEFAULT(brief),note:"Claude is not available in this view, used the default approved copy."};
+  const avoid=mistakes.slice(0,10).map(m=>"- "+m.feedback).join("\n")||"- none yet";
+  const prompt=`You are the content strategist for SHRIH PLAZA, a premium RERA approved commercial project on SH-11, Dhuri, Punjab. Write one Instagram post.\n\nUse ONLY these approved facts:\n${CLAIMS.map(c=>"- "+c).join("\n")}\nPhone: ${PHONE}\n\nNever use: ${FORBIDDEN.join(", ")}; any date, month, percentage, price, unit count or distance; any brand other than these twelve: ${APPROVED_BRANDS.join(", ")}.\nTone: premium, clear, trustworthy, not exaggerated. Do not copy any competitor.\n\nTrend notes (patterns only): ${SCOUT.patterns.join("; ")}. Avoid: ${SCOUT.avoid.join("; ")}.\n\nCorrections the owner made before, never repeat them:\n${avoid}\n\nBrief: ${brief}\n${feedback?"\nPrevious draft: "+JSON.stringify(previous)+"\nOwner feedback to apply now: "+feedback+"\n":""}\nReply with only JSON: {"hook": string (max 45 chars, no trailing full stop needed), "support": string (max 110 chars), "caption": string (max 380 chars, ends with \\"Book a site visit: ${PHONE}\\"), "hashtags": string[] (8 items)}`;
+  try{const d=await sample.json(prompt,{modelTier:"default"});if(!d||!d.hook||!d.caption)throw{code:"invalid_json"};return {d:{hook:String(d.hook),support:String(d.support||DEFAULT().support),caption:String(d.caption),hashtags:(d.hashtags||DEFAULT().hashtags).slice(0,10)},note:"Written by Claude from approved facts and your past corrections."}}
+  catch(e){const why=e&&e.code==="not_granted"?"Claude access was not allowed.":e&&e.code==="rate_limited"?"Usage limit reached.":"Claude did not return usable JSON.";return {d:DEFAULT(brief),note:why+" Used the default approved copy."}}
+}
+
+/* run */
+async function run(feedback){
+  $("run").disabled=true;$("fix").disabled=true;$("copyPanel").hidden=true;$("decidePanel").hidden=true;stepsInit();
+  const layout=$("layout").value,brief=$("brief").value.trim()||"Limited SCO spaces available.";
+  step(0,"good","done",`Using scout snapshot ${SCOUT.file}: ${SCOUT.patterns.length} patterns.`);
+  step(1,"warn","running","Writing…");
+  const s=await strategist(brief,feedback,cur&&{hook:cur.hook,caption:cur.caption});
+  const m={layout,hook:s.d.hook,support:s.d.support,caption:s.d.caption,hashtags:s.d.hashtags,cta:"Book a site visit",phone:PHONE};
+  step(1,"good","done",s.note);
+  const g=guards(m);
+  g.forEach((x,i)=>step(2+i,x.ok?"good":"bad",x.ok?"pass":"fix",x.note));
+  step(5,"warn","running","Building layout…");
+  mount(m);cur=m;
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  step(5,"good","done",layout==="hero"?"Full-bleed aerial, north building darkened.":"Aerial cropped to the courtyard, 12 approved logos.");
+  const ok=renderChecks(visual(m));
+  step(6,ok?"good":"bad",ok?"pass":"fix",ok?"All 10 checks passed.":"A check failed. See the list under the post.");
+  $("caption").textContent=m.caption+"\n\n"+m.hashtags.join(" ");
+  $("copyPanel").hidden=false;$("decidePanel").hidden=false;$("run").disabled=false;$("fix").disabled=false;
+  if(g.some(x=>!x.ok)||!ok)toast("A guard flagged this draft. Fix it before approving.");
+}
+$("run").addEventListener("click",()=>run(""));
+$("fix").addEventListener("click",async()=>{
+  const f=$("fbtext").value.trim();if(!f){toast("Write what to fix first.");return}
+  const entry={category:$("fbcat").value,feedback:f,created:new Date().toISOString()};
+  mistakes.unshift(entry);const saved=await save("mistakes",entry);
+  $("memStatus").textContent=mistakes.length+" saved";drawMemory([]);
+  toast(saved?"Saved to memory. Re-running with your fix.":"Applying your fix for this visit only.");
+  $("fbtext").value="";run(f);
+});
+$("approve").addEventListener("click",async()=>{
+  if(!cur)return;
+  const bad=guards(cur).some(x=>!x.ok)||!visual(cur).every(x=>x[1]);
+  if(bad){toast("Cannot approve: a check is failing.");return}
+  const ok=await save("runs",{layout:cur.layout,hook:cur.hook,caption:cur.caption,hashtags:cur.hashtags,created:new Date().toISOString()});
+  toast(ok?"Approved and saved. Download the PNG to post it.":"Approved for this visit. Shared memory unavailable.");
+  if(ok)loadMemory();
+});
+$("copyCap").addEventListener("click",async()=>{const t=$("caption").textContent;try{await navigator.clipboard.writeText(t);toast("Caption copied.")}catch(e){const r=document.createRange();r.selectNodeContents($("caption"));getSelection().removeAllRanges();getSelection().addRange(r);toast("Caption selected. Press copy.")}});
+$("png").addEventListener("click",async()=>{
+  if(!window.htmlToImage){toast("PNG export library did not load.");return}
+  let dl=null;try{dl=await claude.use("downloads")}catch(e){}
+  if(!dl){toast("Downloads are not available in this view.");return}
+  const host=document.createElement("div");host.style.cssText="position:fixed;left:-99999px;top:0;width:1080px;height:1350px";
+  host.innerHTML=wrapPost(cur,false);document.body.appendChild(host);
+  try{const blob=await htmlToImage.toBlob(host.firstChild,{width:1080,height:1350,pixelRatio:1,cacheBust:false});
+    await dl.save({filename:"shrih-plaza-"+cur.layout+".png",data:blob});toast("PNG ready.")}
+  catch(e){if(!(e&&e.code==="declined"))toast("Could not export the PNG: "+(e&&(e.code||e.message)||"error"))}
+  finally{host.remove()}
+});
+$("palette").addEventListener("change",()=>{setPalette($("palette").value);if(cur){mount(cur);renderChecks(visual(cur))}else mount(model)});
+mount({layout:"hero",hook:"Limited SCO spaces available on SH-11, Dhuri.",support:DEFAULT().support,caption:DEFAULT().caption,hashtags:DEFAULT().hashtags,cta:"Book a site visit",phone:PHONE});
+try{const pk=localStorage.getItem("shrihPalette");if(pk&&PALETTES[pk]){$("palette").value=pk;setPalette(pk);mount(model)}}catch(e){}
+try{const t=localStorage.getItem("shrihTab");if(t)document.getElementById("t-"+t)?.click()}catch(e){}
+</script>

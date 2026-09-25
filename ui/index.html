@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shrih Plaza Agent</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand-mark">SP</div>
+      <div>
+        <p class="eyebrow">Agentic Content Studio</p>
+        <h1>Shrih Plaza</h1>
+      </div>
+      <nav>
+        <a href="#generate">Generate</a>
+        <a href="#review">Review</a>
+        <a href="#memory">Memory</a>
+        <a href="#images">Images</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">RERA approved commercial project</p>
+          <h2>Content agent with critic, fact-check and auto-fix loop</h2>
+        </div>
+        <button id="refreshMemory" class="icon-button" title="Refresh memory">⟳</button>
+      </section>
+
+      <section id="generate" class="workspace">
+        <div class="panel brief-panel">
+          <div class="panel-head">
+            <h3>Content Brief</h3>
+            <span id="statusPill" class="pill">Ready</span>
+          </div>
+          <div class="controls">
+            <label>
+              Platform
+              <select id="platform">
+                <option>Instagram</option>
+                <option>Facebook</option>
+                <option>LinkedIn</option>
+                <option>WhatsApp</option>
+                <option>YouTube Shorts</option>
+              </select>
+            </label>
+            <label>
+              Format
+              <select id="format">
+                <option>post</option>
+                <option>carousel</option>
+                <option>story</option>
+                <option>reel</option>
+                <option>ad</option>
+              </select>
+            </label>
+          </div>
+          <div class="controls">
+            <label>
+              Reference photo
+              <select id="referenceImage">
+                <option value="">None</option>
+              </select>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="generateImageToggle" />
+              Generate real image with Gemini
+            </label>
+          </div>
+          <textarea id="brief">Platform: Instagram
+
+Trend pattern:
+- Premium commercial real estate post
+- One strong elevation image
+- Minimal text overlay
+- CTA for site visit
+
+Goal:
+- Promote Shrih Plaza as a RERA approved commercial destination on SH-11, Dhuri.</textarea>
+          <button id="generateBtn" class="primary-button">Generate & Review</button>
+        </div>
+
+        <div id="review" class="panel result-panel">
+          <div class="panel-head">
+            <h3>Approved Output</h3>
+            <span id="resultStatus" class="pill muted">No run yet</span>
+          </div>
+          <div class="output-block">
+            <p class="label">Hook</p>
+            <h4 id="hook">Waiting for first run</h4>
+          </div>
+          <div class="output-block">
+            <p class="label">Caption</p>
+            <p id="caption"></p>
+          </div>
+          <div class="output-block">
+            <p class="label">Visual Direction</p>
+            <p id="visual"></p>
+          </div>
+          <div class="chips" id="hashtags"></div>
+          <div class="output-block">
+            <p class="label">AI-Generated Elevation Image (architecture-verified)</p>
+            <img id="generatedImagePreview" class="post-preview" alt="Gemini-generated, architecture-verified elevation image" />
+            <p id="generatedImageStatus" class="hint"></p>
+          </div>
+          <div id="architectureChecklist" class="architecture-checklist"></div>
+          <div class="output-block">
+            <p class="label">Composited Instagram Post (deterministic, no AI edits)</p>
+            <img id="postPreview" class="post-preview" alt="Generated Instagram post preview" />
+            <p id="imagePath" class="hint"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-two">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Review Scores</h3>
+          </div>
+          <div id="reviews" class="review-list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Teach The Agent</h3>
+          </div>
+          <div class="controls three">
+            <button class="choice active" data-decision="approved">Approve</button>
+            <button class="choice" data-decision="needs_changes">Needs Changes</button>
+            <button class="choice" data-decision="rejected">Reject</button>
+          </div>
+          <textarea id="feedback" class="small-area" placeholder="Example: Too crowded, make it premium and clean."></textarea>
+          <button id="saveFeedback" class="secondary-button">Save Feedback</button>
+          <p id="feedbackStatus" class="hint"></p>
+        </div>
+      </section>
+
+      <section id="memory" class="panel">
+        <div class="panel-head">
+          <h3>Brand Memory</h3>
+          <span class="pill">Source of truth</span>
+        </div>
+        <div class="memory-grid">
+          <div>
+            <p class="label">Approved Claims</p>
+            <ul id="claims"></ul>
+          </div>
+          <div>
+            <p class="label">Signed Brands</p>
+            <div id="brands" class="chips"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="images" class="panel">
+        <div class="panel-head">
+          <h3>Reference Photos</h3>
+          <span class="pill muted">Real Shrih Plaza photos only</span>
+        </div>
+        <form id="referenceForm" class="upload-row">
+          <input id="referenceInput" type="file" accept="image/*" />
+          <button class="secondary-button" type="submit">Add Reference Photo</button>
+        </form>
+        <p id="referenceStatus" class="hint"></p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h3>Safe Image Enhancement</h3>
+          <span class="pill muted">No architecture changes</span>
+        </div>
+        <form id="imageForm" class="upload-row">
+          <input id="imageInput" type="file" accept="image/*" />
+          <button class="secondary-button" type="submit">Enhance Image</button>
+        </form>
+        <p id="imageStatus" class="hint"></p>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

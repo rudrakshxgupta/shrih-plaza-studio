@@ -1,0 +1,29 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+
+# generated output: kept out of git, the daily workflow uploads it as an artifact
+outputs/drafts/*
+outputs/final/*
+outputs/reviews/*
+outputs/generated/*
+outputs/design/*
+outputs/daily/*
+!outputs/**/.gitkeep
+
+# built by build_web/ from the assets, rebuilt on demand
+build_web/assets.json
+build_web/fonts.css
+build_web/preview_b64.txt
+
+# third-party skills: reinstall with npx skills (see skills-lock.json)
+.agents/
+
+inputs/trends/ui_current_brief.md
+inputs/trends/daily_brief.md
+
+# copies of installed third-party skills and redundant logo backups
+.claude/skills/
+assets/original/brands-supplied/
+assets/original/logo-keyed-from-screenshot.png
