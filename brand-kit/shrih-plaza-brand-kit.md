@@ -418,3 +418,15 @@ Please confirm or provide:
 - Whether "24x7 shopping" is approved for public marketing
 - Whether "12+ national brand associations" is approved for public marketing
 - Whether "100% fully approved commercial project" should be used as written or softened
+
+## Premium Poster Standard (owner approved 2026-09-26)
+
+The owner approved the premium redesign of poster #1 and asked to keep raising the level. Every poster now meets this bar:
+
+- Photo: a golden-hour or dusk render, cropped so no unapproved shop sign is readable. Never the flat aerial on its own.
+- Frame: thin gold inset frame with corner marks.
+- Seal: circular gold RERA APPROVED / FULLY APPROVED seal, top right. Logo top left.
+- Type: one hero word in Playfair Display Bold Italic (gold), with Poppins Light in wide tracking for the line under it and Poppins SemiBold for labels and the phone. One italic Playfair supporting line.
+- Boxes: fact panels with a thin gold top edge on a translucent dark ground, a title and one short line each.
+- Call to action: split block, gold "BOOK A SITE VISIT" beside a dark panel with a gold border for the phone.
+- Always: "Artist's impression." while construction is not finished.
