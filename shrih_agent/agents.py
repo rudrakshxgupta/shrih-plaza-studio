@@ -371,7 +371,7 @@ class AutoFixAgent:
         issue_text = json.dumps(reviews, ensure_ascii=False).lower()
 
         if "hook is too long" in issue_text:
-            data["hook"] = data["hook"][:68].rstrip()
+            data["hook"] = _shorten_hook(data["hook"])
         if "missing_source" in issue_text:
             data["caption"] = self._remove_risky_numbers(data["caption"])
             data["caption"] = data["caption"].replace("guaranteed", "").replace("assured", "")
@@ -394,6 +394,25 @@ class AutoFixAgent:
             value,
             flags=re.IGNORECASE,
         )
+
+
+def _shorten_hook(hook: str, limit: int = 60) -> str:
+    """Cut a long hook at a word or clause boundary, never mid-word, and never end on a joining word."""
+    first_clause = hook.split(",")[0].strip()
+    if 3 <= len(first_clause.split()) and len(first_clause) <= limit:
+        return first_clause.rstrip(".") + "."
+    words, kept = hook.split(), []
+    for word in words:
+        if len(" ".join(kept + [word])) > limit:
+            break
+        kept.append(word)
+    joins = {"and", "or", "with", "on", "in", "the", "a", "of", "for"}
+    cut = max((i for i, w in enumerate(kept) if w.lower().strip(",") in joins and i >= 3), default=None)
+    if cut is not None and len(words) > len(kept):
+        kept = kept[:cut]
+    while kept and kept[-1].lower().strip(",") in joins:
+        kept.pop()
+    return " ".join(kept).rstrip(",") + "."
 
 
 def _remove_phrase(text: str, phrase: str) -> str:

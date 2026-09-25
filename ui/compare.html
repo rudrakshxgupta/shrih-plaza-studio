@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shrih Plaza Joint Review</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap">
+<style>
+:root{--bg:#F2F3F8;--panel:#fff;--line:#D9DDEA;--ink:#0B1237;--muted:#5A6288;--navy:#0B1237;--gold:#D7B469;
+--good:#1F7A52;--good-bg:#DDF1E8;--bad:#B93248;--bad-bg:#F8DDE2;--wait:#8A6A10;--wait-bg:#F6EBCF;--agent:#4B3F9E;--claude:#9A4A1E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 'Poppins',system-ui,sans-serif}
+button,select,textarea,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+header{background:var(--navy);color:#EEF0F8;padding:16px 24px}
+header .row{display:flex;align-items:center;gap:20px;flex-wrap:wrap;max-width:1400px;margin:0 auto}
+header h1{margin:0;font-weight:300;font-size:20px;letter-spacing:.14em;text-transform:uppercase}
+header h1 b{font-weight:500;color:var(--gold)}
+.score{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+.score div{background:rgba(255,255,255,.07);padding:8px 14px;min-width:150px}
+.score strong{display:block;font-size:22px;font-weight:500;color:#fff}
+.score span{font-size:11px;color:#B7BEDA;letter-spacing:.04em}
+.wrap{max-width:1400px;margin:0 auto;padding:20px 24px 60px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:16px;align-items:center}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:middle}
+.tabs{display:flex;gap:4px;margin-left:auto}
+.tabs button{border:1px solid var(--line);background:var(--panel);padding:6px 12px;font-size:12px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.post{display:grid;grid-template-columns:230px repeat(3,minmax(0,1fr));gap:0;background:var(--panel);border:1px solid var(--line);margin-bottom:14px}
+@media(max-width:1000px){.post{grid-template-columns:180px 1fr}.post .col.you{grid-column:1/-1}}
+@media(max-width:620px){.post{grid-template-columns:1fr}}
+.thumb{padding:12px;border-right:1px solid var(--line)}
+.thumb img{width:100%;display:block;cursor:zoom-in}
+.thumb .n{font-weight:600;font-size:13px;margin-top:8px}.thumb .m{font-size:11px;color:var(--muted)}
+.col{padding:14px 16px;border-right:1px solid var(--line)}
+.col:last-child{border-right:0}
+.col h3{margin:0 0 6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;display:flex;align-items:center;gap:8px}
+.col.agent h3{color:var(--agent)}.col.claude h3{color:var(--claude)}.col.you h3{color:var(--ink)}
+.v{display:inline-block;font-size:12px;font-weight:600;padding:2px 10px;border-radius:99px}
+.v.approved{background:var(--good-bg);color:var(--good)}.v.denied{background:var(--bad-bg);color:var(--bad)}.v.pending{background:var(--wait-bg);color:var(--wait)}
+.col p{margin:6px 0 0;font-size:13px}
+.hook{font-size:13px;margin:8px 0 0;font-weight:500}
+.cap{font-size:12px;color:var(--muted);margin-top:4px;max-height:5.2em;overflow:hidden}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;font-size:11px;color:var(--muted);margin-top:8px;align-items:center}
+.bars b{display:block;height:5px;background:var(--line)}.bars b i{display:block;height:5px;background:var(--agent)}
+.agree{font-size:11px;font-weight:600;padding:2px 8px;margin-left:auto}
+.agree.yes{color:var(--good)}.agree.no{color:var(--bad)}
+.choice{display:flex;gap:6px;margin-top:4px}
+.choice button{flex:1;padding:8px;border:1px solid var(--line);background:var(--panel);font-weight:600;cursor:pointer;font-size:13px}
+.choice .ap[aria-pressed="true"]{background:var(--good);color:#fff;border-color:var(--good)}
+.choice .dn[aria-pressed="true"]{background:var(--bad);color:#fff;border-color:var(--bad)}
+textarea,select,input[type=text]{width:100%;border:1px solid var(--line);background:#FBFBFE;padding:8px;margin-top:6px;border-radius:0}
+textarea{min-height:64px;resize:vertical}
+.extra{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.save{margin-top:8px;width:100%;background:var(--navy);color:#fff;border:0;padding:9px;font-weight:600;cursor:pointer}
+.save:disabled{opacity:.45;cursor:not-allowed}
+.hidden-note{color:var(--muted);font-style:italic}
+.err{color:var(--bad);font-size:12px;min-height:16px}
+.zoom{position:fixed;inset:0;background:rgba(11,18,55,.85);display:flex;align-items:center;justify-content:center;z-index:9;cursor:zoom-out}
+.zoom img{max-height:94vh;max-width:94vw}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--navy);color:#fff;padding:12px 16px;border-left:4px solid var(--gold);z-index:10}
+.summary{background:var(--panel);border:1px solid var(--line);padding:16px;margin-bottom:16px;font-size:13px}
+.summary h2{margin:0 0 6px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.summary ul{margin:0;padding-left:18px}
+</style>
+</head>
+<body>
+<header><div class="row">
+  <h1>Shrih Plaza <b>Joint Review</b></h1>
+  <div class="score">
+    <div><strong id="aC">–</strong><span>Agent and Claude agree</span></div>
+    <div><strong id="aY">–</strong><span>Agent agrees with you</span></div>
+    <div><strong id="cY">–</strong><span>Claude agrees with you</span></div>
+    <div><strong id="done">0/0</strong><span>Reviewed by you</span></div>
+  </div>
+</div></header>
+<div class="wrap">
+  <div class="legend">
+    <span><i style="background:var(--agent)"></i>Self-review agent: fixed rubric, scores the post automatically</span>
+    <span><i style="background:var(--claude)"></i>Claude: looked at each rendered post</span>
+    <span><i style="background:var(--ink)"></i>You decide first. The other two verdicts appear after you save.</span>
+    <div class="tabs" role="group" aria-label="Show">
+      <button data-f="all" aria-pressed="true">All</button>
+      <button data-f="disagree" aria-pressed="false">Disagreements</button>
+      <button data-f="todo" aria-pressed="false">Not reviewed by you</button>
+    </div>
+  </div>
+  <div class="summary" id="summary" hidden><h2>Where the reviewers split</h2><ul id="splits"></ul></div>
+  <div id="posts">Loading…</div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let posts=[],filter="all";const pick={};
+const label=d=>d==="approved"?"Approve":d==="denied"?"Deny":"Waiting";
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>e.hidden=true,3500)}
+const A=p=>p.agent_review?.decision,C=p=>p.claude_review?.decision,Y=p=>p.owner_review?.decision;
+function pct(list,f,g){const l=list.filter(p=>f(p)&&g(p));return l.length?`${l.filter(p=>f(p)===g(p)).length}/${l.length}`:"–"}
+function stats(){
+  const seen=posts.filter(Y);$("aC").textContent=pct(seen,A,C);$("aY").textContent=pct(posts,A,Y);$("cY").textContent=pct(posts,C,Y);
+  $("done").textContent=`${posts.filter(Y).length}/${posts.length}`;
+  const splits=seen.filter(p=>new Set([A(p),C(p),Y(p)].filter(Boolean)).size>1);
+  $("summary").hidden=!splits.length;
+  $("splits").innerHTML=splits.map(p=>`<li>#${p.number} ${esc(p.hook)}: agent ${label(A(p)).toLowerCase()}, Claude ${label(C(p)).toLowerCase()}${Y(p)?`, you ${label(Y(p)).toLowerCase()}`:""}</li>`).join("");
+}
+function card(p){
+  const a=p.agent_review||{},c=p.claude_review||{},y=p.owner_review;
+  const bars=Object.entries(a.scores||{}).map(([k,v])=>`<span>${esc(k.replace(/_/g," "))}</span><b><i style="width:${v*10}%"></i></b><span>${v}</span>`).join("");
+  const agreeAC=A(p)&&C(p)?`<span class="agree ${A(p)===C(p)?"yes":"no"}">${A(p)===C(p)?"agrees with Claude":"differs from Claude"}</span>`:"";
+  return `<article class="post" id="p${p.number}">
+    <div class="thumb">${p.image?`<img src="/api/file?path=${encodeURIComponent(p.image)}" alt="Post ${p.number}" data-z>`:""}
+      <div class="n">#${p.number} · ${esc(p.pillar)}</div><div class="m">${esc(p.layout)} · ${esc(p.palette)}</div>
+      <div class="hook">${esc(p.hook)}</div><div class="cap">${esc(p.caption)}</div></div>
+    ${y?`<div class="col agent"><h3>Self-review agent ${agreeAC}</h3><span class="v ${A(p)||"pending"}">${label(A(p))} · ${a.score??"–"}/10</span>
+      <p>${esc(a.reason)}</p><div class="bars">${bars}</div></div>
+    <div class="col claude"><h3>Claude</h3><span class="v ${C(p)||"pending"}">${label(C(p))}</span><p>${esc(c.reason)}</p></div>`
+    :`<div class="col agent"><h3>Self-review agent</h3><p class="hidden-note">Hidden until you decide, so it can't influence you.</p></div>
+    <div class="col claude"><h3>Claude</h3><p class="hidden-note">Hidden until you decide.</p></div>`}
+    <div class="col you"><h3>You ${y?`<span class="agree ${y.decision===C(p)?"yes":"no"}">${y.decision===C(p)?"same as Claude":"differs from Claude"}</span>`:""}</h3>
+      ${y?`<span class="v ${y.decision}">${label(y.decision)}</span><p>${esc(y.reason)}</p><p style="font-size:11px;color:var(--muted)">Saved. Change it below.</p>`:""}
+      <div class="choice"><button class="ap" data-n="${p.number}" data-d="approve" aria-pressed="${pick[p.number]==="approve"}">Approve</button><button class="dn" data-n="${p.number}" data-d="deny" aria-pressed="${pick[p.number]==="deny"}">Deny</button></div>
+      <label class="sr" for="r${p.number}" style="position:absolute;left:-9999px">Reason</label>
+      <textarea id="r${p.number}" placeholder="Why? Required when you deny."></textarea>
+      <div class="extra" ${pick[p.number]==="deny"?"":"hidden"} id="x${p.number}">
+        <select id="c${p.number}" aria-label="What was wrong"><option value="copy">Wording</option><option value="design">Design or colour</option><option value="layout">Layout</option><option value="claim">A claim or fact</option><option value="other">Other</option></select>
+        <input type="text" id="b${p.number}" placeholder="Ban a phrase (optional)" aria-label="Ban a phrase">
+      </div>
+      <div class="err" id="e${p.number}"></div>
+      <button class="save" data-save="${p.number}" ${pick[p.number]?"":"disabled"}>Save my decision</button>
+    </div></article>`;
+}
+function render(){
+  const shown=posts.filter(p=>filter==="all"||(filter==="todo"&&!Y(p))||(filter==="disagree"&&new Set([A(p),C(p),Y(p)].filter(Boolean)).size>1));
+  $("posts").innerHTML=shown.map(card).join("")||"<p>Nothing to show.</p>";stats();
+}
+document.addEventListener("click",async e=>{
+  const t=e.target;
+  if(t.dataset.z!==undefined){const z=document.createElement("div");z.className="zoom";z.innerHTML=`<img src="${t.src}" alt="">`;z.onclick=()=>z.remove();document.body.append(z);return}
+  if(t.dataset.d){const n=t.dataset.n;pick[n]=t.dataset.d;const art=$("p"+n);art.querySelector(".ap").setAttribute("aria-pressed",pick[n]==="approve");art.querySelector(".dn").setAttribute("aria-pressed",pick[n]==="deny");$("x"+n).hidden=pick[n]!=="deny";art.querySelector(".save").disabled=false;$("e"+n).textContent="";return}
+  if(t.dataset.save){
+    const n=t.dataset.save,reason=$("r"+n).value.trim();
+    if(pick[n]==="deny"&&reason.length<5){$("e"+n).textContent="Write why you deny it (at least 5 characters).";$("r"+n).focus();return}
+    t.disabled=true;
+    try{const r=await fetch("/api/batch/decide",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({number:+n,decision:pick[n],reason,category:$("c"+n).value,banned_phrase:pick[n]==="deny"?$("b"+n).value.trim():""})});
+      const d=await r.json();if(!r.ok)throw new Error(d.error);
+      const p=posts.find(x=>x.number===+n);p.owner_review=d.saved;delete pick[n];render();toast(`#${n} saved. The pipeline will use it on the next run.`)}
+    catch(err){$("e"+n).textContent=err.message;t.disabled=false}
+  }
+});
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+fetch("/api/batch").then(r=>r.json()).then(d=>{posts=d.posts;render()}).catch(e=>$("posts").textContent="Could not load: "+e.message);
+</script>
+</body>
+</html>

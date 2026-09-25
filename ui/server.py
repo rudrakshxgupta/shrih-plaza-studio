@@ -38,6 +38,10 @@ class AgentUIHandler(BaseHTTPRequestHandler):
             return self._send_file(UI_DIR / "index.html")
         if parsed.path == "/review":
             return self._send_file(UI_DIR / "review.html")
+        if parsed.path == "/compare":
+            return self._send_file(UI_DIR / "compare.html")
+        if parsed.path == "/api/batch":
+            return self._send_json(self._batch_posts())
         if parsed.path == "/api/review/posts":
             return self._send_json(self._review_posts())
         if parsed.path == "/api/review/learning":
@@ -79,6 +83,8 @@ class AgentUIHandler(BaseHTTPRequestHandler):
             return self._handle_render_post()
         if parsed.path == "/api/save-memory":
             return self._handle_save_memory()
+        if parsed.path == "/api/batch/decide":
+            return self._handle_batch_decide()
         if parsed.path == "/api/review/decide":
             return self._handle_review_decide()
         if parsed.path == "/api/review/sync":
@@ -216,6 +222,42 @@ class AgentUIHandler(BaseHTTPRequestHandler):
             "review": str(review_path),
             "policy": result["architecture_policy"],
         })
+
+    def _batch_dir(self):
+        batches = sorted((OUTPUTS_DIR / "review_batch").glob("*"), reverse=True)
+        return batches[0] if batches else None
+
+    def _batch_posts(self):
+        root = self._batch_dir()
+        if not root:
+            return {"batch": None, "posts": []}
+        posts = []
+        for folder in sorted(root.glob("*")):
+            report_path = folder / "report.json"
+            if report_path.exists():
+                report = read_json(report_path)
+                report["image"] = str(folder / "post.png") if (folder / "post.png").exists() else None
+                posts.append(report)
+        return {"batch": root.name, "posts": posts}
+
+    def _handle_batch_decide(self):
+        data = self._read_json_body()
+        root = self._batch_dir()
+        number = int(data.get("number", 0))
+        report_path = root / f"{number:02d}" / "report.json" if root else None
+        if not report_path or not report_path.exists():
+            return self._send_error(404, "Post not found")
+        report = read_json(report_path)
+        context = {k: report.get(k) for k in ("hook", "caption", "layout", "palette", "pillar", "date")}
+        try:
+            entry = owner_decisions.add_decision(report["post_id"], str(data.get("decision", "")), str(data.get("reason", "")),
+                                                 str(data.get("category", "other")), str(data.get("banned_phrase", "")), context)
+        except ValueError as exc:
+            return self._send_error(400, str(exc))
+        report["owner_review"] = {"decision": entry["decision"], "reason": entry["reason"], "category": entry["category"],
+                                  "banned_phrase": entry["banned_phrase"], "created": entry["created"]}
+        write_json(report_path, report)
+        return self._send_json({"saved": report["owner_review"]})
 
     def _review_posts(self):
         by_id = {d["post_id"]: d for d in owner_decisions.load_decisions()}

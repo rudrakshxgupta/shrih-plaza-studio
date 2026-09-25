@@ -101,8 +101,8 @@ def cover_crop(image, width: int, height: int, anchor_x: float = 0.5, anchor_y: 
     return resized.crop((left, top, left + width, top + height))
 
 
-def _wrap(text: str, size: int, width: int = 952) -> list[str]:
-    per_line = max(8, int(width / (size * 0.60)))
+def _wrap(text: str, size: int, width: int = 952, char_ratio: float = 0.60) -> list[str]:
+    per_line = max(8, int(width / (size * char_ratio)))
     lines: list[str] = []
     current = ""
     for word in text.split():
@@ -151,6 +151,7 @@ class DesignAgent:
         pal = PALETTES[palette]
         navy, navy2, gold, gold2 = pal["n"], pal["n2"], pal["g"], pal["g2"]
         self._rgb, self._gold2 = _rgb(navy), gold2
+        self._layout_metrics, self._headline_fits = {}, True
         phone = project.get("contact", {}).get("phone", "")
 
         logo = Image.open(LOGO_PATH).convert("RGBA")
@@ -185,6 +186,7 @@ class DesignAgent:
             "signage_handling": signage,
             "safe_mode": safe_mode,
             "palette": palette,
+            "layout_metrics": getattr(self, "_layout_metrics", {}),
             "render": render,
             "known_mistakes_applied": mistake_memory.avoid_instructions(),
         }
@@ -225,25 +227,36 @@ class DesignAgent:
         )
 
     def _headline_lines(self, draft: ContentDraft) -> tuple[list[str], int]:
+        """Largest headline size whose uppercase wrap fits in three lines; flags when nothing fits."""
         text = draft.hook.strip().rstrip(".").upper()
         if "LIMITED SCO" in text:
             text = "LIMITED SCO SPACES AVAILABLE"
-        size = 96 if len(text) <= 30 else 72 if len(text) <= 46 else 56
-        return _wrap(text, size)[:3], size
+        for size in (96, 84, 72, 64, 56):
+            lines = _wrap(text, size, char_ratio=0.66)
+            if len(lines) <= 3:
+                self._headline_fits = True
+                return lines, size
+        self._headline_fits = False
+        return _wrap(text, 56, char_ratio=0.66)[:3], 56
 
     def _hero_html(self, draft, hero, logo_b64, logo_h, phone, navy, navy2, gold) -> str:
         p = "font-family:'poppins',sans-serif;"
         lines, size = self._headline_lines(draft)
         line_h = size + 8
-        head_top = 818
-        head = "<br>".join(_esc(line) for line in lines)
         last = lines[-1].split()
-        if last:
-            prefix = " ".join(lines[-1].split()[:-1])
-            head = "<br>".join(_esc(x) for x in lines[:-1])
-            head += ("<br>" if lines[:-1] else "") + (_esc(prefix) + " " if prefix else "") + f'<span style="color:{gold};font-weight:400">{_esc(last[-1])}</span>'
-        support_top = head_top + line_h * len(lines) + 24
-        support = "Premium commercial spaces on SH-11, Dhuri.<br>Retail shops, SCO spaces and offices with central parking."
+        prefix = " ".join(last[:-1])
+        head = "<br>".join(_esc(x) for x in lines[:-1])
+        head += ("<br>" if lines[:-1] else "") + (_esc(prefix) + " " if prefix else "") + f'<span style="color:{gold};font-weight:400">{_esc(last[-1])}</span>'
+        support_text = str(draft.metadata.get("support", "")).strip() or "Premium commercial spaces on SH-11, Dhuri. Retail shops, SCO spaces and offices with central parking."
+        support_lines = len(_wrap(support_text, 28, char_ratio=0.52))
+        # Anchor the text block to the bottom so it always ends above the note at y=1150.
+        support_top = 1136 - support_lines * 40
+        head_top = support_top - 24 - line_h * len(lines)
+        self._layout_metrics = {"headline_lines": len(lines), "headline_size": size,
+                                "headline_fits": self._headline_fits, "text_block_top": head_top - 83,
+                                "text_block_ok": self._headline_fits and head_top - 83 >= 560}
+        eyebrow = _esc(str(draft.metadata.get("eyebrow", "") or "CONSTRUCTION NEARING COMPLETION")).upper()
+        support = _esc(support_text)
         return (
             self._head(navy, navy2)
             + f'<img class="abs" src="data:image/jpeg;base64,{_b64(hero, "JPEG", quality=84, optimize=True)}" style="left:0;top:0;width:1080px;height:1350px" alt="Aerial render of Shrih Plaza">\n'
@@ -252,7 +265,7 @@ class DesignAgent:
             + f'<img class="abs" src="data:image/png;base64,{logo_b64}" style="left:64px;top:54px;width:250px;height:{logo_h}px" alt="Shrih Plaza logo">\n'
             + f'<p class="abs" style="left:600px;top:84px;width:416px;text-align:right;{p}font-weight:400;font-size:20px;line-height:30px;letter-spacing:4px;color:#FFFFFF">RERA APPROVED<br>FULLY APPROVED PROJECT</p>\n'
             + f'<div class="abs" style="left:64px;top:{head_top - 83}px;width:96px;height:4px;background:{gold}"></div>\n'
-            + f'<p class="abs" style="left:64px;top:{head_top - 54}px;width:952px;{p}font-weight:500;font-size:24px;line-height:32px;letter-spacing:6px;color:{self._gold2}">CONSTRUCTION NEARING COMPLETION</p>\n'
+            + f'<p class="abs" style="left:64px;top:{head_top - 54}px;width:952px;{p}font-weight:500;font-size:24px;line-height:32px;letter-spacing:6px;color:{self._gold2}">{eyebrow}</p>\n'
             + f'<p class="abs" style="left:64px;top:{head_top}px;width:952px;{p}font-weight:300;font-size:{size}px;line-height:{line_h}px;color:#FFFFFF">{head}</p>\n'
             + f'<p class="abs" style="left:64px;top:{support_top}px;width:952px;{p}font-weight:400;font-size:28px;line-height:40px;color:#E7EAF5">{support}</p>\n'
             + f'<p class="abs" style="left:64px;top:1150px;width:952px;text-align:right;{p}font-weight:400;font-size:15px;color:#AEB6D0">Artist\'s impression.</p>\n'
@@ -278,7 +291,10 @@ class DesignAgent:
             y = 950 + (index // 6) * (tile_h + gap)
             tiles += f'<img class="abs" src="data:image/jpeg;base64,{_b64(tile, "JPEG", quality=85, optimize=True)}" style="left:{x}px;top:{y}px;width:{tile_w}px;height:{tile_h}px;object-fit:cover" alt="{_esc(name)}">\n'
         lines, _ = self._headline_lines(draft)
-        headline = "WHERE RETAIL, FOOD<br>&amp; BUSINESS MEET"
+        raw = str(draft.metadata.get("tenant_headline", "")).strip()
+        headline = "<br>".join(_esc(part.strip()) for part in raw.split("<br>")) if raw else "WHERE RETAIL, FOOD<br>&amp; BUSINESS MEET"
+        self._layout_metrics = {"headline_lines": headline.count("<br>") + 1, "headline_fits": all(len(x.strip()) <= 26 for x in raw.split("<br>")) if raw else True,
+                                "text_block_ok": True}
         return (
             self._head(navy, navy2)
             + f'<img class="abs" src="data:image/png;base64,{logo_b64}" style="left:64px;top:36px;width:240px;height:{logo_h}px" alt="Shrih Plaza logo">\n'

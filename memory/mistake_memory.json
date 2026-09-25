@@ -1,3 +1,36 @@
 {
-  "mistakes": []
+  "mistakes": [
+    {
+      "id": "mistake_0001",
+      "timestamp": "2026-09-25T23:55:27",
+      "category": "design_defect",
+      "description": "Headline was too long and got cut off.",
+      "avoid_instruction": "Keep the hook to about 6 words so the headline fits in three lines.",
+      "source": "visual_reviewer_auto"
+    },
+    {
+      "id": "mistake_0002",
+      "timestamp": "2026-09-25T23:55:33",
+      "category": "design_defect",
+      "description": "Headline was too long and got cut off.",
+      "avoid_instruction": "Keep the hook to about 6 words so the headline fits in three lines.",
+      "source": "visual_reviewer_auto"
+    },
+    {
+      "id": "mistake_0003",
+      "timestamp": "2026-09-25T23:56:13",
+      "category": "design_defect",
+      "description": "Headline was too long and got cut off.",
+      "avoid_instruction": "Keep the hook to about 6 words so the headline fits in three lines.",
+      "source": "visual_reviewer_auto"
+    },
+    {
+      "id": "mistake_0004",
+      "timestamp": "2026-09-25T23:56:18",
+      "category": "design_defect",
+      "description": "Headline was too long and got cut off.",
+      "avoid_instruction": "Keep the hook to about 6 words so the headline fits in three lines.",
+      "source": "visual_reviewer_auto"
+    }
+  ]
 }

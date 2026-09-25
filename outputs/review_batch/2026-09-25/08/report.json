@@ -1,0 +1,69 @@
+{
+  "post_id": "batch-2026-09-25-08",
+  "batch": "2026-09-25",
+  "number": 8,
+  "pillar": "Everything in one post",
+  "layout": "hero",
+  "palette": "navy",
+  "hook": "Premium SCO spaces.",
+  "caption": "SHRIH PLAZA on SH-11, Dhuri offers premium SCO spaces, retail shops and office spaces with central surface parking, premium SCO facades and retail frontage, and signed brand associations across food, retail, lifestyle and daily convenience. Construction is nearing completion and limited SCO spaces are available. RERA approved. Book a site visit: +91 90564 53575",
+  "hashtags": [
+    "#ShrihPlaza",
+    "#Dhuri",
+    "#SCOSpaces",
+    "#CommercialProperty",
+    "#RetailSpace",
+    "#PunjabRealEstate"
+  ],
+  "text_guards": [
+    [
+      "critic",
+      true
+    ],
+    [
+      "fact_checker",
+      true
+    ],
+    [
+      "legal_rera",
+      true
+    ]
+  ],
+  "text_approved": true,
+  "design_status": "approved",
+  "visual_checks": {
+    "size_1080x1350": true,
+    "no_black_bars": true,
+    "only_approved_brand_logos": true,
+    "no_unapproved_brand_text": true,
+    "safe_source_render": true,
+    "no_forbidden_claims": true,
+    "correct_phone": true,
+    "artists_impression_note": true,
+    "logo_present": true,
+    "min_font_size_14": true,
+    "headline_fits": true,
+    "text_does_not_collide": true,
+    "not_a_denied_combination": true
+  },
+  "date": "2026-09-25",
+  "agent_review": {
+    "agent": "self_review",
+    "decision": "approved",
+    "score": 9.2,
+    "scores": {
+      "compliance": 10.0,
+      "headline": 10.0,
+      "one_clear_idea": 7.0,
+      "caption_length": 7.0,
+      "call_to_action": 10.0,
+      "text_contrast": 10.0
+    },
+    "reason": "Caption covers 4 different selling points; one idea per post reads stronger. Caption is 363 characters; aim for under 300."
+  },
+  "claude_review": {
+    "reviewer": "Claude (visual review of the rendered post)",
+    "decision": "denied",
+    "reason": "The caption crams eight selling points into one post and the headline only fits because auto-fix cut it. One idea per post."
+  }
+}

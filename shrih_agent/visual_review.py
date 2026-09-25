@@ -137,6 +137,16 @@ class VisualReviewerAgent:
         if not checks["min_font_size_14"]:
             issues.append(f"Text as small as {min(sizes)}px will not read on a phone.")
 
+        metrics = design.get("layout_metrics") or {}
+        checks["headline_fits"] = bool(metrics.get("headline_fits", True))
+        if not checks["headline_fits"]:
+            issues.append("The headline does not fit in three lines; it would be cut off. Shorten the hook.")
+            mistake_memory.append_mistake("design_defect", "Headline was too long and got cut off.",
+                                          "Keep the hook to about 6 words so the headline fits in three lines.", "visual_reviewer_auto")
+        checks["text_does_not_collide"] = bool(metrics.get("text_block_ok", True))
+        if not checks["text_does_not_collide"]:
+            issues.append("Headline and support text run into the photo area or each other.")
+
         combo = (design.get("layout"), design.get("palette"))
         checks["not_a_denied_combination"] = combo not in owner_decisions.rejected_combos()
         if not checks["not_a_denied_combination"]:
