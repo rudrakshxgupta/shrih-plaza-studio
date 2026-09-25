@@ -1,0 +1,21 @@
+{
+  "rule": "An approved design is a quality bar, never a template. Every new post must be a completely new design: new layout family, new photo or crop, new type treatment. Changing only the text is not a new design.",
+  "designs": [
+    {
+      "post_id": "redesign-batch-2026-09-25-01-v2",
+      "layout": "premium-hero",
+      "photo": "ai-final-5",
+      "type_treatment": "gold-poppins-bold-hero",
+      "status": "approved",
+      "created": "2026-09-26T00:34:32"
+    },
+    {
+      "post_id": "redesign-batch-2026-09-25-01-v3",
+      "layout": "premium-hero",
+      "photo": "ai-final-5",
+      "type_treatment": "playfair-italic-hero+poppins",
+      "status": "shown",
+      "created": "2026-09-26T00:34:32"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from . import decisions as owner_decisions
+from . import design_history
 from . import mistake_memory
 from .agents import FORBIDDEN_PATTERNS
 from .design_agent import BRAND_LOGO_FILES, CANVAS, SIGNAGE_RISK_PREFIXES
@@ -146,6 +147,14 @@ class VisualReviewerAgent:
         checks["text_does_not_collide"] = bool(metrics.get("text_block_ok", True))
         if not checks["text_does_not_collide"]:
             issues.append("Headline and support text run into the photo area or each other.")
+
+        sig = design_history.signature(str(design.get("layout")), Path(design.get("source_image", "")).name.split(".")[0],
+                                       f"{design.get('layout')}-template")
+        copied = design_history.repeats(sig)
+        checks["new_design_not_a_repeat"] = not copied
+        if copied:
+            issues.append(f"Same layout and photo or type as approved design {copied[0]}. An approved design is a quality bar, "
+                          "not a template: make a completely new design, not new text on the old one.")
 
         combo = (design.get("layout"), design.get("palette"))
         checks["not_a_denied_combination"] = combo not in owner_decisions.rejected_combos()

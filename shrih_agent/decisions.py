@@ -12,7 +12,7 @@ A denial with a category is also written to mistake memory, so the existing
 from datetime import datetime
 from typing import Any
 
-from . import mistake_memory
+from . import design_history, mistake_memory
 from .io import read_json, write_json
 from .paths import MEMORY_DIR
 
@@ -61,6 +61,11 @@ def add_decision(
     decisions = [d for d in load_decisions() if d.get("post_id") != post_id]
     decisions.append(entry)
     _save(decisions)
+    if decision == "approved" and (context or {}).get("layout"):
+        ctx = context or {}
+        design_history.record(post_id, design_history.signature(
+            str(ctx.get("layout")), str(ctx.get("photo") or "aerial-site-plan"),
+            str(ctx.get("type_treatment") or f"{ctx.get('layout')}-template")), "approved")
     if decision == "denied" and category in POSTER_CATEGORIES:
         queue_redesign(post_id, reason, context or {})
     if decision == "denied":

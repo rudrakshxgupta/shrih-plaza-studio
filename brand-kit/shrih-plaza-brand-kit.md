@@ -421,7 +421,11 @@ Please confirm or provide:
 
 ## Premium Poster Standard (owner approved 2026-09-26)
 
-The owner approved the premium redesign of poster #1 and asked to keep raising the level. Every poster now meets this bar:
+The owner approved the premium redesign of poster #1 and asked to keep raising the level.
+
+**Rule (owner, 2026-09-26): an approved design is a quality bar, never a template.** Every new post must be a completely new design: a new layout family, a new photo or crop and a new type treatment. Putting new text on an approved design is not a new post. `memory/design_history.json` records every approved design, and the visual reviewer fails any post that repeats one.
+
+The quality bar every new design must meet or beat:
 
 - Photo: a golden-hour or dusk render, cropped so no unapproved shop sign is readable. Never the flat aerial on its own.
 - Frame: thin gold inset frame with corner marks.
