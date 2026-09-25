@@ -60,6 +60,7 @@ def main() -> int:
     brief_path = INPUTS_DIR / "trends" / "daily_brief.md"
     brief_path.write_text(f"# Daily brief {today.isoformat()}\n\nPillar: {name}\n\n{brief}\n", encoding="utf-8")
 
+    layout = "generative"  # owner rule: a brand-new template every post
     result = ContentPipeline().run(brief_path, design_layout=layout, palette=palette)
     design, content = result.get("design") or {}, result["final_content"]
 
@@ -79,6 +80,7 @@ def main() -> int:
     report = {
         "post_id": f"daily-{today.isoformat()}",
         "date": today.isoformat(), "pillar": name, "layout": layout, "palette": palette,
+        "design_spec": design.get("spec"),
         "hook": content["hook"], "caption": content["caption"], "hashtags": content.get("hashtags", []),
         "lessons_applied": len(owner_decisions.lessons()), "banned_phrases": owner_decisions.banned_phrases(),
         "status": result["status"], "design_status": design.get("status"),

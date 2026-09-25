@@ -85,8 +85,11 @@ class ContentPipeline:
             review = self.visual_reviewer.run(built, self.context.memory.project)
             attempts.append({"attempt": attempt, "design": built, "review": review})
             if review["approved"]:
+                if built.get("spec"):
+                    from .design_history import record_spec
+                    record_spec(Path(built["png"]).stem, built["spec"], "produced")
                 return {"status": "approved", "layout": layout, "png": built["png"], "html": built["html"],
-                        "attempts": attempts}
+                        "spec": built.get("spec"), "attempts": attempts}
             if built.get("status") == "blocked":
                 break
         return {"status": "needs_human_review", "layout": layout,

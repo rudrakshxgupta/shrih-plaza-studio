@@ -427,7 +427,7 @@ The owner approved the premium redesign of poster #1 and asked to keep raising t
 
 The quality bar every new design must meet or beat:
 
-- Photo: a golden-hour or dusk render, cropped so no unapproved shop sign is readable. Never the flat aerial on its own.
+- Photo: a golden-hour or dusk render. Shop signage inside the renders is fine (owner rule 2026-09-26); choose photos for design quality only.
 - Frame: thin gold inset frame with corner marks.
 - Seal: circular gold RERA APPROVED / FULLY APPROVED seal, top right. Logo top left.
 - Type: one hero word in Playfair Display Bold Italic (gold), with Poppins Light in wide tracking for the line under it and Poppins SemiBold for labels and the phone. One italic Playfair supporting line.

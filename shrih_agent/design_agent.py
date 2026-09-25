@@ -44,7 +44,8 @@ BRAND_LOGO_FILES = [
 # The 3D elevation renders show shop signs for brands that are not approved,
 # so they may not be used as the hero. The aerial is used with the north
 # building masked or cropped out.
-SIGNAGE_RISK_PREFIXES = ("elevation-",)
+# Owner rule (2026-09-26): shop signage inside renders is not a reason to exclude a photo.
+SIGNAGE_RISK_PREFIXES: tuple[str, ...] = ()
 
 # Navy and gold is the default. The owner allows any colour, so every palette
 # here keeps a dark ground, because the gold logo needs one to stay readable.
@@ -137,8 +138,10 @@ class DesignAgent:
         except ImportError as exc:
             raise RuntimeError("Pillow is required. Install with: pip install -r requirements.txt") from exc
 
+        if layout == "generative":
+            return self._build_generative(draft, project)
         if layout not in {"hero", "tenants"}:
-            raise ValueError("layout must be 'hero' or 'tenants'")
+            raise ValueError("layout must be 'hero', 'tenants' or 'generative'")
 
         source = source_image or DEFAULT_SOURCE
         if source.name.startswith(SIGNAGE_RISK_PREFIXES):
@@ -190,6 +193,22 @@ class DesignAgent:
             "render": render,
             "known_mistakes_applied": mistake_memory.avoid_instructions(),
         }
+
+    def _build_generative(self, draft: ContentDraft, project: dict[str, Any]) -> dict[str, Any]:
+        """A brand-new template from the layout engine; never repeats an earlier design."""
+        from .layout_engine import compose
+        support = str(draft.metadata.get("support", "")).strip()
+        body, spec = compose(draft.hook, support, project.get("contact", {}).get("phone", ""), LOGO_PATH)
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_dir = OUTPUTS_DIR / "design"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        html_path, png_path = out_dir / f"post_generative_{stamp}.html", out_dir / f"post_generative_{stamp}.png"
+        html_path.write_text(body, encoding="utf-8")
+        render = self.render_png(html_path, png_path)
+        return {"status": "built" if render["ok"] else "render_failed", "layout": "generative",
+                "html": str(html_path), "png": str(png_path) if render["ok"] else None,
+                "source_image": spec["photo_path"], "palette": spec["palette"], "spec": {k: v for k, v in spec.items() if k != "photo_path"},
+                "layout_metrics": {}, "render": render, "known_mistakes_applied": mistake_memory.avoid_instructions()}
 
     def render_png(self, html_path: Path, png_path: Path) -> dict[str, Any]:
         browser = find_browser()

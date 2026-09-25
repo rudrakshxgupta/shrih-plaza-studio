@@ -105,13 +105,6 @@ class VisualReviewerAgent:
             mistake_memory.append_mistake("fake_amenity", f"Unapproved brand text on a post: {found}.",
                                           "Only the 12 owner-approved brands may appear. Never name any other brand.", "visual_reviewer_auto")
 
-        source = Path(design.get("source_image", "")).name
-        checks["safe_source_render"] = not source.startswith(SIGNAGE_RISK_PREFIXES)
-        if not checks["safe_source_render"]:
-            issues.append(f"{source} shows shop signs for unapproved brands.")
-            mistake_memory.append_mistake("fake_amenity", f"Used {source}, which shows unapproved shop signs.",
-                                          "Do not use elevation renders as post images. Use the aerial with the north building masked or cropped.", "visual_reviewer_auto")
-
         forbidden = [p for p in FORBIDDEN_PATTERNS if re.search(p, visible_text)]
         for claim in project.get("forbidden_claims", []):
             if str(claim).lower() in visible_text:
@@ -148,8 +141,12 @@ class VisualReviewerAgent:
         if not checks["text_does_not_collide"]:
             issues.append("Headline and support text run into the photo area or each other.")
 
-        sig = design_history.signature(str(design.get("layout")), Path(design.get("source_image", "")).name.split(".")[0],
-                                       f"{design.get('layout')}-template")
+        spec = design.get("spec") or {}
+        if spec:
+            sig = design_history.signature(str(spec.get("composition")), str(spec.get("photo")), str(spec.get("type")))
+        else:
+            sig = design_history.signature(str(design.get("layout")), Path(design.get("source_image", "")).name.split(".")[0],
+                                           f"{design.get('layout')}-template")
         copied = design_history.repeats(sig)
         checks["new_design_not_a_repeat"] = not copied
         if copied:

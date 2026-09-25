@@ -227,3 +227,7 @@ From the command line: `python run_agent.py decide --id daily-2026-09-25 --decis
 When you deny a poster for its design (image, look, quality or layout), it goes to `memory/redesign_queue.json`. In a Claude session with the Adobe connector, each queued poster is rebuilt as a premium design (golden-hour renders from the AI image set, gold frame, RERA seal, strong typography) and exported to Adobe Express, and the Express link is recorded in the queue. `build_web/poster_premium.py` is the first redesign (poster #1).
 
 Joint review: `python ui/server.py`, then open http://127.0.0.1:8787/compare. You review each post blind; the self-review agent's and Claude's verdicts appear after you save yours.
+
+## A new template every post (layout engine)
+
+Owner rule: every post gets a brand-new template; an approved design is a quality bar, never reused. `shrih_agent/layout_engine.py` composes each poster from independent choices: 6 compositions (cinematic, top headline, split panel, framed card, arch window, centre band), 21 photos (16 golden-hour AI renders in `assets/renders/` plus the original elevations) with 3 crops, 4 type pairings (Playfair italic, Playfair caps, Poppins bold, Poppins light tracked), 4 frames, 3 fact-box styles, 3 call-to-action styles and 5 palettes. Every design is logged in `memory/design_history.json`; a new one must use a composition and photo pair never used before and differ from each of the last 10 designs in at least 4 of the 7 choices. The daily run always uses it: `--design generative`.
