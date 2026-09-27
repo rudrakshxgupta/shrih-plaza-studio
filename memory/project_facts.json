@@ -45,7 +45,7 @@
     ]
   },
   "brand_list_final": "2026-09-25: owner confirms these 12 are the FINAL and only approved brand associations. Do not add any other brand, including names seen on renders or in the old brochure.",
-  "brand_usage_permission": "2026-09-25: owner confirms every listed brand is already leased and permission is held to use their names and logos in marketing. Use only the 12 listed brands. Signage on the 3D renders that is not on this list (e.g. Bigg Bazzar, Jio Bazar, Burger King, Subway) is not approved.",
+  "brand_usage_permission": "2026-09-25: owner confirms every listed brand is already leased and permission is held to use their names and logos in marketing. Use only the 12 listed brands. 2026-09-27 update: placeholder signage on the 3D renders is fine to show as-is. When a post features a signed brand, its logo may be placed on an existing signboard of the render.",
   "signed_brand_associations": [
     "Domino's Pizza",
     "The Brew Estate",
@@ -115,5 +115,11 @@
       "verified_by": "website extraction",
       "date": "2026-09-21"
     }
-  ]
+  ],
+  "render_signage_policy": {
+    "decided_by_owner": "2026-09-27",
+    "renders_usable_as_is": true,
+    "brand_logo_on_signboard": "allowed for the 12 signed brands only",
+    "building_changes": "never: only sky, lighting, colour, declared signboards and foreground props may change"
+  }
 }

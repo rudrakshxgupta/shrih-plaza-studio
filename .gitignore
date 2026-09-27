@@ -26,3 +26,6 @@ inputs/trends/daily_brief.md
 .claude/skills/
 assets/original/brands-supplied/
 assets/original/logo-keyed-from-screenshot.png
+
+# upload bundle; its contents are filed into memory/, skills/ and assets/examples/
+files.zip

@@ -39,6 +39,14 @@
       "description": "Owner denied batch-2026-09-25-01: one time vview only not upto mark use extreme graphi c designing this is so low quality i",
       "avoid_instruction": "Owner feedback, do not repeat: one time vview only not upto mark use extreme graphi c designing this is so low quality i",
       "source": "owner_decision"
+    },
+    {
+      "id": "mistake_0006",
+      "timestamp": "2026-09-27T17:43:12",
+      "category": "design_defect",
+      "description": "Skyline kept a light rim of the old sky after a night relight",
+      "avoid_instruction": "Always defringe the skyline when replacing the sky; check the roof edge at 2x zoom",
+      "source": "claude_review_panel"
     }
   ]
 }
