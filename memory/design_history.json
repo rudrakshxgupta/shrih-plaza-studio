@@ -30,6 +30,20 @@
       "type_treatment": "playfair-caps",
       "status": "produced",
       "created": "2026-09-27T17:26:17"
+    },
+    {
+      "post_id": "post_generative_20260928_100012",
+      "composition": "band-center",
+      "photo": "ai-10",
+      "type": "poppins-light-tracked",
+      "frame": "corner-marks",
+      "facts": "tiles",
+      "cta": "outline",
+      "palette": "charcoal",
+      "layout": "band-center",
+      "type_treatment": "poppins-light-tracked",
+      "status": "produced",
+      "created": "2026-09-28T10:00:14"
     }
   ]
 }
