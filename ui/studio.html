@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shrih Plaza Studio HQ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@300;400;500;600&display=swap">
+<style>
+:root{--bg:#070B22;--panel:#0E1536;--panel2:#131C45;--line:#232E62;--ink:#EEF0F8;--muted:#8E97C2;--gold:#D7B469;--gold2:#F1D89A;
+--good:#3FC48A;--bad:#F06C82;--wait:#F1C451;--work:#6FA8FF}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Poppins',system-ui,sans-serif}
+button,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+header{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:14px 24px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,#0B1237,#070B22)}
+.brand{font-family:'Playfair Display',serif;font-size:22px;letter-spacing:.06em}
+.brand b{color:var(--gold);font-weight:600}
+.brand small{display:block;font:500 10px/1 'Poppins';letter-spacing:.32em;color:var(--muted);margin-top:4px;text-transform:uppercase}
+.live{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.live i{width:9px;height:9px;border-radius:50%;background:#555}
+.live.on i{background:var(--good);box-shadow:0 0 0 0 rgba(63,196,138,.6);animation:ping 1.6s infinite}
+.stats{display:flex;gap:22px;margin-left:auto}
+.stats div{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.stats strong{display:block;font-size:20px;color:var(--ink);font-weight:500;letter-spacing:0}
+.go{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0B1237;border:0;padding:11px 20px;font-weight:600;cursor:pointer;border-radius:3px;letter-spacing:.04em}
+.go:disabled{opacity:.5;cursor:wait}
+.grid{display:grid;grid-template-columns:330px minmax(0,1fr) 340px;gap:18px;padding:18px 24px}
+@media(max-width:1250px){.grid{grid-template-columns:300px minmax(0,1fr)}.feed{grid-column:1/-1}}
+@media(max-width:800px){.grid{grid-template-columns:1fr;padding:14px 16px}}
+h2{font:500 11px/1 'Poppins';letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.team{display:flex;flex-direction:column;gap:8px}
+.agent{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--line);padding:10px 12px;border-radius:4px;transition:border-color .3s,background .3s}
+.agent .top{display:flex;align-items:center;gap:8px}
+.agent .t{font-weight:600;font-size:13px}
+.agent .w{font-size:11px;color:var(--muted)}
+.agent .st{margin-left:auto;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:#1B2450;color:var(--muted)}
+.agent .msg{font-size:12px;color:#C6CBE6;margin-top:6px;min-height:0}
+.agent.working{border-left-color:var(--work);background:var(--panel2)}.agent.working .st{background:rgba(111,168,255,.15);color:var(--work)}
+.agent.working .st::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--work);margin-right:5px;animation:blink 1s infinite}
+.agent.done{border-left-color:var(--good)}.agent.done .st{background:rgba(63,196,138,.14);color:var(--good)}
+.agent.flagged,.agent.error{border-left-color:var(--bad)}.agent.flagged .st,.agent.error .st{background:rgba(240,108,130,.14);color:var(--bad)}
+.agent.waiting{border-left-color:var(--wait);background:#1D1A2E}.agent.waiting .st{background:rgba(241,196,81,.16);color:var(--wait);animation:blink 1.4s infinite}
+.agent.owner{border:1px solid rgba(215,180,105,.5);border-left-width:3px}
+.agent.owner .t{color:var(--gold2)}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:22px;align-content:start}
+@media(max-width:1500px){.stage{grid-template-columns:1fr}}
+.poster{position:relative;background:#050817;aspect-ratio:4/5;border-radius:4px;overflow:hidden;display:grid;place-items:center;color:var(--muted);text-align:center}
+.poster img{width:100%;height:100%;object-fit:cover;display:block}
+.poster .ph{padding:30px;font-size:13px}
+.badge{position:absolute;top:12px;left:12px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:rgba(7,11,34,.8);border:1px solid var(--line)}
+.badge.approved{color:var(--good);border-color:var(--good)}.badge.denied{color:var(--bad);border-color:var(--bad)}.badge.pending{color:var(--wait);border-color:var(--wait)}
+.hook{font-family:'Playfair Display',serif;font-size:26px;line-height:1.2;margin:0 0 10px}
+.cap{white-space:pre-wrap;color:#C6CBE6;font-size:13px;background:var(--panel2);padding:12px;border-radius:4px;margin:0 0 12px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tag{font-size:11px;border:1px solid var(--line);padding:2px 8px;border-radius:99px;color:var(--muted)}
+.score{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.ring{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:17px;background:conic-gradient(var(--gold) calc(var(--p)*1%),#1B2450 0)}
+.ring span{width:50px;height:50px;border-radius:50%;background:var(--panel);display:grid;place-items:center}
+.bars{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:4px 14px;font-size:11px;color:var(--muted)}
+.bars div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line)}
+.checks{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+.chk{font-size:10.5px;padding:2px 7px;border-radius:3px;background:rgba(63,196,138,.1);color:var(--good)}
+.chk.no{background:rgba(240,108,130,.12);color:var(--bad)}
+.decide{border-top:1px solid var(--line);padding-top:16px}
+.btns{display:flex;gap:10px}
+.btns button{flex:1;padding:12px;border-radius:3px;cursor:pointer;font-weight:600;letter-spacing:.04em;border:1px solid}
+.ok{background:var(--good);border-color:var(--good);color:#06241A}
+.no{background:transparent;border-color:var(--bad);color:var(--bad)}
+.denyform{display:none;margin-top:12px;gap:8px;flex-direction:column}
+.denyform.show{display:flex}
+.denyform select,.denyform textarea,.denyform input{background:var(--panel2);border:1px solid var(--line);padding:9px;border-radius:3px;width:100%}
+.denyform textarea{min-height:70px;resize:vertical}
+.denyform label{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.done-note{font-size:13px;padding:10px 12px;border-radius:4px;background:var(--panel2);margin-top:10px}
+.feed{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;max-height:calc(100vh - 110px);overflow:auto;position:sticky;top:12px;align-self:start}
+@media(max-width:1250px){.feed{position:static;max-height:420px}}
+.ev{display:grid;grid-template-columns:54px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px;animation:slide .35s ease}
+.ev time{color:var(--muted);font-variant-numeric:tabular-nums}
+.ev b{font-weight:600}
+.ev.done b{color:var(--good)}.ev.flagged b,.ev.error b{color:var(--bad)}.ev.working b{color:var(--work)}.ev.waiting b{color:var(--wait)}
+.shelf{grid-column:1/-1}
+.strip{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+.thumb{flex:0 0 132px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:0;cursor:pointer;text-align:left;overflow:hidden}
+.thumb[aria-current="true"]{border-color:var(--gold)}
+.thumb img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;background:#050817}
+.thumb div{padding:6px 8px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--wait)}
+.dot.approved{background:var(--good)}.dot.denied{background:var(--bad)}
+.progress{height:3px;background:#1B2450;border-radius:2px;overflow:hidden;margin:-4px 0 14px}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);padding:10px 18px;border-radius:4px;display:none;z-index:9}
+@keyframes blink{50%{opacity:.35}}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(63,196,138,.6)}100%{box-shadow:0 0 0 9px rgba(63,196,138,0)}}
+@keyframes slide{from{opacity:0;transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">SHRIH <b>PLAZA</b><small>Studio HQ · live content team</small></div>
+  <div class="live" id="live"><i></i><span>Connecting…</span></div>
+  <div class="stats">
+    <div><strong id="sWorking">0</strong>Working now</div>
+    <div><strong id="sPending">0</strong>Awaiting you</div>
+    <div><strong id="sApproved">0</strong>Approved</div>
+  </div>
+  <button class="go" id="go">▶ Start a new post</button>
+</header>
+
+<div class="grid">
+  <section aria-labelledby="teamH">
+    <h2 id="teamH">The team</h2>
+    <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+    <div class="team" id="team"></div>
+  </section>
+
+  <section aria-labelledby="stageH">
+    <h2 id="stageH">Final product</h2>
+    <div class="stage" id="stage">
+      <div class="poster"><div class="ph">No post yet. Press <b>Start a new post</b> and watch the team build it.</div></div>
+      <div></div>
+    </div>
+  </section>
+
+  <aside class="feed" aria-labelledby="feedH">
+    <h2 id="feedH">Live activity</h2>
+    <div id="feed" aria-live="polite"></div>
+  </aside>
+
+  <section class="shelf" aria-labelledby="shelfH">
+    <h2 id="shelfH">Recent posts</h2>
+    <div class="strip" id="strip"></div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const STATE_LABEL={idle:"Idle",working:"Working",done:"Done",flagged:"Flagged",waiting:"Your turn",error:"Stopped"};
+const ORDER=["head","trend","copy","critic","facts","legal","fix","art","qa","cd","owner"];
+let team=[],agentState={},posts=[],current=null,runId=null,running=false;
+
+async function api(url,opts={}){const r=await fetch(url,{headers:{"Content-Type":"application/json"},...opts});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||r.statusText);return j}
+function toast(t){const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",3200)}
+
+function renderTeam(){
+  $("team").innerHTML=team.map(a=>{const s=agentState[a.id]||{state:"idle",message:a.does};
+    return `<div class="agent ${s.state} ${a.id==="owner"?"owner":""}" id="ag-${a.id}">
+      <div class="top"><div><div class="t">${esc(a.title)}</div><div class="w">${esc(a.who)}</div></div><span class="st">${STATE_LABEL[s.state]||s.state}</span></div>
+      <div class="msg">${esc(s.message)}</div></div>`}).join("");
+  const touched=ORDER.filter(id=>agentState[id]&&agentState[id].state!=="idle").length;
+  $("prog").style.width=(running||touched?Math.round(touched/ORDER.length*100):0)+"%";
+  $("sWorking").textContent=Object.values(agentState).filter(s=>s.state==="working").length;
+}
+
+function addFeed(ev){
+  const who=(team.find(a=>a.id===ev.agent)||{title:ev.agent}).title;
+  const d=document.createElement("div");d.className="ev "+ev.state;
+  d.innerHTML=`<time>${esc(ev.time)}</time><div><b>${esc(who)}</b> · ${esc(ev.message)}</div>`;
+  $("feed").prepend(d);
+  while($("feed").children.length>200)$("feed").lastChild.remove();
+}
+
+function onEvent(ev){
+  if(ev.agent==="head"&&ev.state==="working"&&/New post started/.test(ev.message)){agentState={};runId=ev.run_id;running=true;$("go").disabled=true}
+  if(ev.run_id&&runId&&ev.run_id!==runId&&!ev.data?.post_id){addFeed(ev);return}
+  agentState[ev.agent]={state:ev.state,message:ev.message};
+  if(ev.agent==="art"&&ev.data?.png){showBuilding()}
+  if(ev.agent==="owner"&&ev.state==="waiting"){running=false;$("go").disabled=false;loadPosts(ev.data.post_id);toast("A new post is waiting for your approval")}
+  if(ev.state==="error"&&ev.agent==="head"){running=false;$("go").disabled=false}
+  if(ev.agent==="owner"&&ev.state!=="waiting")loadPosts(current);
+  addFeed(ev);renderTeam();
+}
+
+function showBuilding(){
+  if(current&&posts.find(p=>p.post_id===current&&!p.decision))return;
+  $("stage").innerHTML=`<div class="poster"><div class="ph">The Art Director has built a design.<br>Visual QA and the Creative Director are reviewing it…</div></div><div></div>`;
+}
+
+function renderStage(){
+  const p=posts.find(x=>x.post_id===current);
+  if(!p){return}
+  const dec=p.decision?.decision;const cls=dec||"pending";
+  const r=p.agent_review;const checks=p.visual_checks||{};
+  const scores=r?Object.entries(r.scores).map(([k,v])=>`<div><span>${esc(k.replace(/_/g," "))}</span><span>${v}</span></div>`).join(""):"";
+  const spec=p.design_spec?Object.entries(p.design_spec).filter(([k])=>["composition","type","frame","palette","photo"].includes(k)).map(([k,v])=>`<span class="tag">${esc(k)}: ${esc(String(v).split("/").pop())}</span>`).join(""):"";
+  $("stage").innerHTML=`
+   <div class="poster">${p.image?`<img src="${p.image}?v=${encodeURIComponent(p.post_id)}" alt="Poster: ${esc(p.hook)}">`:`<div class="ph">No image</div>`}
+     <span class="badge ${cls}">${dec?dec:"awaiting you"}</span></div>
+   <div>
+     <div class="tag" style="display:inline-block;margin-bottom:10px">${esc(p.pillar||"")} · ${esc(p.folder)}</div>
+     <p class="hook">${esc(p.hook)}</p>
+     <p class="cap">${esc(p.caption)}</p>
+     <div class="tags">${(p.hashtags||[]).map(h=>`<span class="tag">${esc(h)}</span>`).join("")}</div>
+     ${r?`<div class="score"><div class="ring" style="--p:${r.score*10}"><span>${r.score}</span></div><div class="bars">${scores}</div></div>
+     <p style="font-size:12px;color:var(--muted);margin:-4px 0 12px"><b style="color:var(--ink)">Creative Director:</b> ${esc(r.decision)} — ${esc(r.reason)}</p>`:""}
+     <div class="checks">${Object.entries(checks).map(([k,v])=>`<span class="chk ${v?"":"no"}">${v?"✓":"✗"} ${esc(k.replace(/_/g," "))}</span>`).join("")}</div>
+     ${spec?`<div class="tags">${spec}</div>`:""}
+     <div class="decide">
+       <h2>Your decision</h2>
+       ${dec?`<div class="done-note">You ${dec} this post${p.decision.reason?`: “${esc(p.decision.reason)}”`:"."}  You can change it below.</div>`:""}
+       <div class="btns" style="margin-top:10px"><button class="ok" id="bOk">✓ Approve</button><button class="no" id="bNo">✗ Deny</button></div>
+       <form class="denyform" id="denyForm">
+         <label for="cat">What was wrong?</label>
+         <select id="cat"><option value="design">Poster design (image, look, quality) → Adobe Express redesign</option><option value="layout">Layout</option><option value="copy">Wording</option><option value="claim">A claim or fact</option><option value="other">Other</option></select>
+         <label for="why">Why? The team learns this for every next post</label>
+         <textarea id="why" required minlength="5" placeholder="e.g. Headline too small, photo too dark"></textarea>
+         <label for="ban">Ban a phrase (optional)</label>
+         <input id="ban" placeholder="a phrase never to use again">
+         <button class="no" type="submit">Send denial to the team</button>
+       </form>
+     </div>
+   </div>`;
+  $("bOk").onclick=()=>decide("approve");
+  $("bNo").onclick=()=>{$("denyForm").classList.toggle("show");$("why").focus()};
+  $("denyForm").onsubmit=e=>{e.preventDefault();decide("deny")};
+}
+
+async function decide(choice){
+  const body={post_id:current,decision:choice,reason:choice==="deny"?$("why").value.trim():"",category:choice==="deny"?$("cat").value:"other",banned_phrase:choice==="deny"?$("ban").value.trim():""};
+  if(choice==="deny"&&body.reason.length<5){toast("Please give a reason of at least 5 characters");return}
+  try{await api("/api/studio/decide",{method:"POST",body:JSON.stringify(body)});toast(choice==="approve"?"Approved. Saved as a quality bar.":"Denied. The team has learned it.")}
+  catch(e){toast(e.message)}
+}
+
+function renderStrip(){
+  $("strip").innerHTML=posts.map(p=>`<button class="thumb" aria-current="${p.post_id===current}" data-id="${esc(p.post_id)}">
+    ${p.image?`<img src="${p.image}" alt="" loading="lazy">`:`<img alt="">`}
+    <div><span class="dot ${p.decision?.decision||""}"></span>${esc(p.folder)}</div></button>`).join("");
+  $("strip").querySelectorAll(".thumb").forEach(b=>b.onclick=()=>{current=b.dataset.id;renderStage();renderStrip()});
+  $("sPending").textContent=posts.filter(p=>!p.decision).length;
+  $("sApproved").textContent=posts.filter(p=>p.decision?.decision==="approved").length;
+}
+
+async function loadPosts(focus){
+  posts=(await api("/api/studio/posts")).posts;
+  current=focus&&posts.some(p=>p.post_id===focus)?focus:(current&&posts.some(p=>p.post_id===current)?current:posts[0]?.post_id);
+  renderStrip();renderStage();
+}
+
+function connect(){
+  const es=new EventSource("/api/studio/stream?since=0");
+  es.onopen=()=>{$("live").className="live on";$("live").querySelector("span").textContent="Live"};
+  es.onerror=()=>{$("live").className="live";$("live").querySelector("span").textContent="Reconnecting…";es.close();$("feed").innerHTML="";agentState={};setTimeout(connect,2000)};
+  es.onmessage=m=>onEvent(JSON.parse(m.data));
+}
+
+$("go").onclick=async()=>{
+  $("go").disabled=true;
+  try{const r=await api("/api/studio/run",{method:"POST"});toast("Team started on "+r.run_id)}
+  catch(e){toast(e.message);$("go").disabled=false}
+};
+
+(async()=>{
+  const s=await api("/api/studio/status");team=s.team;running=s.running;runId=s.run_id;$("go").disabled=running;
+  renderTeam();await loadPosts();connect();
+})();
+</script>
+</body>
+</html>

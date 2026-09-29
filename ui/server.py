@@ -14,6 +14,7 @@ import subprocess
 
 from shrih_agent import decisions as owner_decisions
 from shrih_agent import mistake_memory
+from shrih_agent import studio
 from shrih_agent.agents import PreferenceLearningAgent
 from shrih_agent.image_prompt import CHECKLIST_ITEMS, category_for_checklist_key
 from shrih_agent.image_tools import enhance_image_safe
@@ -36,6 +37,17 @@ class AgentUIHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/":
             return self._send_file(UI_DIR / "index.html")
+        if parsed.path in ("/studio", "/hq"):
+            return self._send_file(UI_DIR / "studio.html")
+        if parsed.path == "/api/studio/status":
+            return self._send_json(studio.status())
+        if parsed.path == "/api/studio/posts":
+            return self._send_json({"posts": studio.history_posts()})
+        if parsed.path.startswith("/api/studio/image/"):
+            image = studio.image_path(parsed.path.rsplit("/", 1)[-1])
+            return self._send_safe_workspace_file(image) if image else self._send_error(404, "No image")
+        if parsed.path == "/api/studio/stream":
+            return self._stream_studio(int(parse_query(parsed.query).get("since", "0") or 0))
         if parsed.path == "/review":
             return self._send_file(UI_DIR / "review.html")
         if parsed.path == "/compare":
@@ -73,6 +85,18 @@ class AgentUIHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
+        if parsed.path == "/api/studio/run":
+            ok, detail = studio.start_run()
+            return self._send_json({"started": ok, "run_id" if ok else "error": detail}, status=200 if ok else 409)
+        if parsed.path == "/api/studio/decide":
+            data = self._read_json_body()
+            try:
+                entry = studio.record_owner_decision(str(data.get("post_id", "")), str(data.get("decision", "")),
+                                                     str(data.get("reason", "")), str(data.get("category", "design")),
+                                                     str(data.get("banned_phrase", "")))
+            except ValueError as exc:
+                return self._send_error(400, str(exc))
+            return self._send_json({"saved": entry})
         if parsed.path == "/api/generate":
             return self._handle_generate()
         if parsed.path == "/api/feedback":
@@ -340,6 +364,31 @@ class AgentUIHandler(BaseHTTPRequestHandler):
             "drafts": [{"name": path.name, "path": str(path)} for path in drafts],
             "final": [{"name": path.name, "path": str(path)} for path in final],
         }
+
+    def _stream_studio(self, since: int):
+        """Server-sent events: every agent step reaches the Studio HQ page as it happens."""
+        import time
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.end_headers()
+        seq, idle = since, 0
+        try:
+            while True:
+                fresh = studio.events_since(seq)
+                for event in fresh:
+                    self.wfile.write(f"data: {json.dumps(event, ensure_ascii=False)}\n\n".encode("utf-8"))
+                    seq = event["seq"]
+                if fresh:
+                    idle = 0
+                else:
+                    idle += 1
+                    if idle % 30 == 0:
+                        self.wfile.write(b": keep-alive\n\n")
+                self.wfile.flush()
+                time.sleep(0.5)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            return
 
     def _send_file(self, path: Path):
         if not path.exists() or not path.resolve().is_relative_to(UI_DIR.resolve()):

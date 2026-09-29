@@ -29,3 +29,4 @@ assets/original/logo-keyed-from-screenshot.png
 
 # upload bundle; its contents are filed into memory/, skills/ and assets/examples/
 files.zip
+outputs/live/
