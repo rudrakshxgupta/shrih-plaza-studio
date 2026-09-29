@@ -1,12 +1,12 @@
 ---
 name: shrih-plaza-studio
-description: Shrih Plaza's complete multi-agent social media studio, run inside Claude and finished in Adobe Express. Use it whenever the user mentions Shrih Plaza, SHRIH PLAZA, SH-11 Dhuri, SCO spaces, their brands (Domino's, Barista, Sagar Ratna...), an Instagram post / reel cover / poster / creative / caption / festival greeting (Janmashtami, Diwali, Lohri...), trend research for their content, redesigning a denied post, or approving/denying/giving feedback on a post, even if they do not say skill or agents. Pipeline - social research → brand-customised creative brief → real-building enhancement with architecture guard → premium poster → review panel → auto-fix → owner → learning.
+description: Shrih Plaza's complete multi-agent social media studio, run inside Claude with AI-made posters. Use it whenever the user mentions Shrih Plaza, SHRIH PLAZA, SH-11 Dhuri, SCO spaces, their brands (Domino's, Barista, Sagar Ratna...), an Instagram post / reel cover / poster / creative / caption / festival greeting (Janmashtami, Diwali, Lohri...), trend research for their content, redesigning a denied post, or approving/denying/giving feedback on a post, even if they do not say skill or agents. Pipeline - social research → brand-customised creative brief → real-building enhancement with architecture guard → premium poster → review panel → auto-fix → owner → learning.
 ---
 
 # Shrih Plaza Studio
 
 A team of agents that Claude plays one after another. The GitHub repo is long-term memory,
-real renders are the only source of the building, and Adobe Express is where finished posts
+real renders are the only source of the building, and AI-made images are where finished posts
 live. The owner (Rudraksh) isn't a developer: plain language, show results, one question at a time.
 
 Repo: https://github.com/rudrakshxgupta/shrih-plaza-studio (must stay public).
@@ -16,7 +16,7 @@ Research -> Creative brief -> Enhance real photo -> Architecture guard -> Design
                                    ^                     | fail                       | fail
                                    +---- auto-fix <------+---------- auto-fix <-------+  (max 3, then ask)
                                                                                       | pass
-Owner "change X" <- Owner approves / denies <- Adobe Express + caption <--------------+
+Owner "change X" <- Owner approves / denies <- AI poster + caption <-------------------+
       |                     |
       +-> back to step      +-> learning: decisions + mistakes saved for every future run
 ```
@@ -79,15 +79,13 @@ python3 <skill>/scripts/log_mistake.py --category design_defect --what "..." --a
 ```
 Max 3 loops. Still failing, or a new fact/photo is needed → ask the owner one question.
 
-## Step 7 · Adobe Express
-`adobe_mandatory_init` (once) → `get_account_type` (must be `auth`; guest can't export) →
-`create_visual_design_express_skill` (once, follow it) → `html_export_readiness_skill` (before
-EVERY export) → `export_html_to_express` (`docName`: "Shrih Plaza – <pillar> – <date>"). Check the
-returned slide HTML kept text, fonts and props. Adobe Stock props load here even though the local
-preview showed a placeholder box.
+## Step 7 · AI poster
+The poster is an AI image made on Azure AI Foundry (GPT Image 2.5 Flare) from a real render:
+`python scripts/ai_poster.py`. The AI has full creative freedom around the building; the building
+itself must match the source render. Adobe Express is no longer used.
 
 ## Step 8 · Owner
-Show the preview PNG (copy to `/mnt/user-data/outputs/` and present it), the Express link, caption +
+Show the preview PNG (copy to `/mnt/user-data/outputs/` and present it), caption +
 hashtags, and a 4-line review summary (facts ✓, legal ✓, architecture ✓ with score, critic score).
 Ask: approve, or what should change?
 - "Change X" → apply X, rerun from the affected step (copy → Step 2, photo/look → Step 3,

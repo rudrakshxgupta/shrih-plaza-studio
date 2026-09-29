@@ -137,17 +137,17 @@ def load_redesign_queue() -> list[dict[str, Any]]:
 
 
 def queue_redesign(post_id: str, reason: str, context: dict[str, Any]) -> None:
-    """A denied poster goes to the Adobe Express redesign queue, handled in a Claude session."""
+    """A denied poster goes to the regenerate queue: the AI art director makes a completely new image for it."""
     queue = [q for q in load_redesign_queue() if q.get("post_id") != post_id or q.get("status") == "done"]
     queue.append({"post_id": post_id, "reason": reason, "context": context, "status": "pending",
-                  "created": datetime.now().isoformat(timespec="seconds"), "express_url": None})
+                  "created": datetime.now().isoformat(timespec="seconds"), "result_png": None})
     write_json(REDESIGN_QUEUE_PATH, {"queue": queue})
 
 
-def complete_redesign(post_id: str, express_url: str, png_path: str = "") -> None:
+def complete_redesign(post_id: str, png_path: str) -> None:
     queue = load_redesign_queue()
     for item in queue:
         if item.get("post_id") == post_id and item.get("status") == "pending":
-            item.update({"status": "done", "express_url": express_url, "png": png_path,
+            item.update({"status": "done", "result_png": png_path,
                          "done": datetime.now().isoformat(timespec="seconds")})
     write_json(REDESIGN_QUEUE_PATH, {"queue": queue})

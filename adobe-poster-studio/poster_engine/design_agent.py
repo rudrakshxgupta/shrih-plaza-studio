@@ -14,10 +14,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from . import mistake_memory
-from .io import read_json
-from .models import ContentDraft
-from .paths import ASSETS_DIR, MEMORY_DIR, OUTPUTS_DIR
+from shrih_agent import mistake_memory
+from shrih_agent.io import read_json
+from shrih_agent.models import ContentDraft
+from shrih_agent.paths import ASSETS_DIR, MEMORY_DIR, OUTPUTS_DIR
 
 CANVAS = (1080, 1350)
 LOGO_PATH = ASSETS_DIR / "original" / "logo-transparent.png"

@@ -9,7 +9,6 @@ from .io import write_json
 from .memory import load_memory, save_preferences
 from .pipeline import ContentPipeline
 from .paths import ASSETS_DIR, INPUTS_DIR, MEMORY_DIR, OUTPUTS_DIR
-from .renderer import render_instagram_post
 
 
 def cmd_run(args: argparse.Namespace) -> None:
@@ -25,8 +24,7 @@ def cmd_run(args: argparse.Namespace) -> None:
         image_path=Path(args.image).resolve() if args.image else None,
         generate_image=args.generate_image,
         max_image_attempts=args.max_image_attempts,
-        design_layout=args.design,
-        palette=args.palette,
+        ai_content=args.ai_content,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
@@ -70,18 +68,6 @@ def cmd_check_architecture(args: argparse.Namespace) -> None:
     result = ArchitectureGuardAgent().run(
         Path(args.original).resolve(), Path(args.candidate).resolve()
     )
-    print(json.dumps(result, indent=2, ensure_ascii=False))
-
-
-def cmd_render_post(args: argparse.Namespace) -> None:
-    memory = load_memory()
-    content_path = Path(args.content)
-    if not content_path.is_absolute():
-        content_path = (Path.cwd() / content_path).resolve()
-    data = json.loads(content_path.read_text(encoding="utf-8"))
-    content = data.get("final_content", data)
-    image_path = Path(args.image).resolve() if args.image else None
-    result = render_instagram_post(content, memory.brand, memory.project, image_path=image_path)
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
@@ -166,8 +152,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--image", help="Optional source elevation/render image")
     run.add_argument("--generate-image", action="store_true", help="Generate a real edited image with Gemini, architecture-verified")
     run.add_argument("--max-image-attempts", type=int, default=3)
-    run.add_argument("--design", choices=["hero", "tenants"], help="Build a finished post with the design agent and visual reviewer")
-    run.add_argument("--palette", default="navy", choices=["navy", "emerald", "maroon", "charcoal", "plum"], help="Colour palette for --design (navy and gold is the default)")
+    run.add_argument("--ai-content", action="store_true", help="Make an AI image of the real building (OpenAI GPT Image 2.5 Flare; paid, capped per day)")
     run.set_defaults(func=cmd_run)
 
     regenerate = sub.add_parser("regenerate", help="Re-run generation using human feedback on a previous content pack")
@@ -195,10 +180,6 @@ def build_parser() -> argparse.ArgumentParser:
     check_architecture.add_argument("--candidate", required=True)
     check_architecture.set_defaults(func=cmd_check_architecture)
 
-    render = sub.add_parser("render-post", help="Render an Instagram PNG from a generated content JSON")
-    render.add_argument("--content", required=True)
-    render.add_argument("--image")
-    render.set_defaults(func=cmd_render_post)
 
     feedback = sub.add_parser("feedback", help="Record approval/rejection feedback")
     feedback.add_argument("--decision", choices=["approved", "rejected", "needs_changes"], required=True)

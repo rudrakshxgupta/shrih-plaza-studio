@@ -47,6 +47,14 @@
       "description": "Skyline kept a light rim of the old sky after a night relight",
       "avoid_instruction": "Always defringe the skyline when replacing the sky; check the roof edge at 2x zoom",
       "source": "claude_review_panel"
+    },
+    {
+      "id": "mistake_0007",
+      "timestamp": "2026-09-29T23:40:26",
+      "category": "design_defect",
+      "description": "Owner denied daily-2026-09-29-studio-233225: not uptomark",
+      "avoid_instruction": "Owner feedback, do not repeat: not uptomark",
+      "source": "owner_decision"
     }
   ]
 }

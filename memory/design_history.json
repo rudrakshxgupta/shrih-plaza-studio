@@ -58,6 +58,79 @@
       "type_treatment": "playfair-italic-hero",
       "status": "produced",
       "created": "2026-09-29T09:59:33"
+    },
+    {
+      "post_id": "daily-2026-09-29-studio-233225",
+      "composition": "split-panel",
+      "photo": "ai-03",
+      "type": "poppins-light-tracked",
+      "frame": "corner-marks",
+      "facts": "stacked-list",
+      "cta": "outline",
+      "palette": "navy",
+      "layout": "split-panel",
+      "type_treatment": "poppins-light-tracked",
+      "status": "produced",
+      "created": "2026-09-29T23:32:39"
+    },
+    {
+      "post_id": "ai-test-1",
+      "layout": "ai:noir-gold",
+      "photo": "ai-01",
+      "type_treatment": "Your Brand. The Highway.",
+      "concept": "noir-gold",
+      "status": "produced",
+      "created": "2026-09-29T23:38:23"
+    },
+    {
+      "post_id": "ai-test-2",
+      "layout": "ai:string-lights-market",
+      "photo": "ai-16",
+      "type_treatment": "Where Brands Arrive",
+      "concept": "string-lights-market",
+      "status": "produced",
+      "created": "2026-09-29T23:40:14"
+    },
+    {
+      "post_id": "ai-trial-1",
+      "layout": "ai:day-to-night",
+      "photo": "ai-08",
+      "type_treatment": "ai-content",
+      "concept": "day-to-night",
+      "status": "produced",
+      "created": "2026-09-29T23:43:11"
+    },
+    {
+      "post_id": "daily-2026-09-28",
+      "composition": "band-center",
+      "photo": "ai-10",
+      "type": "poppins-light-tracked",
+      "frame": "corner-marks",
+      "facts": "tiles",
+      "cta": "outline",
+      "palette": "charcoal",
+      "layout": "band-center",
+      "type_treatment": "poppins-light-tracked",
+      "status": "approved",
+      "created": "2026-09-29T23:44:41"
+    },
+    {
+      "post_id": "ai-trial-2",
+      "layout": "ai:aurora-sky",
+      "photo": "ai-06",
+      "type_treatment": "ai-content",
+      "concept": "aurora-sky",
+      "status": "produced",
+      "created": "2026-09-29T23:44:47"
+    },
+    {
+      "post_id": "ai-trial-3",
+      "layout": "ai:fireworks",
+      "photo": "ai-16",
+      "type_treatment": "ai-content",
+      "concept": "fireworks",
+      "status": "produced",
+      "created": "2026-09-29T23:46:25"
     }
   ]
 }

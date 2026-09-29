@@ -60,17 +60,18 @@ def main() -> int:
     brief_path = INPUTS_DIR / "trends" / "daily_brief.md"
     brief_path.write_text(f"# Daily brief {today.isoformat()}\n\nPillar: {name}\n\n{brief}\n", encoding="utf-8")
 
-    layout = "generative"  # owner rule: a brand-new template every post
-    result = ContentPipeline().run(brief_path, design_layout=layout, palette=palette)
+    # Owner rule (2026-09-30): AI real-estate content, not posters. The building stays exactly as the render.
+    post_id = f"daily-{today.isoformat()}"
+    result = ContentPipeline().run(brief_path, ai_content=True, post_id=post_id)
+    layout = f"ai:{(result.get('design') or {}).get('concept')}"
     design, content = result.get("design") or {}, result["final_content"]
 
     folder = OUTPUTS_DIR / "daily" / today.isoformat()
     folder.mkdir(parents=True, exist_ok=True)
     if design.get("png"):
         shutil.copyfile(design["png"], folder / "post.png")
-    caption = f"{content['hook']}\n\n{content['caption']}\n\n{' '.join(content.get('hashtags', []))}\n"
+    caption = f"{content['hook']}\n\n{content['caption']}\n\nArtist's impression.\n\n{' '.join(content.get('hashtags', []))}\n"
     (folder / "caption.txt").write_text(caption, encoding="utf-8")
-    review = (design.get("attempts") or [{}])[-1].get("review", {})
     if os.getenv("GEMINI_API_KEY"):
         llm = "gemini"
     elif os.getenv("OPENAI_API_KEY"):
@@ -78,24 +79,25 @@ def main() -> int:
     else:
         llm = "local fallback (same default copy every day)"
     report = {
-        "post_id": f"daily-{today.isoformat()}",
+        "post_id": post_id, "kind": "ai_content",
         "date": today.isoformat(), "pillar": name, "layout": layout, "palette": palette,
-        "design_spec": design.get("spec"),
+        "concept": design.get("concept"), "scene": design.get("scene"), "source_image": design.get("source_image"),
+        "architecture_score": design.get("architecture_score"), "model": design.get("model"), "image_error": design.get("error"),
         "hook": content["hook"], "caption": content["caption"], "hashtags": content.get("hashtags", []),
         "lessons_applied": len(owner_decisions.lessons()), "banned_phrases": owner_decisions.banned_phrases(),
         "status": result["status"], "design_status": design.get("status"),
-        "visual_checks": review.get("checks"), "trend_mode": (result.get("trend_report") or {}).get("mode"),
+        "visual_checks": {"image_made": bool(design.get("png")), "building_unchanged": design.get("status") == "approved"}, "trend_mode": (result.get("trend_report") or {}).get("mode"),
         "llm": llm,
     }
 
     subject = f"Shrih Plaza daily post for approval - {today.isoformat()} ({name})"
-    body = (f"Status: {result['status']}\nPillar: {name} | layout {layout} | palette {palette}\n\n{caption}\n"
+    body = (f"Status: {result['status']}\nPillar: {name} | concept {layout}\n\n{caption}\n"
             "To approve, reply APPROVE, or write what to change.\n"
             "The system never posts to Instagram; publish it by hand after approval.\n")
     report["email"] = send_email(folder, subject, body)
     (folder / "report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
-    return 0 if design.get("png") else 1
+    return 0  # a missing image (no OPENAI_API_KEY secret, budget reached) still saves the caption for review
 
 
 if __name__ == "__main__":

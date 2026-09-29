@@ -42,10 +42,13 @@ h2{font:500 11px/1 'Poppins';letter-spacing:.24em;text-transform:uppercase;color
 .agent.waiting{border-left-color:var(--wait);background:#1D1A2E}.agent.waiting .st{background:rgba(241,196,81,.16);color:var(--wait);animation:blink 1.4s infinite}
 .agent.owner{border:1px solid rgba(215,180,105,.5);border-left-width:3px}
 .agent.owner .t{color:var(--gold2)}
-.stage{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:22px;align-content:start}
-@media(max-width:1500px){.stage{grid-template-columns:1fr}}
-.poster{position:relative;background:#050817;aspect-ratio:4/5;border-radius:4px;overflow:hidden;display:grid;place-items:center;color:var(--muted);text-align:center}
-.poster img{width:100%;height:100%;object-fit:cover;display:block}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;display:grid;grid-template-columns:1fr;gap:22px;align-content:start}
+.poster{position:relative;background:#050817;min-height:240px;border-radius:4px;overflow:hidden;display:grid;place-items:center;color:var(--muted);text-align:center}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.compare figure{margin:0}.compare img{width:100%;display:block;border-radius:3px}
+.compare figcaption{font-size:11px;color:var(--muted);margin-top:3px}
+.meter{font-size:12px;color:var(--muted);margin:4px 0 12px}
+.poster img{width:100%;height:auto;display:block}
 .poster .ph{padding:30px;font-size:13px}
 .badge{position:absolute;top:12px;left:12px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:rgba(7,11,34,.8);border:1px solid var(--line)}
 .badge.approved{color:var(--good);border-color:var(--good)}.badge.denied{color:var(--bad);border-color:var(--bad)}.badge.pending{color:var(--wait);border-color:var(--wait)}
@@ -82,7 +85,7 @@ h2{font:500 11px/1 'Poppins';letter-spacing:.24em;text-transform:uppercase;color
 .strip{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
 .thumb{flex:0 0 132px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:0;cursor:pointer;text-align:left;overflow:hidden}
 .thumb[aria-current="true"]{border-color:var(--gold)}
-.thumb img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;background:#050817}
+.thumb img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#050817}
 .thumb div{padding:6px 8px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--wait)}
 .dot.approved{background:var(--good)}.dot.denied{background:var(--bad)}
@@ -97,14 +100,15 @@ h2{font:500 11px/1 'Poppins';letter-spacing:.24em;text-transform:uppercase;color
 </head>
 <body>
 <header>
-  <div class="brand">SHRIH <b>PLAZA</b><small>Studio HQ · live content team</small></div>
+  <div class="brand">SHRIH <b>PLAZA</b><small>Studio HQ · AI real-estate content team</small></div>
   <div class="live" id="live"><i></i><span>Connecting…</span></div>
   <div class="stats">
     <div><strong id="sWorking">0</strong>Working now</div>
     <div><strong id="sPending">0</strong>Awaiting you</div>
     <div><strong id="sApproved">0</strong>Approved</div>
+    <div title="Paid OpenAI images: today / daily cap"><strong id="sBudget">–</strong>AI images today</div>
   </div>
-  <button class="go" id="go">▶ Start a new post</button>
+  <button class="go" id="go">▶ Create new content</button>
 </header>
 
 <div class="grid">
@@ -115,9 +119,9 @@ h2{font:500 11px/1 'Poppins';letter-spacing:.24em;text-transform:uppercase;color
   </section>
 
   <section aria-labelledby="stageH">
-    <h2 id="stageH">Final product</h2>
+    <h2 id="stageH">Final content</h2>
     <div class="stage" id="stage">
-      <div class="poster"><div class="ph">No post yet. Press <b>Start a new post</b> and watch the team build it.</div></div>
+      <div class="poster"><div class="ph">No content yet. Press <b>Create new content</b> and watch the team make it.</div></div>
       <div></div>
     </div>
   </section>
@@ -167,15 +171,15 @@ function onEvent(ev){
   if(ev.run_id&&runId&&ev.run_id!==runId&&!ev.data?.post_id){addFeed(ev);return}
   agentState[ev.agent]={state:ev.state,message:ev.message};
   if(ev.agent==="art"&&ev.data?.png){showBuilding()}
-  if(ev.agent==="owner"&&ev.state==="waiting"){running=false;$("go").disabled=false;loadPosts(ev.data.post_id);toast("A new post is waiting for your approval")}
-  if(ev.state==="error"&&ev.agent==="head"){running=false;$("go").disabled=false}
+  if(ev.agent==="owner"&&ev.state==="waiting"){running=false;$("go").disabled=false;loadPosts(ev.data.post_id);toast("New content is waiting for your approval");loadBudget()}
+  if(ev.state==="error"&&ev.agent==="head"){running=false;loadBudget()}
   if(ev.agent==="owner"&&ev.state!=="waiting")loadPosts(current);
   addFeed(ev);renderTeam();
 }
 
 function showBuilding(){
   if(current&&posts.find(p=>p.post_id===current&&!p.decision))return;
-  $("stage").innerHTML=`<div class="poster"><div class="ph">The Art Director has built a design.<br>Visual QA and the Creative Director are reviewing it…</div></div><div></div>`;
+  $("stage").innerHTML=`<div class="poster"><div class="ph">The AI Visual Artist has made the image.<br>The Architecture Guard and Creative Director are checking it…</div></div><div></div>`;
 }
 
 function renderStage(){
@@ -186,8 +190,12 @@ function renderStage(){
   const scores=r?Object.entries(r.scores).map(([k,v])=>`<div><span>${esc(k.replace(/_/g," "))}</span><span>${v}</span></div>`).join(""):"";
   const spec=p.design_spec?Object.entries(p.design_spec).filter(([k])=>["composition","type","frame","palette","photo"].includes(k)).map(([k,v])=>`<span class="tag">${esc(k)}: ${esc(String(v).split("/").pop())}</span>`).join(""):"";
   $("stage").innerHTML=`
-   <div class="poster">${p.image?`<img src="${p.image}?v=${encodeURIComponent(p.post_id)}" alt="Poster: ${esc(p.hook)}">`:`<div class="ph">No image</div>`}
-     <span class="badge ${cls}">${dec?dec:"awaiting you"}</span></div>
+   <div>
+     <div class="poster">${p.image?`<img src="${p.image}?v=${encodeURIComponent(p.post_id)}" alt="AI image: ${esc(p.scene||p.hook)}">`:`<div class="ph">No image</div>`}
+       <span class="badge ${cls}">${dec?dec:"awaiting you"}</span></div>
+     ${p.source_url?`<div class="compare"><figure><img src="${p.source_url}" alt="Real render"><figcaption>Real render (the building must match)</figcaption></figure>
+       <figure><img src="${p.image}" alt="AI image"><figcaption>AI image · ${esc(p.concept||"")} · building match ${p.architecture_score??"–"}</figcaption></figure></div>`:""}
+   </div>
    <div>
      <div class="tag" style="display:inline-block;margin-bottom:10px">${esc(p.pillar||"")} · ${esc(p.folder)}</div>
      <p class="hook">${esc(p.hook)}</p>
@@ -199,11 +207,11 @@ function renderStage(){
      ${spec?`<div class="tags">${spec}</div>`:""}
      <div class="decide">
        <h2>Your decision</h2>
-       ${dec?`<div class="done-note">You ${dec} this post${p.decision.reason?`: “${esc(p.decision.reason)}”`:"."}  You can change it below.</div>`:""}
+       ${dec?`<div class="done-note">You ${dec} this content${p.decision.reason?`: “${esc(p.decision.reason)}”`:"."}  You can change it below.</div>`:""}
        <div class="btns" style="margin-top:10px"><button class="ok" id="bOk">✓ Approve</button><button class="no" id="bNo">✗ Deny</button></div>
        <form class="denyform" id="denyForm">
          <label for="cat">What was wrong?</label>
-         <select id="cat"><option value="design">Poster design (image, look, quality) → Adobe Express redesign</option><option value="layout">Layout</option><option value="copy">Wording</option><option value="claim">A claim or fact</option><option value="other">Other</option></select>
+         <select id="cat"><option value="design">Image (look, mood, quality) → new AI image</option><option value="layout">Building changed / not accurate</option><option value="copy">Wording</option><option value="claim">A claim or fact</option><option value="other">Other</option></select>
          <label for="why">Why? The team learns this for every next post</label>
          <textarea id="why" required minlength="5" placeholder="e.g. Headline too small, photo too dark"></textarea>
          <label for="ban">Ban a phrase (optional)</label>
@@ -233,6 +241,12 @@ function renderStrip(){
   $("sApproved").textContent=posts.filter(p=>p.decision?.decision==="approved").length;
 }
 
+async function loadBudget(){
+  try{const b=await api("/api/studio/budget");$("sBudget").textContent=`${b.today}/${b.daily_limit}`;
+    $("go").title=b.left>0?`${b.left} paid image(s) left today · ${b.month}/${b.monthly_limit} this month`:"Image budget reached for today";
+    if(!running)$("go").disabled=b.left<=0;}catch(e){}
+}
+
 async function loadPosts(focus){
   posts=(await api("/api/studio/posts")).posts;
   current=focus&&posts.some(p=>p.post_id===focus)?focus:(current&&posts.some(p=>p.post_id===current)?current:posts[0]?.post_id);
@@ -254,7 +268,7 @@ $("go").onclick=async()=>{
 
 (async()=>{
   const s=await api("/api/studio/status");team=s.team;running=s.running;runId=s.run_id;$("go").disabled=running;
-  renderTeam();await loadPosts();connect();
+  renderTeam();await loadPosts();loadBudget();connect();
 })();
 </script>
 </body>

@@ -21,15 +21,15 @@ from .paths import INPUTS_DIR, OUTPUTS_DIR, ROOT
 
 TEAM = [
     {"id": "owner", "title": "Managing Director", "who": "You", "does": "Final approval. Nothing is published without you."},
-    {"id": "head", "title": "Content Head", "who": "Orchestrator", "does": "Assigns the brief, runs the team, sends the post to you."},
+    {"id": "head", "title": "Content Head", "who": "Orchestrator", "does": "Assigns the brief, guards the image budget, sends the content to you."},
     {"id": "trend", "title": "Trend Scout", "who": "Trend Research Agent", "does": "Brings in current content patterns and angles."},
     {"id": "copy", "title": "Copy Lead", "who": "Content Strategist Agent", "does": "Writes the hook, caption and hashtags in the brand voice."},
     {"id": "critic", "title": "Copy Editor", "who": "Critic Agent", "does": "Checks the hook, length and clarity."},
     {"id": "facts", "title": "Fact Checker", "who": "Fact Checker Agent", "does": "Every claim must be an approved project fact."},
     {"id": "legal", "title": "Legal & RERA Officer", "who": "Legal RERA Agent", "does": "Blocks forbidden claims and banned phrases."},
     {"id": "fix", "title": "Fix-it Editor", "who": "Auto-Fix Agent", "does": "Repairs whatever the reviewers flag."},
-    {"id": "art", "title": "Art Director", "who": "Design Agent + Layout Engine", "does": "Builds a brand-new poster design on the real building."},
-    {"id": "qa", "title": "Visual QA Lead", "who": "Visual Reviewer Agent", "does": "Checks fit, fonts, logos, bars, phone and repeats."},
+    {"id": "art", "title": "AI Visual Artist", "who": "GPT Image 2.5 Flare · OpenAI", "does": "Creates bold, new AI imagery around the real building."},
+    {"id": "qa", "title": "Architecture Guard", "who": "Building check", "does": "Lines the AI image up with the real render; the building must not change."},
     {"id": "cd", "title": "Creative Director", "who": "Self-Review Agent", "does": "Scores the post the way you would before you see it."},
     {"id": "memory", "title": "Brand Memory Keeper", "who": "Preference Learning", "does": "Turns your decisions into rules for every next post."},
 ]
@@ -57,14 +57,26 @@ def events_since(seq: int) -> list[dict[str, Any]]:
         return _events[seq:]
 
 
+def budget() -> dict[str, Any]:
+    from .openai_images import budget_left, usage
+    u = usage()
+    return {"left": budget_left(), "today": u["today"], "daily_limit": u["daily_limit"],
+            "month": u["month"], "monthly_limit": u["monthly_limit"]}
+
+
 def status() -> dict[str, Any]:
-    return {"running": _running["active"], "run_id": _running["run_id"], "team": TEAM, "last_seq": len(_events)}
+    return {"running": _running["active"], "run_id": _running["run_id"], "team": TEAM, "last_seq": len(_events),
+            "budget": budget()}
 
 
 def start_run() -> tuple[bool, str]:
     with _lock:
         if _running["active"]:
             return False, "The team is already working on a post."
+        if budget()["left"] <= 0:
+            b = budget()
+            return False, (f"Image budget reached ({b['today']}/{b['daily_limit']} today, "
+                           f"{b['month']}/{b['monthly_limit']} this month). No credits were spent.")
         run_id = datetime.now().strftime("%Y-%m-%d-studio-%H%M%S")
         _running.update(active=True, run_id=run_id)
     threading.Thread(target=_run_safely, args=(run_id,), daemon=True).start()
@@ -99,15 +111,12 @@ def _run(run_id: str) -> None:
     from .models import ContentDraft  # noqa: F401  (keeps import errors inside the run)
     from .pipeline import ContentPipeline
     from .self_review import SelfReviewAgent
-    from .design_history import record_spec
+    from .ai_content import ARCHITECTURE_PASS, make_content
 
     emit("head", "working", "New post started. Opening the brief and the owner's rules.", run_id)
     pillars, palette_order = _pillars()
     index = (datetime.now().toordinal() + int(time.time() // 60)) % len(pillars)
-    name, brief, _layout, palette = pillars[index]
-    denied = owner_decisions.rejected_combos()
-    if ("generative", palette) in denied:
-        palette = next((p for p in palette_order if ("generative", p) not in denied), palette)
+    name, brief, _layout, _palette = pillars[index]
     lessons, banned = owner_decisions.lessons(), owner_decisions.banned_phrases()
     brief_path = INPUTS_DIR / "trends" / "studio_brief.md"
     brief_path.write_text(f"# Studio brief {run_id}\n\nPillar: {name}\n\n{brief}\n", encoding="utf-8")
@@ -147,47 +156,45 @@ def _run(run_id: str) -> None:
     if not text_ok:
         emit("head", "flagged", "Copy still has open flags after 3 rounds. Sending it with the flags shown.", run_id)
 
-    design, review = None, {}
-    for attempt in range(1, 3):
-        emit("art", "working", "Designing a brand-new poster (new composition, photo, type and palette)." if attempt == 1
-             else "Rebuilding in safe mode after QA notes.", run_id)
-        design = pipe.designer.build(draft, ctx.memory.brand, ctx.memory.project, layout="generative",
-                                     safe_mode=attempt > 1, palette=palette)
-        if design.get("status") == "blocked":
-            emit("art", "error", design.get("reason", "Design blocked."), run_id)
-            break
-        spec = design.get("spec") or {}
-        emit("art", "done", "Poster built: " + ", ".join(f"{k} {v}" for k, v in spec.items() if k in ("composition", "type", "palette")),
-             run_id, spec=spec, png=design.get("png"))
-        emit("qa", "working", "Checking fit, fonts, logos, black bars, phone and repeats.", run_id)
-        review = pipe.visual_reviewer.run(design, ctx.memory.project)
-        failed = [k for k, v in (review.get("checks") or {}).items() if not v]
-        emit("qa", "done" if review.get("approved") else "flagged",
-             "All visual checks passed." if review.get("approved") else "Failed: " + ", ".join(f.replace("_", " ") for f in failed),
-             run_id, checks=review.get("checks"))
-        if review.get("approved"):
-            break
+    left = budget()["left"]
+    emit("art", "working", f"Picking a new creative concept and a real render ({left} paid image(s) left today).", run_id)
+
+    def on_step(kind, attempt, *info):
+        if kind == "generating":
+            emit("art", "working", f"Creating concept “{info[0]}” from render {info[1]} (try {attempt}).", run_id)
+        else:
+            ok = info[0] >= info[1]
+            emit("qa", "done" if ok else "flagged",
+                 f"Building match {info[0]:.2f} (pass {info[1]:.2f}). " + ("The building is unchanged." if ok else "The building drifted; retrying."),
+                 run_id, score=info[0])
+
+    made = make_content(f"daily-{run_id}", mood=f"Theme of the post: {name}.", attempts=min(2, max(1, left)), on_step=on_step)
+    if made.get("status") in ("ok", "architecture_failed"):
+        emit("art", "done", f"Image ready: {made['concept']} on {Path(made['source_image']).name}.", run_id, png=made.get("png"))
+    else:
+        emit("art", "error", f"No image: {made.get('error') or made.get('status')}", run_id)
 
     folder = OUTPUTS_DIR / "daily" / run_id
     folder.mkdir(parents=True, exist_ok=True)
     png = folder / "post.png"
-    if design and design.get("png"):
-        shutil.copyfile(design["png"], png)
-        if design.get("spec") and review.get("approved"):
-            record_spec(f"daily-{run_id}", design["spec"], "produced")
-    caption = f"{draft.hook}\n\n{draft.caption}\n\n{' '.join(draft.hashtags)}\n"
+    if made.get("png"):
+        shutil.copyfile(made["png"], png)
+    caption = f"{draft.hook}\n\n{draft.caption}\n\nArtist's impression.\n\n{' '.join(draft.hashtags)}\n"
     (folder / "caption.txt").write_text(caption, encoding="utf-8")
 
-    report = {"post_id": f"daily-{run_id}", "date": run_id[:10], "source": "studio", "pillar": name,
-              "layout": "generative", "palette": palette, "design_spec": (design or {}).get("spec"),
+    building_ok = made.get("status") == "ok"
+    report = {"post_id": f"daily-{run_id}", "date": run_id[:10], "source": "studio", "kind": "ai_content", "pillar": name,
+              "layout": f"ai:{made.get('concept')}", "concept": made.get("concept"), "scene": made.get("scene"),
+              "source_image": made.get("source_image"), "architecture_score": made.get("architecture_score"),
+              "model": made.get("model"),
               "hook": draft.hook, "caption": draft.caption, "hashtags": draft.hashtags,
               "text_guards": [(r["agent"], r["approved"]) for r in history[-1]["reviews"]] if history else [],
-              "text_approved": text_ok, "design_status": "approved" if review.get("approved") else "needs_human_review",
-              "visual_checks": review.get("checks"), "trend_mode": trend.get("mode"),
-              "lessons_applied": len(lessons), "banned_phrases": banned}
+              "text_approved": text_ok, "design_status": "approved" if building_ok else "needs_human_review",
+              "visual_checks": {"image_made": bool(made.get("png")), "building_unchanged": building_ok},
+              "trend_mode": trend.get("mode"), "lessons_applied": len(lessons), "banned_phrases": banned}
 
     emit("cd", "working", "Scoring the finished post the way you would.", run_id)
-    self_review = SelfReviewAgent().run(report, png if png.exists() else None)
+    self_review = SelfReviewAgent().run(report, None)
     report["agent_review"] = self_review
     emit("cd", "done" if self_review["decision"] == "approved" else "flagged",
          f"{self_review['decision'].title()} at {self_review['score']}/10. {self_review['reason']}", run_id,
@@ -208,13 +215,17 @@ def record_owner_decision(post_id: str, decision: str, reason: str, category: st
     entry = owner_decisions.add_decision(post_id, decision, reason, category, banned_phrase, context)
     if entry["decision"] == "approved" and report.get("design_spec"):
         record_spec(post_id, report["design_spec"], "approved")
+    if entry["decision"] == "approved" and report.get("concept"):
+        from . import design_history
+        design_history.record(post_id, {"layout": f"ai:{report['concept']}", "photo": Path(report.get("source_image") or "").stem,
+                                        "type_treatment": "ai-content", "concept": report["concept"]}, "approved")
     run_id = post_id.removeprefix("daily-")
     if entry["decision"] == "approved":
         emit("owner", "done", "Approved. Ready to publish by hand.", run_id, post_id=post_id)
         emit("memory", "done", "Saved as a quality bar. The next post must still be a completely new design.", run_id)
     else:
         emit("owner", "flagged", f"Denied ({category}): {reason}", run_id, post_id=post_id)
-        note = "Queued for an Adobe Express redesign. " if category in owner_decisions.POSTER_CATEGORIES else ""
+        note = "Queued for a brand-new AI image (uses paid credits only when you run it). " if category in owner_decisions.POSTER_CATEGORIES else ""
         emit("memory", "done", f"{note}Lesson saved; every future post will avoid it.", run_id,
              lessons=len(owner_decisions.lessons()))
     return entry
@@ -233,7 +244,10 @@ def history_posts(limit: int = 12) -> list[dict[str, Any]]:
                       "caption": report.get("caption"), "hashtags": report.get("hashtags", []),
                       "image": f"/api/studio/image/{folder.name}" if (folder / "post.png").exists() else None,
                       "agent_review": report.get("agent_review"), "visual_checks": report.get("visual_checks"),
-                      "design_spec": report.get("design_spec"), "decision": by_id.get(post_id)})
+                      "design_spec": report.get("design_spec"), "decision": by_id.get(post_id),
+                      "kind": report.get("kind", "poster"), "concept": report.get("concept"), "scene": report.get("scene"),
+                      "architecture_score": report.get("architecture_score"), "model": report.get("model"),
+                      "source_url": f"/api/studio/source/{Path(report['source_image']).name}" if report.get("source_image") else None})
         if len(posts) >= limit:
             break
     return posts
@@ -242,3 +256,13 @@ def history_posts(limit: int = 12) -> list[dict[str, Any]]:
 def image_path(folder_name: str) -> Path | None:
     path = (OUTPUTS_DIR / "daily" / Path(folder_name).name / "post.png")
     return path if path.exists() else None
+
+
+def source_path(name: str) -> Path | None:
+    """A real render the AI started from, for the side-by-side building check."""
+    from .paths import ASSETS_DIR
+    for folder in (ASSETS_DIR / "renders", ASSETS_DIR / "original"):
+        path = folder / Path(name).name
+        if path.exists():
+            return path
+    return None

@@ -31,6 +31,38 @@
         "date": "2026-09-26"
       },
       "created": "2026-09-26T00:26:50"
+    },
+    {
+      "post_id": "daily-2026-09-29-studio-233225",
+      "decision": "denied",
+      "reason": "not uptomark",
+      "category": "design",
+      "banned_phrase": "",
+      "context": {
+        "hook": "Limited SCO spaces available on SH-11, Dhuri.",
+        "caption": "Construction is nearing completion and limited premium commercial SCO spaces are available at Shrih Plaza on SH-11, Dhuri, with retail shops, offices and central parking. RERA approved. Book a site visit: +91 90564 53575",
+        "layout": "generative",
+        "palette": "charcoal",
+        "pillar": "Central parking",
+        "date": "2026-09-29"
+      },
+      "created": "2026-09-29T23:40:26"
+    },
+    {
+      "post_id": "daily-2026-09-28",
+      "decision": "approved",
+      "reason": "",
+      "category": "other",
+      "banned_phrase": "",
+      "context": {
+        "hook": "Limited SCO spaces available on SH-11, Dhuri.",
+        "caption": "Construction is nearing completion and limited premium commercial SCO spaces are available at Shrih Plaza on SH-11, Dhuri, with retail shops, offices and central parking. RERA approved. Book a site visit: +91 90564 53575",
+        "layout": "generative",
+        "palette": "emerald",
+        "pillar": "Retail and SCO opportunity",
+        "date": "2026-09-28"
+      },
+      "created": "2026-09-29T23:44:41"
     }
   ]
 }

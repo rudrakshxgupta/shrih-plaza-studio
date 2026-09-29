@@ -13,7 +13,6 @@ from .agents import (
     PreferenceLearningAgent,
     TrendResearchAgent,
 )
-from .design_agent import DesignAgent
 from .gemini import GeminiImageClient
 from .image_prompt import build_image_edit_prompt
 from .io import read_text, write_json, write_text
@@ -21,8 +20,6 @@ from .llm import default_client
 from .memory import load_memory, save_preferences
 from .models import ContentDraft
 from .paths import OUTPUTS_DIR
-from .renderer import render_instagram_post
-from .visual_review import VisualReviewerAgent
 
 
 class ContentPipeline:
@@ -37,8 +34,6 @@ class ContentPipeline:
         self.auto_fix = AutoFixAgent()
         self.preference_learning = PreferenceLearningAgent()
         self.image_client = GeminiImageClient()
-        self.designer = DesignAgent()
-        self.visual_reviewer = VisualReviewerAgent()
 
     def run(
         self,
@@ -50,8 +45,8 @@ class ContentPipeline:
         image_path: Path | None = None,
         generate_image: bool = False,
         max_image_attempts: int = 3,
-        design_layout: str | None = None,
-        palette: str = "navy",
+        ai_content: bool = False,
+        post_id: str | None = None,
     ) -> dict[str, Any]:
         brief = read_text(brief_path)
         trend_report = self.trend_research.run(self.context, brief, platform)
@@ -64,8 +59,11 @@ class ContentPipeline:
             image_generation = self.generate_and_verify_image(draft, image_path, max_image_attempts)
 
         design = None
-        if design_layout:
-            design = self.design_and_review(draft, design_layout, palette=palette)
+        if ai_content:
+            from .ai_content import make_content
+            from datetime import datetime as _dt
+            made = make_content(post_id or f"content-{_dt.now():%Y%m%d-%H%M%S}")
+            design = {**made, "status": "approved" if made.get("status") == "ok" else made.get("status")}
 
         status = self._overall_status(text_approved, image_generation, design)
         hero_image = image_path
@@ -73,27 +71,6 @@ class ContentPipeline:
             hero_image = Path(image_generation["final_image"])
 
         return self._save(status, draft, text_history, render_image, hero_image, trend_report, image_generation, design)
-
-    def design_and_review(self, draft: ContentDraft, layout: str, source_image: Path | None = None,
-                          max_attempts: int = 2, palette: str = "navy") -> dict[str, Any]:
-        """Design agent builds the post, the visual reviewer inspects the render.
-        A failed review retries once in safe mode; defects are logged to mistake memory."""
-        attempts: list[dict[str, Any]] = []
-        for attempt in range(1, max_attempts + 1):
-            built = self.designer.build(draft, self.context.memory.brand, self.context.memory.project,
-                                        layout=layout, source_image=source_image, safe_mode=attempt > 1, palette=palette)
-            review = self.visual_reviewer.run(built, self.context.memory.project)
-            attempts.append({"attempt": attempt, "design": built, "review": review})
-            if review["approved"]:
-                if built.get("spec"):
-                    from .design_history import record_spec
-                    record_spec(Path(built["png"]).stem, built["spec"], "produced")
-                return {"status": "approved", "layout": layout, "png": built["png"], "html": built["html"],
-                        "spec": built.get("spec"), "attempts": attempts}
-            if built.get("status") == "blocked":
-                break
-        return {"status": "needs_human_review", "layout": layout,
-                "png": attempts[-1]["design"].get("png"), "attempts": attempts}
 
     def generate_and_verify_image(
         self,
@@ -234,17 +211,8 @@ class ContentPipeline:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         rendered_image = None
         if design and design.get("png"):
-            rendered_image = {"created": True, "output": design["png"], "size": [1080, 1350],
-                              "source_image": "design agent (real renders, no generated building)",
-                              "architecture_note": "Real render composed into a layout. No generative edits."}
-        elif render_image:
-            rendered_image = render_instagram_post(
-                draft.to_dict(),
-                self.context.memory.brand,
-                self.context.memory.project,
-                image_path=image_path,
-                output_path=OUTPUTS_DIR / "final" / f"instagram_post_{timestamp}.png",
-            )
+            rendered_image = {"created": True, "output": design["png"], "source_image": design.get("source_image"),
+                              "architecture_note": f"AI image of the real render; building check {design.get('architecture_score')}"}
         package = {
             "status": status,
             "final_content": draft.to_dict(),

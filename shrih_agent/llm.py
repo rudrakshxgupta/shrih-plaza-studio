@@ -19,6 +19,8 @@ class LocalLLMClient(LLMClient):
 
 class OpenAIResponsesClient(LLMClient):
     def __init__(self, model: str | None = None) -> None:
+        from .openai_images import load_dotenv
+        load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY", "")
         self.model = model or os.getenv("OPENAI_MODEL", "gpt-5.5")
 
@@ -115,6 +117,8 @@ class GeminiTextClient(LLMClient):
 
 
 def default_client() -> LLMClient:
+    # Owner rule (2026-09-30): unattended runs use OpenAI. Only the Copy Lead calls a model (one short
+    # call per post); the reviewers are fixed rules. Claude does the in-session work (see README).
     client = OpenAIResponsesClient()
     if client.available:
         return client

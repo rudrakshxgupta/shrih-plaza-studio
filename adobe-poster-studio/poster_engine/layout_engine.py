@@ -15,8 +15,8 @@ import random
 from pathlib import Path
 from typing import Any
 
-from .design_history import load_history
-from .paths import ASSETS_DIR
+from shrih_agent.design_history import load_history
+from shrih_agent.paths import ASSETS_DIR
 
 W, H = 1080, 1350
 TYPEKIT = "https://use.typekit.net/ubj2uch.css"

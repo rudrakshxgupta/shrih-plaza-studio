@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from .paths import ASSETS_DIR, OUTPUTS_DIR
+from shrih_agent.paths import ASSETS_DIR, OUTPUTS_DIR
 
 
 CANVAS_SIZE = (1080, 1350)

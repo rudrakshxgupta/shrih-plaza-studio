@@ -201,7 +201,6 @@ python run_agent.py run --brief inputs/trends/sample_trend_brief.md --design ten
 - The **design agent** (`shrih_agent/design_agent.py`) composes an HTML layout from the original logo, the approved brand logos and the aerial render, then renders a 1080x1350 PNG with headless Chrome or Edge. It never generates or edits the building, and it refuses the elevation renders because they show unapproved shop signs.
 - The **visual reviewer** (`shrih_agent/visual_review.py`) checks the PNG: size, black bars, only the 12 approved brands, no unapproved brand names, forbidden claims, the phone number, the "Artist's impression" note, the logo and minimum text size. A failed review retries once, and every defect is logged to `memory/mistake_memory.json`.
 - The **trend scout** (`agents/instagram_trend_scout_agent.md`) runs in a Claude session: it browses Explore and hashtag pages in your signed-in browser, looks only, and writes a snapshot to `inputs/trends/scout/`. The pipeline's trend agent reads snapshots from the last 30 days. It is not an unattended script, because scripted scraping of Instagram breaks its terms.
-- Adobe Express export is done in a Claude session with the Adobe connector. The design HTML in `outputs/design/` is the source for it.
 
 ## Daily Review (approve or deny, and the pipeline learns)
 
@@ -222,12 +221,23 @@ What the pipeline does with them (`memory/decisions.json`, `shrih_agent/decision
 
 From the command line: `python run_agent.py decide --id daily-2026-09-25 --decision deny --reason "..." --category copy --ban "phrase"`.
 
-## Poster redesigns in Adobe Express
+## Denied posters get a new AI image
 
-When you deny a poster for its design (image, look, quality or layout), it goes to `memory/redesign_queue.json`. In a Claude session with the Adobe connector, each queued poster is rebuilt as a premium design (golden-hour renders from the AI image set, gold frame, RERA seal, strong typography) and exported to Adobe Express, and the Express link is recorded in the queue. `build_web/poster_premium.py` is the first redesign (poster #1).
+When you deny a poster for its design (image, look, quality or layout), it goes to `memory/redesign_queue.json` and the AI art director makes a completely new image for it. Adobe Express is no longer used.
 
 Joint review: `python ui/server.py`, then open http://127.0.0.1:8787/compare. You review each post blind; the self-review agent's and Claude's verdicts appear after you save yours.
 
-## A new template every post (layout engine)
+## AI real-estate content (no posters)
 
-Owner rule: every post gets a brand-new template; an approved design is a quality bar, never reused. `shrih_agent/layout_engine.py` composes each poster from independent choices: 6 compositions (cinematic, top headline, split panel, framed card, arch window, centre band), 21 photos (16 golden-hour AI renders in `assets/renders/` plus the original elevations) with 3 crops, 4 type pairings (Playfair italic, Playfair caps, Poppins bold, Poppins light tracked), 4 frames, 3 fact-box styles, 3 call-to-action styles and 5 palettes. Every design is logged in `memory/design_history.json`; a new one must use a composition and photo pair never used before and differ from each of the last 10 designs in at least 4 of the 7 choices. The daily run always uses it: `--design generative`.
+Owner direction (2026-09-30): the studio makes AI real-estate content, not posters. `shrih_agent/ai_content.py` picks a creative concept (sky lanterns, monsoon reflections, aurora, fireworks, blue-hour light trails and more) and a real render it has never paired before, and GPT Image 2.5 Flare (`shrih_agent/openai_images.py`) transforms everything around the building. The building itself must not change: an automatic building check lines the AI image up with the source render (faithful edits score about 0.9, a different view about 0.5; the pass mark is 0.70) and retries once if it drifted. The caption says "Artist's impression". The poster system (layout engine, design agent, visual reviewer, the Adobe Express redesigns and the old skill) lives in `adobe-poster-studio/`.
+
+Paid images are capped: 3 a day and 60 a month by default (`OPENAI_IMAGE_DAILY_LIMIT`, `OPENAI_IMAGE_MONTHLY_LIMIT`), counted in `memory/image_usage.json`. A call over the cap never reaches OpenAI.
+
+## Who does what: OpenAI or Claude
+
+| Work | Done by | Why |
+|---|---|---|
+| AI images of the building | OpenAI GPT Image 2.5 Flare | Claude cannot make images |
+| Caption writing in unattended runs (daily GitHub run, Studio HQ button) | OpenAI gpt-5.5, one short call per post | Runs with no Claude session open |
+| Copy, fact, legal/RERA and building checks, self-review score | Fixed rules in code | Free, instant and always the same |
+| Final look at each image for building accuracy, caption polish, trend scouting in the browser, redesign briefs, all code changes | Claude, in a session | Needs judgement, vision and tools |

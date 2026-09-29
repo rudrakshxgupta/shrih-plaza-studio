@@ -9,10 +9,10 @@ import re
 from pathlib import Path
 from typing import Any
 
-from . import decisions as owner_decisions
-from . import design_history
-from . import mistake_memory
-from .agents import FORBIDDEN_PATTERNS
+from shrih_agent import decisions as owner_decisions
+from shrih_agent import design_history
+from shrih_agent import mistake_memory
+from shrih_agent.agents import FORBIDDEN_PATTERNS
 from .design_agent import BRAND_LOGO_FILES, CANVAS, SIGNAGE_RISK_PREFIXES
 
 # Brand names seen on the 3D renders that are NOT approved. The owner confirmed

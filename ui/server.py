@@ -22,7 +22,6 @@ from shrih_agent.io import read_json, write_json
 from shrih_agent.memory import load_memory, save_preferences
 from shrih_agent.pipeline import ContentPipeline
 from shrih_agent.paths import ASSETS_DIR, INPUTS_DIR, MEMORY_DIR, OUTPUTS_DIR, ROOT
-from shrih_agent.renderer import render_instagram_post
 
 REFERENCE_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
@@ -46,6 +45,11 @@ class AgentUIHandler(BaseHTTPRequestHandler):
         if parsed.path.startswith("/api/studio/image/"):
             image = studio.image_path(parsed.path.rsplit("/", 1)[-1])
             return self._send_safe_workspace_file(image) if image else self._send_error(404, "No image")
+        if parsed.path.startswith("/api/studio/source/"):
+            source = studio.source_path(parsed.path.rsplit("/", 1)[-1])
+            return self._send_safe_workspace_file(source) if source else self._send_error(404, "No source")
+        if parsed.path == "/api/studio/budget":
+            return self._send_json(studio.budget())
         if parsed.path == "/api/studio/stream":
             return self._stream_studio(int(parse_query(parsed.query).get("since", "0") or 0))
         if parsed.path == "/review":
@@ -103,8 +107,6 @@ class AgentUIHandler(BaseHTTPRequestHandler):
             return self._handle_feedback()
         if parsed.path == "/api/enhance-image":
             return self._handle_enhance_image()
-        if parsed.path == "/api/render-post":
-            return self._handle_render_post()
         if parsed.path == "/api/save-memory":
             return self._handle_save_memory()
         if parsed.path == "/api/batch/decide":
@@ -187,15 +189,6 @@ class AgentUIHandler(BaseHTTPRequestHandler):
         review_path = OUTPUTS_DIR / "reviews" / f"human_architecture_review_{_timestamp()}.json"
         write_json(review_path, {"approved": approved, "checklist": checklist, "notes": notes})
         return self._send_json({"saved": True, "approved": approved, "review": str(review_path)})
-
-    def _handle_render_post(self):
-        data = self._read_json_body()
-        content = data.get("content")
-        if not isinstance(content, dict):
-            return self._send_error(400, "Content object is required")
-        memory = load_memory()
-        result = render_instagram_post(content, memory.brand, memory.project)
-        return self._send_json(result)
 
     def _handle_feedback(self):
         data = self._read_json_body()

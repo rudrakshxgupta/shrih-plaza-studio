@@ -11,13 +11,16 @@ import sys
 from datetime import date
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[1]  # the repo root
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from shrih_agent.models import ContentDraft  # noqa: E402
 from shrih_agent.paths import OUTPUTS_DIR  # noqa: E402
 from shrih_agent.pipeline import ContentPipeline  # noqa: E402
 from shrih_agent.self_review import SelfReviewAgent  # noqa: E402
+from poster_engine.design_agent import DesignAgent  # noqa: E402
+from poster_engine.visual_review import VisualReviewerAgent  # noqa: E402
 
 PHONE = "+91 90564 53575"
 TAGS = ["#ShrihPlaza", "#Dhuri", "#SCOSpaces", "#CommercialProperty", "#RetailSpace", "#PunjabRealEstate"]
@@ -57,6 +60,21 @@ VARIANTS = [
 ]
 
 
+def design_and_review(pipeline, draft, layout, palette, max_attempts=2):
+    """Design agent builds the poster, the visual reviewer inspects it; one retry in safe mode."""
+    designer, reviewer, attempts = DesignAgent(), VisualReviewerAgent(), []
+    memory = pipeline.context.memory
+    for attempt in range(1, max_attempts + 1):
+        built = designer.build(draft, memory.brand, memory.project, layout=layout, safe_mode=attempt > 1, palette=palette)
+        review = reviewer.run(built, memory.project)
+        attempts.append({"attempt": attempt, "design": built, "review": review})
+        if review["approved"] or built.get("status") == "blocked":
+            break
+    last = attempts[-1]
+    return {"status": "approved" if last["review"]["approved"] else "needs_human_review",
+            "png": last["design"].get("png"), "attempts": attempts}
+
+
 def main() -> int:
     batch = date.today().isoformat()
     root = OUTPUTS_DIR / "review_batch" / batch
@@ -70,7 +88,7 @@ def main() -> int:
                              visual_direction="", cta="Book a site visit", hashtags=TAGS,
                              metadata={k: v.get(k, "") for k in ("eyebrow", "support", "tenant_headline")})
         draft, history, text_ok = pipeline._text_review_loop(draft, 3)
-        design = pipeline.design_and_review(draft, v["layout"], palette=v["palette"])
+        design = design_and_review(pipeline, draft, v["layout"], v["palette"])
         folder = root / f"{n:02d}"
         folder.mkdir(parents=True, exist_ok=True)
         if design.get("png"):
