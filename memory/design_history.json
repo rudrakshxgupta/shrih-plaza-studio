@@ -44,6 +44,20 @@
       "type_treatment": "poppins-light-tracked",
       "status": "produced",
       "created": "2026-09-28T10:00:14"
+    },
+    {
+      "post_id": "post_generative_20260929_095931",
+      "composition": "top-headline",
+      "photo": "ai-13",
+      "type": "playfair-italic-hero",
+      "frame": "corner-marks",
+      "facts": "diamond-row",
+      "cta": "outline",
+      "palette": "maroon",
+      "layout": "top-headline",
+      "type_treatment": "playfair-italic-hero",
+      "status": "produced",
+      "created": "2026-09-29T09:59:33"
     }
   ]
 }
