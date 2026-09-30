@@ -84,7 +84,7 @@
     },
     {
       "date": "2026-10-01",
-      "rule": "Logo colour: gold and its shades are the first preference (official, deep, light, rich, champagne). Use another colour (white or the piece's own palette colours) only when no gold shade passes the pixel legibility check on that background. Among passing golds, pick the most vivid one that reads comfortably. Owner, 2026-10-01.",
+      "rule": "Logo colour: gold and its shades are the first preference, and the gold must LOOK gold. Pale shades (champagne, light) read as cream/white and are not acceptable when a vivid gold (official, deep, rich) can work. If no vivid gold reads on the background, add a soft halo in the image's own darkened colour behind the logo until rich gold passes (weakest 10% >= 3:1). Only if that fails, use a pale gold, then white or palette colours. Owner, 2026-10-01.",
       "check": "best_logo_for_region"
     }
   ]

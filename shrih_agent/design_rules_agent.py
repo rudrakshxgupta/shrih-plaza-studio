@@ -146,17 +146,46 @@ def best_logo_for_region(background_region, palette: list[tuple[str, str]] | Non
         c = logo_colour(path)
         results[name]["saturation"] = round((max(c) - min(c)) / max(c), 2) if max(c) else 0
     passing = {n: r for n, r in results.items() if r["ok"]}
-    # Owner rule: gold and its shades come first; other colours only when no gold shade passes.
-    passing_gold = [n for n in passing if n in GOLD_FAMILY]
-    comfy_gold = [n for n in passing_gold if passing[n]["weakest_10pct"] >= 3.0]
-    if comfy_gold:          # a vivid gold that reads comfortably never looks washed out
-        best = max(comfy_gold, key=lambda n: passing[n]["saturation"])
-    elif passing_gold:      # any gold shade that passes still beats other colours
-        best = max(passing_gold, key=lambda n: passing[n]["weakest_10pct"])
-    else:                   # no gold works on this background: best other colour
-        pool = passing or results
-        best = max(pool, key=lambda n: pool[n]["score"])
+    # Owner rules: gold and its shades come first, and the gold must LOOK gold. Champagne and light gold
+    # are so pale they read as cream/white (owner, courtyard story), so only vivid golds count first.
+    vivid = [n for n in passing if n in GOLD_FAMILY and passing[n]["saturation"] >= 0.5]
+    comfy_vivid = [n for n in vivid if passing[n]["weakest_10pct"] >= 3.0]
+    if comfy_vivid:
+        best = max(comfy_vivid, key=lambda n: passing[n]["saturation"])
+    else:
+        # No vivid gold reads here: deepen the sky behind the logo with a soft halo in the image's own
+        # colour until rich gold reads, instead of settling for a pale shade.
+        halo = _halo_for_gold(background_region, candidates.get("rich"))
+        if halo:
+            return {"shade": "rich", "file": str(candidates["rich"]), "ok": True, "halo": halo, "all": results}
+        passing_gold = [n for n in passing if n in GOLD_FAMILY]
+        if passing_gold:
+            best = max(passing_gold, key=lambda n: passing[n]["weakest_10pct"])
+        else:
+            pool = passing or results
+            best = max(pool, key=lambda n: pool[n]["score"])
     return {"shade": best, "file": results[best]["file"], "ok": results[best]["ok"], "all": results}
+
+
+def _halo_for_gold(background_region, gold_path) -> dict[str, Any] | None:
+    """Smallest soft halo (the region's own colour, darkened) that lets a vivid gold logo read
+    comfortably. Returns the colour and centre opacity to use, or None if 0.7 is not enough."""
+    import numpy as np
+    from PIL import Image
+    if gold_path is None:
+        return None
+    base = np.asarray(background_region.convert("RGB")).astype(float)
+    colour = tuple(int(c * 0.3) for c in base.reshape(-1, 3).mean(axis=0))
+    for alpha in (0.1, 0.2, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7):
+        region = Image.fromarray((base * (1 - alpha) + np.array(colour) * alpha).astype(np.uint8))
+        r = logo_legibility(gold_path, region)
+        if r["ok"] and r["weakest_10pct"] >= 3.0:
+            centre = round(min(0.8, alpha + 0.1), 2)   # soft radial: centre a little stronger, edges fade
+            return {"colour": _hex(colour), "alpha": alpha,
+                    "css": f"radial-gradient(ellipse 50% 50% at 50% 50%, rgba{colour + (centre,)} 0%, "
+                           f"rgba{colour + (alpha,)} 50%, rgba{colour + (0,)} 100%)",
+                    "contrast": r}
+    return None
 
 
 def logo_size(logo_width: int, canvas_width: int) -> dict[str, Any]:
