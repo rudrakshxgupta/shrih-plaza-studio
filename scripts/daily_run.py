@@ -70,7 +70,7 @@ def main() -> int:
     folder.mkdir(parents=True, exist_ok=True)
     if design.get("png"):
         shutil.copyfile(design["png"], folder / "post.png")
-    caption = f"{content['hook']}\n\n{content['caption']}\n\nArtist's impression.\n\n{' '.join(content.get('hashtags', []))}\n"
+    caption = f"{content['hook']}\n\n{content['caption']}\n\n{' '.join(content.get('hashtags', []))}\n"
     (folder / "caption.txt").write_text(caption, encoding="utf-8")
     if os.getenv("GEMINI_API_KEY"):
         llm = "gemini"
