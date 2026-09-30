@@ -20,7 +20,7 @@ from shrih_agent.models import ContentDraft
 from shrih_agent.paths import ASSETS_DIR, MEMORY_DIR, OUTPUTS_DIR
 
 CANVAS = (1080, 1350)
-LOGO_PATH = ASSETS_DIR / "original" / "logo-transparent.png"
+LOGO_PATH = ASSETS_DIR / "original" / "logo-official.png"
 BRAND_LOGO_DIR = ASSETS_DIR / "original" / "brands"
 DEFAULT_SOURCE = ASSETS_DIR / "original" / "aerial-site-plan.jpg"
 TYPEKIT_CSS = "https://use.typekit.net/nho3gjv.css"
