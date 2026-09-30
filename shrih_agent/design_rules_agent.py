@@ -142,8 +142,17 @@ def best_logo_for_region(background_region, palette: list[tuple[str, str]] | Non
         r["score"] = round(min(r["weakest_10pct"], 6) * (0.6 + 0.4 * sat) + identity, 2)
         r["file"] = str(path)
         results[name] = r
-    passing = {n: r for n, r in results.items() if r["ok"]} or results
-    best = max(passing, key=lambda n: passing[n]["score"])
+    for name, path in candidates.items():
+        c = logo_colour(path)
+        results[name]["saturation"] = round((max(c) - min(c)) / max(c), 2) if max(c) else 0
+    passing = {n: r for n, r in results.items() if r["ok"]}
+    # 1) A vivid gold that reads comfortably (weakest parts >= 3:1) keeps the brand and never looks washed out.
+    comfy_gold = [n for n in passing if n in GOLD_FAMILY and passing[n]["weakest_10pct"] >= 3.0]
+    if comfy_gold:
+        best = max(comfy_gold, key=lambda n: passing[n]["saturation"])
+    else:
+        pool = passing or results
+        best = max(pool, key=lambda n: pool[n]["score"])
     return {"shade": best, "file": results[best]["file"], "ok": results[best]["ok"], "all": results}
 
 
