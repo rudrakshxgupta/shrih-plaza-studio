@@ -154,9 +154,20 @@ def text_clear_of_building(text_bands: list[tuple[int, int]], building_top: int,
     return {"ok": not clashes, "clashes": clashes, "safe_sky": (0, building_top), "safe_foreground": (building_bottom, None)}
 
 
+BANNED_DESIGN_TEXT = ["artist's impression", "artist&#39;s impression", "artists impression"]
+
+
+def banned_text(html_or_text: str) -> dict[str, Any]:
+    """Owner rule: some wording never goes on content (e.g. "Artist's impression")."""
+    low = html_or_text.lower()
+    found = [t for t in BANNED_DESIGN_TEXT if t in low]
+    return {"ok": not found, "found": found}
+
+
 def review(image: Path, canvas: tuple[int, int], logo_bg=None, logo_width: int | None = None,
            text_bands: list[tuple[int, int]] | None = None, building_bottom: int | None = None,
-           image_top: int = 0, image_height: int | None = None, pos_y: float = 0.5) -> dict[str, Any]:
+           image_top: int = 0, image_height: int | None = None, pos_y: float = 0.5,
+           design_text: str | None = None) -> dict[str, Any]:
     """Run every measurable owner rule on one design and return verdicts with fixes."""
     w, h = canvas
     report: dict[str, Any] = {"palette_from_image": palette_from_image(image)}
@@ -168,5 +179,7 @@ def review(image: Path, canvas: tuple[int, int], logo_bg=None, logo_width: int |
         report["logo_shade"] = pick_logo_shade(logo_bg)
     if logo_width:
         report["logo_size"] = logo_size(logo_width, w)
+    if design_text is not None:
+        report["banned_text"] = banned_text(design_text)
     report["ok"] = all(v.get("ok", True) for v in report.values() if isinstance(v, dict))
     return report

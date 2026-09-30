@@ -118,9 +118,10 @@ class VisualReviewerAgent:
         if not checks["correct_phone"]:
             issues.append("Owner-confirmed phone number is missing.")
 
-        checks["artists_impression_note"] = "artist's impression" in visible_text or "artist&#39;s impression" in visible_text
-        if not checks["artists_impression_note"]:
-            issues.append("Missing the \"Artist's impression\" note while construction is not finished.")
+        # Owner rule (2026-10-01): no "Artist's impression" text on content.
+        checks["no_artists_impression_text"] = "artist's impression" not in visible_text and "artist&#39;s impression" not in visible_text
+        if not checks["no_artists_impression_text"]:
+            issues.append("Remove the \"Artist's impression\" text; the owner does not want it on content.")
 
         checks["logo_present"] = any("logo" in a.lower() for a in alts)
         if not checks["logo_present"]:

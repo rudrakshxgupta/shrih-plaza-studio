@@ -288,7 +288,7 @@ class Poster:
         return y + 80
 
     def note(self, y=None, align="right", color="#AEB6D0"):
-        self.text(66, H - 52 if y is None else y, W - 132, "Artist's impression.", f"{P}font-weight:400;font-size:14px;line-height:18px;color:{color}", align)
+        return  # owner rule 2026-10-01: no "Artist's impression" text on content
 
     # ---------- compositions ----------
     def build(self) -> str:
