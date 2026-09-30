@@ -233,6 +233,19 @@ Owner direction (2026-09-30): the studio makes AI real-estate content, not poste
 
 Paid images are capped: 3 a day and 60 a month by default (`OPENAI_IMAGE_DAILY_LIMIT`, `OPENAI_IMAGE_MONTHLY_LIMIT`), counted in `memory/image_usage.json`. A call over the cap never reaches OpenAI.
 
+## Owner rules are enforced, not just remembered
+
+Every change the owner asks for in a review becomes a standing rule in `memory/owner_design_rules.json` (`python run_agent.py add-rule --rule "..."`). The copy agent reads all of them, and `shrih_agent/design_rules_agent.py` checks every design against the ones that can be measured and returns the fix, so the next design resolves them without being told again:
+
+- **Logo shade**: picks the shade of the official logo that stays crisp and reaches 3:1 contrast on the background (deep, rich, light or champagne).
+- **Logo size**: 36–54% of the canvas width; returns the width to use.
+- **Colours from the image**: samples the photo's sky, horizon and facade and returns the palette to build the post from.
+- **Building is the hero**: flags any text block over the building, using measured building positions in `assets/render_meta.json`.
+
+```
+python run_agent.py design-check --image assets/renders/ai-14.jpg --canvas 1080x1920 --logo-bg "#006491" --logo-width 580 --text "60-300,370-780,1560-1750" --image-top 260 --image-height 1660
+```
+
 ## Who does what: OpenAI or Claude
 
 | Work | Done by | Why |

@@ -1,0 +1,172 @@
+"""Design rules agent: checks a design against the owner's review rules and fixes what it can.
+
+Owner direction (2026-10-01): every change the owner asks for in a review is a standing
+rule, and the next design must resolve it automatically, not wait to be told again.
+The rules live in memory/owner_design_rules.json; each one that can be measured has a
+check here (the "check" field of the rule names it). Checks that can fix themselves
+return the fix (a logo shade, a palette, a safe text zone) instead of just complaining.
+
+    python run_agent.py design-check --image assets/renders/ai-14.jpg --canvas 1080x1350 \
+        --logo-bg "#006491" --logo-width 390 --text "30-190,204-460,1200-1300"
+"""
+
+from pathlib import Path
+from typing import Any
+
+from .paths import ASSETS_DIR, ROOT
+
+RENDER_META = ASSETS_DIR / "render_meta.json"
+
+LOGO_SHADES = {
+    "official": ASSETS_DIR / "original" / "logo-official.png",
+    "deep": ASSETS_DIR / "original" / "logo-official-deep.png",
+    "light": ASSETS_DIR / "original" / "logo-official-light.png",
+    "rich": ASSETS_DIR / "original" / "logo-official-rich.png",
+    "champagne": ASSETS_DIR / "original" / "logo-official-champagne.png",
+}
+MIN_LOGO_CONTRAST = 3.0
+LOGO_WIDTH_SHARE = (0.36, 0.54)   # of canvas width, owner rule 2026-10-01
+
+
+def _hex(rgb) -> str:
+    return "#%02X%02X%02X" % tuple(int(round(c)) for c in rgb)
+
+
+def _rgb(value) -> tuple[float, float, float]:
+    if isinstance(value, str):
+        v = value.lstrip("#")
+        return tuple(int(v[i:i + 2], 16) for i in (0, 2, 4))
+    return tuple(value)
+
+
+def luminance(rgb) -> float:
+    out = []
+    for c in _rgb(rgb):
+        c = c / 255.0
+        out.append(c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4)
+    return 0.2126 * out[0] + 0.7152 * out[1] + 0.0722 * out[2]
+
+
+def contrast(a, b) -> float:
+    la, lb = sorted([luminance(a), luminance(b)], reverse=True)
+    return round((la + 0.05) / (lb + 0.05), 2)
+
+
+def logo_colour(path: Path) -> tuple[float, float, float]:
+    from PIL import Image
+    im = Image.open(path).convert("RGBA")
+    px = [p[:3] for p in im.getdata() if p[3] > 200]
+    return tuple(sum(c) / len(px) for c in zip(*px))
+
+
+def pick_logo_shade(background) -> dict[str, Any]:
+    """Rule: the logo must not fade. Keep the official gold when it already reads (>= 3:1),
+    otherwise use the shade of the same logo with the best contrast on this background."""
+    colours = {name: logo_colour(path) for name, path in LOGO_SHADES.items() if path.exists()}
+    scores = {name: contrast(c, background) for name, c in colours.items()}
+    if scores.get("official", 0) >= MIN_LOGO_CONTRAST:
+        name = "official"
+    else:
+        # Owner review (Domino's reel): a pale shade that passes on contrast still looks washed out.
+        # Among the shades that pass, prefer the crisp, saturated one.
+        def saturation(c):
+            return (max(c) - min(c)) / max(c) if max(c) else 0
+        passing = [n for n in scores if scores[n] >= MIN_LOGO_CONTRAST] or list(scores)
+        name = max(passing, key=lambda n: scores[n] * (0.5 + saturation(colours[n])))
+    return {"shade": name, "file": str(LOGO_SHADES[name]), "contrast": scores[name], "all": scores,
+            "ok": scores[name] >= MIN_LOGO_CONTRAST}
+
+
+def logo_size(logo_width: int, canvas_width: int) -> dict[str, Any]:
+    lo, hi = LOGO_WIDTH_SHARE
+    share = logo_width / canvas_width
+    fix = None if lo <= share <= hi else round(canvas_width * (lo + hi) / 2)
+    return {"ok": fix is None, "share": round(share, 2), "fix_width": fix}
+
+
+def palette_from_image(path: Path) -> dict[str, str]:
+    """Rule: take the post's colours from its own image. Samples the sky from top to horizon
+    and the facade, and derives a dark text colour and a warm accent from them."""
+    from PIL import Image
+    im = Image.open(path).convert("RGB").resize((120, 120))
+    def band(y0, y1):
+        px = [im.getpixel((x, y)) for y in range(y0, y1) for x in range(120)]
+        return tuple(sum(c) / len(px) for c in zip(*px))
+    top, mid, horizon, facade = band(0, 8), band(20, 30), band(38, 46), band(60, 75)
+    dark = tuple(c * 0.35 for c in top)
+    warm = max((top, mid, horizon, facade), key=lambda c: c[0] - c[2])
+    return {"sky_top": _hex(top), "sky_mid": _hex(mid), "horizon": _hex(horizon), "facade": _hex(facade),
+            "text_dark": _hex(dark), "accent_warm": _hex(warm)}
+
+
+def roofline(path: Path, canvas_w: int, canvas_h: int, pos_y: float = 0.5, top: int = 0,
+             height: int | None = None) -> int:
+    """Where the building starts, in canvas px, for an image drawn with object-fit: cover.
+    Buildings are full of sharp vertical lines (columns, window frames); skies and clouds
+    are not. The first row band with dense vertical edges is taken as the roofline."""
+    from PIL import Image
+    im = Image.open(path).convert("L")
+    h = height or canvas_h
+    scale = max(canvas_w / im.width, h / im.height)
+    offset = (im.height * scale - h) * pos_y
+    small = im.resize((240, int(240 * im.height / im.width)))
+    W, H = small.size
+    px = small.load()
+    rows = []
+    for y in range(H):
+        strong = sum(1 for x in range(1, W - 1) if abs(px[x + 1, y] - px[x - 1, y]) > 28)
+        rows.append(strong / W)
+    smooth = [sum(rows[max(0, y - 2):y + 3]) / len(rows[max(0, y - 2):y + 3]) for y in range(H)]
+    for y in range(3, H):
+        if smooth[y] > 0.12:
+            return int(top + (y / H * im.height) * scale - offset)
+    return int(top + h * 0.35)
+
+
+def building_band(path: Path, canvas_w: int, canvas_h: int, pos_y: float = 0.5, top: int = 0,
+                  height: int | None = None) -> dict[str, Any]:
+    """Top and bottom of the building in canvas px. Uses the measured values in
+    assets/render_meta.json when the image is listed; otherwise estimates the roofline
+    from vertical edges and says so, so a person or Claude can measure and add it."""
+    import json
+    from PIL import Image
+    h = height or canvas_h
+    im = Image.open(path)
+    scale = max(canvas_w / im.width, h / im.height)
+    offset = (im.height * scale - h) * pos_y
+    meta = json.loads(RENDER_META.read_text(encoding="utf-8")).get("images", {}) if RENDER_META.exists() else {}
+    try:
+        key = Path(path).resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        key = Path(path).name
+    entry = meta.get(key) or next((v for k, v in meta.items() if Path(k).name == Path(path).name), None)
+    if entry:
+        to_canvas = lambda f: int(top + f * im.height * scale - offset)
+        return {"top": to_canvas(entry["building_top"]), "bottom": to_canvas(entry["building_bottom"]), "measured": True}
+    est = roofline(path, canvas_w, canvas_h, pos_y, top, height)
+    return {"top": est, "bottom": int(est + h * 0.3), "measured": False,
+            "note": "Estimated. Measure this image (Adobe sky mask) and add it to assets/render_meta.json."}
+
+
+def text_clear_of_building(text_bands: list[tuple[int, int]], building_top: int, building_bottom: int) -> dict[str, Any]:
+    """Rule: the building is the hero; no text block may overlap it."""
+    clashes = [b for b in text_bands if b[0] < building_bottom and b[1] > building_top]
+    return {"ok": not clashes, "clashes": clashes, "safe_sky": (0, building_top), "safe_foreground": (building_bottom, None)}
+
+
+def review(image: Path, canvas: tuple[int, int], logo_bg=None, logo_width: int | None = None,
+           text_bands: list[tuple[int, int]] | None = None, building_bottom: int | None = None,
+           image_top: int = 0, image_height: int | None = None, pos_y: float = 0.5) -> dict[str, Any]:
+    """Run every measurable owner rule on one design and return verdicts with fixes."""
+    w, h = canvas
+    report: dict[str, Any] = {"palette_from_image": palette_from_image(image)}
+    band = building_band(image, w, h, pos_y, image_top, image_height)
+    report["building"] = band
+    if text_bands:
+        report["text_off_building"] = text_clear_of_building(text_bands, band["top"], building_bottom or band["bottom"])
+    if logo_bg is not None:
+        report["logo_shade"] = pick_logo_shade(logo_bg)
+    if logo_width:
+        report["logo_size"] = logo_size(logo_width, w)
+    report["ok"] = all(v.get("ok", True) for v in report.values() if isinstance(v, dict))
+    return report

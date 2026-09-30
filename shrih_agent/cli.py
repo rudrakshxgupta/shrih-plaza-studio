@@ -44,6 +44,14 @@ def cmd_regenerate(args: argparse.Namespace) -> None:
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
+def cmd_design_check(args: argparse.Namespace) -> None:
+    from .design_rules_agent import review
+    w, h = (int(v) for v in args.canvas.lower().split("x"))
+    bands = [tuple(int(v) for v in b.split("-")) for b in args.text.split(",")] if args.text else None
+    print(json.dumps(review(Path(args.image), (w, h), args.logo_bg, args.logo_width, bands, args.building_bottom,
+                            args.image_top, args.image_height, args.pos_y), indent=2, ensure_ascii=False))
+
+
 def cmd_add_rule(args: argparse.Namespace) -> None:
     print(json.dumps({"rules_now": owner_decisions.add_design_rule(args.rule)}, indent=2, ensure_ascii=False))
 
@@ -174,6 +182,18 @@ def build_parser() -> argparse.ArgumentParser:
     decide.add_argument("--ban", help="A phrase that must never appear again")
     decide.add_argument("--post", help="Path to the post's report.json, to remember what was decided on")
     decide.set_defaults(func=cmd_decide)
+
+    check = sub.add_parser("design-check", help="Check a design against the owner's rules and get automatic fixes")
+    check.add_argument("--image", required=True)
+    check.add_argument("--canvas", default="1080x1350")
+    check.add_argument("--logo-bg", help="Colour behind the logo, e.g. #006491")
+    check.add_argument("--logo-width", type=int)
+    check.add_argument("--text", help="Text blocks as top-bottom px bands, e.g. 30-190,1200-1300")
+    check.add_argument("--building-bottom", type=int)
+    check.add_argument("--image-top", type=int, default=0)
+    check.add_argument("--image-height", type=int)
+    check.add_argument("--pos-y", type=float, default=0.5)
+    check.set_defaults(func=cmd_design_check)
 
     add_rule = sub.add_parser("add-rule", help="Save a standing owner rule that every future post must follow")
     add_rule.add_argument("--rule", required=True)

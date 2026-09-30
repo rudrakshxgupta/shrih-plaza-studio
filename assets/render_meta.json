@@ -1,0 +1,35 @@
+{
+  "note": "Where the building sits in each image, as fractions of the image height (0 = top). Measured with the Adobe sky mask or by eye in a Claude session. design_rules_agent uses these to keep text off the building; add a line for every new image.",
+  "images": {
+    "outputs/adobe/golden-plaza-4x5.png": {
+      "building_top": 0.527,
+      "building_bottom": 0.693,
+      "source": "Adobe expand of ai-06, measured 2026-10-01"
+    },
+    "outputs/adobe/blue-hour-front-4x5.png": {
+      "building_top": 0.567,
+      "building_bottom": 0.7,
+      "source": "Adobe edit of elevation-front-day, measured 2026-10-01"
+    },
+    "assets/renders/ai-13.jpg": {
+      "building_top": 0.318,
+      "building_bottom": 0.63,
+      "source": "Adobe sky mask, 2026-10-01"
+    },
+    "assets/renders/ai-05.jpg": {
+      "building_top": 0.36,
+      "building_bottom": 0.75,
+      "source": "measured by eye, 2026-10-01"
+    },
+    "assets/renders/ai-14.jpg": {
+      "building_top": 0.36,
+      "building_bottom": 0.75,
+      "source": "measured by eye, 2026-10-01"
+    },
+    "assets/renders/ai-06.jpg": {
+      "building_top": 0.28,
+      "building_bottom": 0.55,
+      "source": "measured by eye, 2026-10-01"
+    }
+  }
+}

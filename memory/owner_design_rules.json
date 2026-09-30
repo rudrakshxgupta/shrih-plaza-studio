@@ -1,9 +1,10 @@
 {
-  "note": "Standing owner rules from reviews. Every agent reads these (decisions.design_rules) before writing or designing. Add new ones with: python run_agent.py add-rule --rule \"...\"",
+  "note": "Standing owner rules from reviews. Every agent reads these before writing or designing, and every design is run through shrih_agent/design_rules_agent.py (python run_agent.py design-check ...), which applies the rules that carry a \"check\" automatically and returns the fix. When the owner gives a new rule: add it with run_agent.py add-rule, and if it can be measured, add a check to design_rules_agent.py and name it here.",
   "rules": [
     {
       "date": "2026-09-26",
-      "rule": "An approved design is a quality bar, never a template: every post is a completely new design, not the same layout with new text."
+      "rule": "An approved design is a quality bar, never a template: every post is a completely new design, not the same layout with new text.",
+      "check": "design_history.repeats"
     },
     {
       "date": "2026-09-30",
@@ -11,7 +12,8 @@
     },
     {
       "date": "2026-10-01",
-      "rule": "The building is the hero: headline and text go in the sky above it or in the foreground below it, never over the building, and no dark gradient may cover the facade."
+      "rule": "The building is the hero: headline and text go in the sky above it or in the foreground below it, never over the building, and no dark gradient may cover the facade.",
+      "check": "text_off_building"
     },
     {
       "date": "2026-10-01",
@@ -19,7 +21,8 @@
     },
     {
       "date": "2026-10-01",
-      "rule": "Use a different render each time (21 renders in assets/renders and assets/original) and do not stick to one colour scheme; vary palette and fonts per post."
+      "rule": "Use a different render each time (21 renders in assets/renders and assets/original) and do not stick to one colour scheme; vary palette and fonts per post.",
+      "check": "design_history.repeats"
     },
     {
       "date": "2026-10-01",
@@ -35,7 +38,8 @@
     },
     {
       "date": "2026-10-01",
-      "rule": "The Shrih Plaza logo must be big and prominent, never a small corner mark: the official wide lockup at about 36-54% of the canvas width (roughly 390-580 px on a 1080 px post or reel, 150-230 px tall). Owner asked twice for a bigger logo (2026-10-01)."
+      "rule": "The Shrih Plaza logo must be big and prominent, never a small corner mark: the official wide lockup at about 36-54% of the canvas width (roughly 390-580 px on a 1080 px post or reel, 150-230 px tall). Owner asked twice for a bigger logo (2026-10-01).",
+      "check": "logo_size"
     },
     {
       "date": "2026-10-01",
@@ -47,11 +51,13 @@
     },
     {
       "date": "2026-10-01",
-      "rule": "Take each post's colour theme from its own image: sample the photo's sky, light and facade colours and build the palette from them (e.g. sapphire sky + sunset gold + sandstone for a golden-hour render). Never lay an unrelated colour (like plum over a golden image) on a photo; it looks odd."
+      "rule": "Take each post's colour theme from its own image: sample the photo's sky, light and facade colours and build the palette from them (e.g. sapphire sky + sunset gold + sandstone for a golden-hour render). Never lay an unrelated colour (like plum over a golden image) on a photo; it looks odd.",
+      "check": "palette_from_image"
     },
     {
       "date": "2026-10-01",
-      "rule": "If the logo fades on a post's background, use a shade of it for that post only (same logo, same gradient): logo-official-deep.png on light/cream backgrounds, logo-official-rich.png (vivid warm gold) on saturated blue or brand-coloured backgrounds like Domino's blue, logo-official-light.png on dark navy or green, logo-official-champagne.png on bright blue skies. Aim for at least 3:1 contrast and a crisp, not washed-out, look."
+      "rule": "If the logo fades on a post's background, use a shade of it for that post only (same logo, same gradient): logo-official-deep.png on light/cream backgrounds, logo-official-rich.png (vivid warm gold) on saturated blue or brand-coloured backgrounds like Domino's blue, logo-official-light.png on dark navy or green, logo-official-champagne.png on bright blue skies. Aim for at least 3:1 contrast and a crisp, not washed-out, look.",
+      "check": "logo_shade"
     }
   ]
 }
