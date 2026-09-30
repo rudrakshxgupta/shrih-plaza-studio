@@ -238,6 +238,7 @@ Paid images are capped: 3 a day and 60 a month by default (`OPENAI_IMAGE_DAILY_L
 Every change the owner asks for in a review becomes a standing rule in `memory/owner_design_rules.json` (`python run_agent.py add-rule --rule "..."`). The copy agent reads all of them, and `shrih_agent/design_rules_agent.py` checks every design against the ones that can be measured and returns the fix, so the next design resolves them without being told again:
 
 - **Logo shade**: picks the shade of the official logo that stays crisp and reaches 3:1 contrast on the background (deep, rich, light or champagne).
+- **Logo legibility**: compares every logo pixel with the real background behind it, so thin letters over a busy sky are caught (median 3:1, weakest 10% at least 2.5:1), and switches to the shade that passes.
 - **Logo size**: 36–54% of the canvas width; returns the width to use.
 - **Colours from the image**: samples the photo's sky, horizon and facade and returns the palette to build the post from.
 - **Building is the hero**: flags any text block over the building, using measured building positions in `assets/render_meta.json`.

@@ -77,6 +77,43 @@ def pick_logo_shade(background) -> dict[str, Any]:
             "ok": scores[name] >= MIN_LOGO_CONTRAST}
 
 
+def logo_legibility(logo_path: Path, background_region) -> dict[str, Any]:
+    """Owner rule: the logo's text must be clearly readable. Compares every logo pixel with the
+    exact background pixel behind it (not an average), so thin letters over a busy sky are caught.
+    background_region: a PIL image the size the logo is drawn at, showing what sits behind it."""
+    import numpy as np
+    from PIL import Image
+    bg = background_region.convert("RGB")
+    logo = Image.open(logo_path).convert("RGBA").resize(bg.size, Image.LANCZOS)
+    a = np.asarray(logo).astype(float)
+    b = np.asarray(bg).astype(float)
+    mask = a[..., 3] > 160
+    def lum(x):
+        x = x / 255.0
+        x = np.where(x <= 0.03928, x / 12.92, ((x + 0.055) / 1.055) ** 2.4)
+        return 0.2126 * x[..., 0] + 0.7152 * x[..., 1] + 0.0722 * x[..., 2]
+    la, lb = lum(a[..., :3][mask]), lum(b[mask])
+    ratio = (np.maximum(la, lb) + 0.05) / (np.minimum(la, lb) + 0.05)
+    p10, median = float(np.percentile(ratio, 10)), float(np.median(ratio))
+    return {"ok": median >= MIN_LOGO_CONTRAST and p10 >= 2.5, "median": round(median, 2), "weakest_10pct": round(p10, 2)}
+
+
+def best_logo_for_region(background_region) -> dict[str, Any]:
+    """Tries every shade of the official logo on the real background and keeps the most
+    legible crisp one (saturation breaks ties, per the owner's 'not washed out' review)."""
+    results = {}
+    for name, path in LOGO_SHADES.items():
+        if path.exists():
+            r = logo_legibility(path, background_region)
+            c = logo_colour(path)
+            sat = (max(c) - min(c)) / max(c) if max(c) else 0
+            r["score"] = round(r["weakest_10pct"] * (0.6 + 0.4 * sat) + r["median"] * 0.25, 2)
+            results[name] = r
+    passing = {n: r for n, r in results.items() if r["ok"]} or results
+    best = max(passing, key=lambda n: passing[n]["score"])
+    return {"shade": best, "file": str(LOGO_SHADES[best]), "ok": results[best]["ok"], "all": results}
+
+
 def logo_size(logo_width: int, canvas_width: int) -> dict[str, Any]:
     lo, hi = LOGO_WIDTH_SHARE
     share = logo_width / canvas_width
