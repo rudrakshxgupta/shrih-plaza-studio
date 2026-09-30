@@ -98,11 +98,33 @@ def import_decisions(items: list[dict[str, Any]]) -> int:
     return changed
 
 
+DESIGN_RULES_PATH = MEMORY_DIR / "owner_design_rules.json"
+
+
+def design_rules() -> list[str]:
+    """Standing rules the owner gave in reviews (canvas comments, chat). Never expire."""
+    if not DESIGN_RULES_PATH.exists():
+        return []
+    return [r["rule"] for r in read_json(DESIGN_RULES_PATH).get("rules", [])]
+
+
+def add_design_rule(rule: str) -> list[str]:
+    rule = rule.strip()
+    if len(rule) < 5:
+        raise ValueError("A rule needs at least 5 characters.")
+    data = read_json(DESIGN_RULES_PATH) if DESIGN_RULES_PATH.exists() else {"rules": []}
+    if rule.lower() not in (r["rule"].lower() for r in data["rules"]):
+        data["rules"].append({"date": datetime.now().date().isoformat(), "rule": rule})
+        write_json(DESIGN_RULES_PATH, data)
+    return design_rules()
+
+
 def lessons(limit: int = 12) -> list[str]:
-    """Plain-language rules from the newest denials, for the strategist prompt."""
+    """Standing owner rules first, then plain-language rules from the newest denials, for the strategist prompt."""
     denied = [d for d in load_decisions() if d["decision"] == "denied"]
     denied.sort(key=lambda d: d.get("created", ""), reverse=True)
-    return [f"The owner denied a {d['category']} on a past post: {d['reason']}" for d in denied[:limit]]
+    rules = [f"Owner rule: {r}" for r in design_rules()]
+    return rules + [f"The owner denied a {d['category']} on a past post: {d['reason']}" for d in denied[:limit]]
 
 
 def approved_examples(limit: int = 3) -> list[str]:

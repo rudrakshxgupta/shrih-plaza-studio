@@ -44,6 +44,10 @@ def cmd_regenerate(args: argparse.Namespace) -> None:
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
+def cmd_add_rule(args: argparse.Namespace) -> None:
+    print(json.dumps({"rules_now": owner_decisions.add_design_rule(args.rule)}, indent=2, ensure_ascii=False))
+
+
 def cmd_decide(args: argparse.Namespace) -> None:
     context = {}
     if args.post:
@@ -170,6 +174,10 @@ def build_parser() -> argparse.ArgumentParser:
     decide.add_argument("--ban", help="A phrase that must never appear again")
     decide.add_argument("--post", help="Path to the post's report.json, to remember what was decided on")
     decide.set_defaults(func=cmd_decide)
+
+    add_rule = sub.add_parser("add-rule", help="Save a standing owner rule that every future post must follow")
+    add_rule.add_argument("--rule", required=True)
+    add_rule.set_defaults(func=cmd_add_rule)
 
     imp = sub.add_parser("import-decisions", help="Merge decisions exported from the web review page")
     imp.add_argument("--file", required=True)

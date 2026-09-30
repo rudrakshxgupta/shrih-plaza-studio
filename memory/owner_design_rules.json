@@ -1,0 +1,37 @@
+{
+  "note": "Standing owner rules from reviews. Every agent reads these (decisions.design_rules) before writing or designing. Add new ones with: python run_agent.py add-rule --rule \"...\"",
+  "rules": [
+    {
+      "date": "2026-09-26",
+      "rule": "An approved design is a quality bar, never a template: every post is a completely new design, not the same layout with new text."
+    },
+    {
+      "date": "2026-09-30",
+      "rule": "We make real-estate content that preserves the real building; the building's architecture must never change."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "The building is the hero: headline and text go in the sky above it or in the foreground below it, never over the building, and no dark gradient may cover the facade."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Do not repeat the same elements between posts (same fact boxes, same split gold/navy call-to-action bar); give each post its own call-to-action treatment."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Use a different render each time (21 renders in assets/renders and assets/original) and do not stick to one colour scheme; vary palette and fonts per post."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "For a brand announcement the brand comes first: its logo or name leads, then 'is coming to Shrih Plaza' (e.g. Domino's first, then 'is coming to', then Shrih Plaza)."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Use the real gold Shrih Plaza logo and only the 12 approved brands; never the older posts' extra brands or old phone numbers. Phone: +91 90564 53575."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Workflow: images are made in Adobe (Generative Expand plus sky/lighting grades on the real renders), laid out in Claude Design, and finished in Adobe Express Pro; posts can also be turned into animated reels."
+    }
+  ]
+}
