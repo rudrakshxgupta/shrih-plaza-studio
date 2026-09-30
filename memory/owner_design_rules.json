@@ -77,6 +77,10 @@
     {
       "date": "2026-10-01",
       "rule": "Concepts the owner rejected as not up to mark (2026-10-01): the vintage tilted postcard with stamp and postmark, and plain full-bleed photo + headline layouts. The strong ideas are the ones where the building itself carries the concept (masthead behind the roofline; the same building split day/night). Build every new concept around the building, never around decoration."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Choose the hero image carefully: prefer renders with strong perspective, a big building and a dramatic sky (e.g. the ai-04 sunset corner view). Do not use the flat frontal daytime elevation for a hero post (owner: 'wrong choice of image'). A day/night split only works when the two halves are clearly different."
     }
   ]
 }

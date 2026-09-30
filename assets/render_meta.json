@@ -30,6 +30,11 @@
       "building_top": 0.28,
       "building_bottom": 0.55,
       "source": "measured by eye, 2026-10-01"
+    },
+    "outputs/adobe/corner-dusk-4x5.png": {
+      "building_top": 0.45,
+      "building_bottom": 0.74,
+      "source": "Adobe expand of ai-04, measured by eye 2026-10-01"
     }
   }
 }
