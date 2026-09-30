@@ -73,6 +73,10 @@
       "date": "2026-10-01",
       "rule": "Logos and brand marks must be sharp, never blurry: the file must have at least 1.5x the pixels it is displayed at. If only a small file exists, rebuild it cleanly in the brand's flat colours at high resolution (see assets/original/brands/dominos-reversed.png, 1418 px) or use a vector, never stretch a small image.",
       "check": "image_sharpness"
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Concepts the owner rejected as not up to mark (2026-10-01): the vintage tilted postcard with stamp and postmark, and plain full-bleed photo + headline layouts. The strong ideas are the ones where the building itself carries the concept (masthead behind the roofline; the same building split day/night). Build every new concept around the building, never around decoration."
     }
   ]
 }
