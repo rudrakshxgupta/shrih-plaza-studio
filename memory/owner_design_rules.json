@@ -68,6 +68,11 @@
       "date": "2026-10-01",
       "rule": "The logo's text (the 'Plaza' letters and the Shri mark) must be clearly readable on its real background, pixel by pixel, not just on average: median contrast at least 3:1 and the weakest 10% of logo pixels at least 2.5:1. If it fails, switch to the shade of the logo that passes (design_rules_agent.best_logo_for_region).",
       "check": "logo_legibility"
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Logos and brand marks must be sharp, never blurry: the file must have at least 1.5x the pixels it is displayed at. If only a small file exists, rebuild it cleanly in the brand's flat colours at high resolution (see assets/original/brands/dominos-reversed.png, 1418 px) or use a vector, never stretch a small image.",
+      "check": "image_sharpness"
     }
   ]
 }

@@ -239,6 +239,7 @@ Every change the owner asks for in a review becomes a standing rule in `memory/o
 
 - **Logo shade**: picks the shade of the official logo that stays crisp and reaches 3:1 contrast on the background (deep, rich, light or champagne).
 - **Logo legibility**: compares every logo pixel with the real background behind it, so thin letters over a busy sky are caught (median 3:1, weakest 10% at least 2.5:1), and switches to the shade that passes.
+- **Sharp logos**: a logo file needs at least 1.5× the pixels it is shown at; small files are rebuilt in flat brand colours at high resolution instead of being stretched.
 - **Logo size**: 36–54% of the canvas width; returns the width to use.
 - **Colours from the image**: samples the photo's sky, horizon and facade and returns the palette to build the post from.
 - **Building is the hero**: flags any text block over the building, using measured building positions in `assets/render_meta.json`.

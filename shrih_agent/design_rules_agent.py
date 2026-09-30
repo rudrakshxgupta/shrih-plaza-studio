@@ -114,6 +114,19 @@ def best_logo_for_region(background_region) -> dict[str, Any]:
     return {"shade": best, "file": str(LOGO_SHADES[best]), "ok": results[best]["ok"], "all": results}
 
 
+def image_sharpness(asset_path: Path, display_width: int) -> dict[str, Any]:
+    """Owner rule: logos and brand marks must never look blurry. The source file needs at least
+    1.5x the pixels it is shown at (phones have dense screens), measured on its visible content."""
+    from PIL import Image
+    im = Image.open(asset_path).convert("RGBA")
+    box = im.getchannel("A").point(lambda v: 255 if v > 10 else 0).getbbox() or (0, 0, im.width, im.height)
+    content_w = box[2] - box[0]
+    ratio = content_w / display_width
+    return {"ok": ratio >= 1.5, "source_px": content_w, "display_px": display_width, "ratio": round(ratio, 2),
+            "fix": None if ratio >= 1.5 else "Rebuild the logo at high resolution in flat brand colours "
+                                             "(8x upscale, smooth, snap to brand colours, downsample) or get a vector file."}
+
+
 def logo_size(logo_width: int, canvas_width: int) -> dict[str, Any]:
     lo, hi = LOGO_WIDTH_SHARE
     share = logo_width / canvas_width
