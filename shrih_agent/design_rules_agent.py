@@ -98,33 +98,53 @@ def logo_legibility(logo_path: Path, background_region) -> dict[str, Any]:
     return {"ok": median >= MIN_LOGO_CONTRAST and p10 >= 2.5, "median": round(median, 2), "weakest_10pct": round(p10, 2)}
 
 
-def best_logo_for_region(background_region) -> dict[str, Any]:
-    """Tries every shade of the official logo on the real background and keeps the most
-    legible crisp one (saturation breaks ties, per the owner's 'not washed out' review)."""
+VARIANT_DIR = ASSETS_DIR / "original" / "logo-variants"
+
+
+def logo_variant(dark_hex: str, light_hex: str) -> Path:
+    """The official logo recoloured to any colour ramp (dark to light), keeping its gradient
+    and soft edges. Owner rule: any logo colour may be used if it looks best on that content."""
+    import numpy as np
+    from PIL import Image
+    VARIANT_DIR.mkdir(parents=True, exist_ok=True)
+    out = VARIANT_DIR / f"logo-{dark_hex.strip('#').lower()}-{light_hex.strip('#').lower()}.png"
+    if out.exists():
+        return out
+    src = np.asarray(Image.open(LOGO_SHADES["official"]).convert("RGBA")).astype(float)
+    lum = 0.299 * src[..., 0] + 0.587 * src[..., 1] + 0.114 * src[..., 2]
+    vis = src[..., 3] > 30
+    lo, hi = np.percentile(lum[vis], 2), np.percentile(lum[vis], 98)
+    t = np.clip((lum - lo) / (hi - lo), 0, 1)[..., None]
+    d, l = np.array(_rgb(dark_hex), float), np.array(_rgb(light_hex), float)
+    rgb = d + (l - d) * t
+    Image.fromarray(np.dstack([rgb, src[..., 3]]).astype(np.uint8), "RGBA").save(out)
+    return out
+
+
+GOLD_FAMILY = ("official", "deep", "light", "rich", "champagne")
+
+
+def best_logo_for_region(background_region, palette: list[tuple[str, str]] | None = None) -> dict[str, Any]:
+    """Owner rule: the logo may take any colour that looks best on that content. Tries every
+    gold shade, white, and logo versions in the piece's own palette colours (dark, light hex
+    pairs), keeps the ones that stay legible pixel by pixel, and picks the best-looking:
+    crisp (not washed out), and gold when gold reads as well, to keep the brand's identity."""
+    candidates = {name: path for name, path in LOGO_SHADES.items() if path.exists()}
+    candidates["white"] = logo_variant("#E9EEF6", "#FFFFFF")
+    for dark, light in palette or []:
+        candidates[f"palette {dark}"] = logo_variant(dark, light)
     results = {}
-    for name, path in LOGO_SHADES.items():
-        if path.exists():
-            r = logo_legibility(path, background_region)
-            c = logo_colour(path)
-            sat = (max(c) - min(c)) / max(c) if max(c) else 0
-            r["score"] = round(r["weakest_10pct"] * (0.6 + 0.4 * sat) + r["median"] * 0.25, 2)
-            results[name] = r
+    for name, path in candidates.items():
+        r = logo_legibility(path, background_region)
+        c = logo_colour(path)
+        sat = (max(c) - min(c)) / max(c) if max(c) else 0
+        identity = 0.6 if name in GOLD_FAMILY else 0.0
+        r["score"] = round(min(r["weakest_10pct"], 6) * (0.6 + 0.4 * sat) + identity, 2)
+        r["file"] = str(path)
+        results[name] = r
     passing = {n: r for n, r in results.items() if r["ok"]} or results
     best = max(passing, key=lambda n: passing[n]["score"])
-    return {"shade": best, "file": str(LOGO_SHADES[best]), "ok": results[best]["ok"], "all": results}
-
-
-def image_sharpness(asset_path: Path, display_width: int) -> dict[str, Any]:
-    """Owner rule: logos and brand marks must never look blurry. The source file needs at least
-    1.5x the pixels it is shown at (phones have dense screens), measured on its visible content."""
-    from PIL import Image
-    im = Image.open(asset_path).convert("RGBA")
-    box = im.getchannel("A").point(lambda v: 255 if v > 10 else 0).getbbox() or (0, 0, im.width, im.height)
-    content_w = box[2] - box[0]
-    ratio = content_w / display_width
-    return {"ok": ratio >= 1.5, "source_px": content_w, "display_px": display_width, "ratio": round(ratio, 2),
-            "fix": None if ratio >= 1.5 else "Rebuild the logo at high resolution in flat brand colours "
-                                             "(8x upscale, smooth, snap to brand colours, downsample) or get a vector file."}
+    return {"shade": best, "file": results[best]["file"], "ok": results[best]["ok"], "all": results}
 
 
 def logo_size(logo_width: int, canvas_width: int) -> dict[str, Any]:

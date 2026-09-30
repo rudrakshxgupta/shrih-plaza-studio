@@ -81,6 +81,11 @@
     {
       "date": "2026-10-01",
       "rule": "Choose the hero image carefully: prefer renders with strong perspective, a big building and a dramatic sky (e.g. the ai-04 sunset corner view). Do not use the flat frontal daytime elevation for a hero post (owner: 'wrong choice of image'). A day/night split only works when the two halves are clearly different."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "The logo may be any colour that looks best on that piece, not only gold: try the gold shades, white and the piece's own palette colours (logo_variant), keep only colours that pass the pixel legibility check, then pick the crisp one that suits the image. Prefer a gold shade when it reads as well, to keep the brand identity.",
+      "check": "best_logo_for_region"
     }
   ]
 }
