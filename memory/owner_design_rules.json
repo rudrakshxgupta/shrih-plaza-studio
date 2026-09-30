@@ -51,7 +51,7 @@
     },
     {
       "date": "2026-10-01",
-      "rule": "If the logo fades on a post's background, use a shade of it for that post only (same logo, same gradient): logo-official-deep.png on light/cream backgrounds, logo-official-light.png on dark or brand-coloured ones, logo-official-champagne.png on bright blue skies. Aim for at least 3:1 contrast against what is behind it."
+      "rule": "If the logo fades on a post's background, use a shade of it for that post only (same logo, same gradient): logo-official-deep.png on light/cream backgrounds, logo-official-rich.png (vivid warm gold) on saturated blue or brand-coloured backgrounds like Domino's blue, logo-official-light.png on dark navy or green, logo-official-champagne.png on bright blue skies. Aim for at least 3:1 contrast and a crisp, not washed-out, look."
     }
   ]
 }
