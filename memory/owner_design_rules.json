@@ -86,6 +86,10 @@
       "date": "2026-10-01",
       "rule": "Logo colour: gold and its shades are the first preference, and the gold must LOOK gold. Pale shades (champagne, light) read as cream/white and are not acceptable when a vivid gold (official, deep, rich) can work. If no vivid gold reads on the background, add a soft halo in the image's own darkened colour behind the logo until rich gold passes (weakest 10% >= 3:1). Only if that fails, use a pale gold, then white or palette colours. Owner, 2026-10-01.",
       "check": "best_logo_for_region"
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Keep the sky behind text calm: if the top of an image is busy with clouds (often after Adobe Generative Expand), smooth the upper sky into a clean gradient in the image's own colours, fading back to the real sky well above the roofline. Never touch the building. (Owner, sunset feed, 2026-10-01)"
     }
   ]
 }
