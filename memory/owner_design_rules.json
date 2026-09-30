@@ -32,6 +32,10 @@
     {
       "date": "2026-10-01",
       "rule": "Workflow: images are made in Adobe (Generative Expand plus sky/lighting grades on the real renders), laid out in Claude Design, and finished in Adobe Express Pro; posts can also be turned into animated reels."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "The Shrih Plaza logo must be prominent: about 16-23% of the canvas width (roughly 170-250 px on a 1080 px post or reel), never a small corner mark."
     }
   ]
 }
