@@ -40,6 +40,11 @@
       "building_top": 0.45,
       "building_bottom": 0.74,
       "source": "corner-dusk with the top sky calmed, 2026-10-01"
+    },
+    "outputs/adobe/pylon-sunset-story-calm.png": {
+      "building_top": 0.36,
+      "building_bottom": 0.84,
+      "source": "Adobe expand of ai-07; top = pylon sign, measured 2026-10-01"
     }
   }
 }
