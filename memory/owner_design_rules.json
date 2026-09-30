@@ -36,6 +36,10 @@
     {
       "date": "2026-10-01",
       "rule": "The Shrih Plaza logo must be prominent: about 16-23% of the canvas width (roughly 170-250 px on a 1080 px post or reel), never a small corner mark."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Place brand logos cut out, without their white background box; on dark or brand-coloured backgrounds use a reversed version (white wordmark, e.g. assets/original/brands/dominos-reversed.png) with a soft white edge so the logo reads clearly."
     }
   ]
 }
