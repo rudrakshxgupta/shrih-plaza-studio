@@ -168,7 +168,7 @@ def best_logo_for_region(background_region, palette: list[tuple[str, str]] | Non
 
 
 def _halo_for_gold(background_region, gold_path) -> dict[str, Any] | None:
-    """Smallest soft halo (the region's own colour, darkened) that lets a vivid gold logo read
+    """Smallest sky deepening (the region's own colour, darkened, full width) that lets a vivid gold logo read
     comfortably. Returns the colour and centre opacity to use, or None if 0.7 is not enough."""
     import numpy as np
     from PIL import Image
@@ -180,10 +180,13 @@ def _halo_for_gold(background_region, gold_path) -> dict[str, Any] | None:
         region = Image.fromarray((base * (1 - alpha) + np.array(colour) * alpha).astype(np.uint8))
         r = logo_legibility(gold_path, region)
         if r["ok"] and r["weakest_10pct"] >= 3.0:
-            centre = round(min(0.8, alpha + 0.1), 2)   # soft radial: centre a little stronger, edges fade
+            # Owner review (Dusk Issue carousel): an oval halo reads as a separate patch. Deepen the sky
+            # edge to edge instead, strongest at the top and fading out below the logo, like a real dusk sky.
+            top = round(min(0.8, alpha + 0.15), 2)
             return {"colour": _hex(colour), "alpha": alpha,
-                    "css": f"radial-gradient(ellipse 50% 50% at 50% 50%, rgba{colour + (centre,)} 0%, "
-                           f"rgba{colour + (alpha,)} 50%, rgba{colour + (0,)} 100%)",
+                    "css": f"linear-gradient(180deg, rgba{colour + (top,)} 0%, rgba{colour + (alpha,)} 50%, "
+                           f"rgba{colour + (round(alpha / 2, 2),)} 75%, rgba{colour + (0,)} 100%)",
+                    "placement": "full width, from the top edge to about 1.5x the logo's bottom",
                     "contrast": r}
     return None
 
