@@ -179,7 +179,7 @@ def _run(run_id: str) -> None:
     png = folder / "post.png"
     if made.get("png"):
         shutil.copyfile(made["png"], png)
-    caption = f"{draft.hook}\n\n{draft.caption}\n\nArtist's impression.\n\n{' '.join(draft.hashtags)}\n"
+    caption = f"{draft.hook}\n\n{draft.caption}\n\n{' '.join(draft.hashtags)}\n"
     (folder / "caption.txt").write_text(caption, encoding="utf-8")
 
     building_ok = made.get("status") == "ok"
