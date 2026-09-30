@@ -146,11 +146,14 @@ def best_logo_for_region(background_region, palette: list[tuple[str, str]] | Non
         c = logo_colour(path)
         results[name]["saturation"] = round((max(c) - min(c)) / max(c), 2) if max(c) else 0
     passing = {n: r for n, r in results.items() if r["ok"]}
-    # 1) A vivid gold that reads comfortably (weakest parts >= 3:1) keeps the brand and never looks washed out.
-    comfy_gold = [n for n in passing if n in GOLD_FAMILY and passing[n]["weakest_10pct"] >= 3.0]
-    if comfy_gold:
+    # Owner rule: gold and its shades come first; other colours only when no gold shade passes.
+    passing_gold = [n for n in passing if n in GOLD_FAMILY]
+    comfy_gold = [n for n in passing_gold if passing[n]["weakest_10pct"] >= 3.0]
+    if comfy_gold:          # a vivid gold that reads comfortably never looks washed out
         best = max(comfy_gold, key=lambda n: passing[n]["saturation"])
-    else:
+    elif passing_gold:      # any gold shade that passes still beats other colours
+        best = max(passing_gold, key=lambda n: passing[n]["weakest_10pct"])
+    else:                   # no gold works on this background: best other colour
         pool = passing or results
         best = max(pool, key=lambda n: pool[n]["score"])
     return {"shade": best, "file": results[best]["file"], "ok": results[best]["ok"], "all": results}

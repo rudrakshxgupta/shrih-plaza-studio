@@ -84,7 +84,7 @@
     },
     {
       "date": "2026-10-01",
-      "rule": "The logo may be any colour that looks best on that piece, not only gold: try the gold shades, white and the piece's own palette colours (logo_variant), keep only colours that pass the pixel legibility check, then pick the crisp one that suits the image. Prefer a gold shade when it reads as well, to keep the brand identity.",
+      "rule": "Logo colour: gold and its shades are the first preference (official, deep, light, rich, champagne). Use another colour (white or the piece's own palette colours) only when no gold shade passes the pixel legibility check on that background. Among passing golds, pick the most vivid one that reads comfortably. Owner, 2026-10-01.",
       "check": "best_logo_for_region"
     }
   ]
