@@ -27,6 +27,9 @@ FORBIDDEN_PATTERNS = [
     r"\b100% returns?\b",
     r"\bguaranteed profits?\b",
     r"\bdouble your money\b",
+    # owner (2026-10-02): brands are "opening soon", never "coming" / "coming soon"
+    r"\bcoming soon\b",
+    r"\b(is|are) coming\b",
 ]
 
 STRATEGY_PATH = Path(__file__).resolve().parents[1] / "brand-kit" / "content-strategy.md"

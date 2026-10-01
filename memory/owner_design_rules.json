@@ -118,6 +118,10 @@
     {
       "date": "2026-10-01",
       "rule": "Puzzle grid: every 9 posts/reels form one big 3x3 picture on the profile (one Shrih Plaza render, logo in row 1, building in row 2, CTA in row 3). Each tile opens the real content: posts are carousels (slide 1 = grid piece, slide 2 = design), reels use the grid piece as cover. Slice 4:5 pieces at 1012 px visible width plus 34 px hidden edges for the 3:4 grid crop."
+    },
+    {
+      "date": "2026-10-02",
+      "rule": "Never say a brand is 'coming' or 'coming soon'. Always say 'opening soon' (e.g. 'Domino's · opening soon at Shrih Plaza'). Checked by banned_text and the legal agent."
     }
   ]
 }

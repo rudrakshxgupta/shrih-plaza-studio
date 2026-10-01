@@ -291,7 +291,9 @@ def text_clear_of_building(text_bands: list[tuple[int, int]], building_top: int,
     return {"ok": not clashes, "clashes": clashes, "safe_sky": (0, building_top), "safe_foreground": (building_bottom, None)}
 
 
-BANNED_DESIGN_TEXT = ["artist's impression", "artist&#39;s impression", "artists impression"]
+BANNED_DESIGN_TEXT = ["artist's impression", "artist&#39;s impression", "artists impression",
+                      # owner (2026-10-02): a brand is never "coming", it is "opening soon"
+                      "coming soon", "is coming", "are coming", "coming to shrih"]
 
 
 def banned_text(html_or_text: str) -> dict[str, Any]:
