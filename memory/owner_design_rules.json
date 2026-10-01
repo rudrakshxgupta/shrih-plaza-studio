@@ -94,6 +94,10 @@
     {
       "date": "2026-10-01",
       "rule": "Every post follows the owner's content strategy (brand-kit/content-strategy.md): BRAND -> LOCATION -> COMMERCIAL ACTIVITY -> SHOP OWNERSHIP -> ENQUIRY. The brand or visual is only the hook; the design and caption must end on owning a commercial space at Shrih Plaza and an enquiry, never on visiting or enjoying a brand."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Stories and reels: keep the call-to-action and phone number above Instagram's bottom reply bar (at least 230 px from the bottom of a 1920 px canvas) and away from the top 150 px, and when the photo changes, rebuild the whole piece's palette (panels too) from the new image."
     }
   ]
 }
