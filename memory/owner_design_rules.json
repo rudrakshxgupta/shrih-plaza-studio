@@ -122,6 +122,10 @@
     {
       "date": "2026-10-02",
       "rule": "Never say a brand is 'coming' or 'coming soon'. Always say 'opening soon' (e.g. 'Domino's · opening soon at Shrih Plaza'). Checked by banned_text and the legal agent."
+    },
+    {
+      "date": "2026-10-02",
+      "rule": "Brand-logo posts: no rectangles or grid tiles. Logos float free at natural sizes in a staggered collage on organic shapes (waves, curves, circles, speech bubbles) with a small association label, as in the owner's earlier 'In Associations' posts."
     }
   ]
 }
