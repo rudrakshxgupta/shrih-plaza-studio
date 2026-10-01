@@ -236,6 +236,9 @@ class FactCheckerAgent:
         if "parking" in lowered:
             return "parking" in approved_text
         signed_brands = [brand.lower() for brand in project.get("signed_brand_associations", [])]
+        count = re.search(r"\b(\d+)\s+(?:signed\s+)?brands?\b", lowered)
+        if count and signed_brands:
+            return int(count.group(1)) == len(signed_brands)
         return any(brand in lowered for brand in signed_brands)
 
 

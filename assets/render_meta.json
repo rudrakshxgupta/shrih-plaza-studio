@@ -50,6 +50,11 @@
       "building_top": 0.47,
       "building_bottom": 0.8,
       "source": "Adobe expand of ai-09, top = pylon sign, measured 2026-10-01"
+    },
+    "outputs/adobe/search-wide-calm-4x5.png": {
+      "building_top": 0.5,
+      "building_bottom": 0.8,
+      "source": "Adobe expand of ai-01, measured 2026-10-01"
     }
   }
 }
