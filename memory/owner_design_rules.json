@@ -126,6 +126,10 @@
     {
       "date": "2026-10-02",
       "rule": "Brand-logo posts: no rectangles or grid tiles. Logos float free at natural sizes in a staggered collage on organic shapes (waves, curves, circles, speech bubbles) with a small association label, as in the owner's earlier 'In Associations' posts."
+    },
+    {
+      "date": "2026-10-02",
+      "rule": "The phone number is always set in a clean sans-serif (weight 600-700, lining numerals), never a decorative serif like Cormorant. Check: phone_font."
     }
   ]
 }

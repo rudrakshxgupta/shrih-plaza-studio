@@ -315,6 +315,21 @@ def all_brand_logos(design_text: str, brand_logos: list[str] | None) -> dict[str
             "fix": None if shown >= 12 else "show all 12 brand logos, or drop the 12-brands wording"}
 
 
+PHONE = "+91 90564 53575"
+
+
+def phone_font(html: str) -> dict[str, Any]:
+    """Owner rule (2026-10-02): the phone number is always set in a clean sans-serif with lining
+    figures, never a decorative serif (old-style serif numerals read badly)."""
+    bad = []
+    for m in re.finditer(r'<(?:div|span)[^>]*style="([^"]*)"[^>]*>\s*' + re.escape(PHONE), html):
+        style = m.group(1)
+        if re.search(r"font-family:[^;]*\bserif\b", style) and "sans-serif" not in style:
+            bad.append(style)
+    return {"ok": not bad, "serif_phone_styles": bad,
+            "fix": None if not bad else "set the phone in the post's sans-serif, weight 600-700, lining-nums"}
+
+
 def review(image: Path, canvas: tuple[int, int], logo_bg=None, logo_width: int | None = None,
            text_bands: list[tuple[int, int]] | None = None, building_bottom: int | None = None,
            image_top: int = 0, image_height: int | None = None, pos_y: float = 0.5,
