@@ -90,6 +90,21 @@
       "building_top": 0.47,
       "building_bottom": 0.7,
       "source": "Adobe expand of ai-15, measured by eye 2026-10-01"
+    },
+    "blockA strip (ai-11 crop 0,76,1672,803)": {
+      "building_top": 0.24,
+      "building_bottom": 0.7,
+      "source": "crop of ai-11, no generative fill, 2026-10-02"
+    },
+    "outputs/adobe/blockA-day1-4x5.png": {
+      "building_top": 0.5,
+      "building_bottom": 0.71,
+      "source": "Adobe expand of ai-16, 2026-10-02"
+    },
+    "outputs/adobe/blockA-day2-9x16.png": {
+      "building_top": 0.47,
+      "building_bottom": 0.63,
+      "source": "Adobe expand of ai-12, 2026-10-02"
     }
   }
 }
