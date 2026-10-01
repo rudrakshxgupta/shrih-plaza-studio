@@ -22,7 +22,21 @@ FORBIDDEN_PATTERNS = [
     r"\bbest project\b",
     r"\bpossession soon\b",
     r"\blimited units only\b",
+    r"\bbuy now\b",
+    r"\bbest investment\b",
+    r"\b100% returns?\b",
+    r"\bguaranteed profits?\b",
+    r"\bdouble your money\b",
 ]
+
+STRATEGY_PATH = Path(__file__).resolve().parents[1] / "brand-kit" / "content-strategy.md"
+OWNERSHIP_WORDS = ("own ", "owning", "ownership", "own your", "own a", "commercial space", "shop availability",
+                   "available shops", "enquire", "enquiry")
+
+
+def content_strategy() -> str:
+    """The owner's content strategy: brand -> location -> commercial activity -> ownership -> enquiry."""
+    return STRATEGY_PATH.read_text(encoding="utf-8") if STRATEGY_PATH.exists() else ""
 
 
 @dataclass
@@ -50,17 +64,25 @@ class ContentStrategistAgent:
         fallback = {
             "platform": platform,
             "format": content_format,
-            "hook": "Limited SCO spaces available on SH-11, Dhuri.",
+            "hook": "Where brands arrive, businesses follow.",
             "caption": (
-                "Construction is nearing completion and limited premium commercial SCO spaces are available at "
-                f"{project_name} on SH-11, Dhuri, with retail shops, offices and central parking. RERA approved. "
-                f"{cta}: {project.get('contact', {}).get('phone', '')}"
+                f"Signed brands are choosing {project_name} on SH-11, Dhuri, a RERA approved commercial destination "
+                "with retail shops, offices and central parking. Customers will come for the brands. "
+                "You could own the space. Limited SCO spaces are available. "
+                f"Enquire for shop availability: {project.get('contact', {}).get('phone', '')}"
             ).strip(),
             "visual_direction": (
                 "Use one approved elevation image. Keep the layout minimal with warm ivory space, "
                 "deep green panels, gold accent lines, and a clear CTA footer."
             ),
-            "cta": cta,
+            "cta": "Enquire for shop availability",
+            "taglines": [
+                "Don't just visit the destination. Own a part of it.",
+                "Where recognised brands meet your next opportunity.",
+                "See the brands. See the opportunity. Own the space.",
+                "Where brands create destinations, and destinations create opportunity.",
+                "Be where the next commercial destination takes shape.",
+            ],
             "hashtags": ["#ShrihPlaza", "#Dhuri", "#CommercialProperty", "#SCOSpaces", "#PunjabRealEstate"],
             "claims_used": [
                 "RERA approved",
@@ -77,7 +99,12 @@ class ContentStrategistAgent:
         }
 
         system = (
-            "You are the Shrih Plaza content strategy agent. Create original social content using only "
+            "You are the Content Strategy & Real Estate Marketing AI for Shrih Plaza. Follow the owner's content "
+            "strategy below exactly: every post moves the viewer BRAND -> LOCATION -> COMMERCIAL ACTIVITY -> "
+            "SHOP OWNERSHIP -> ENQUIRY, and the caption must end on Shrih Plaza + commercial space + ownership + "
+            "enquiry, never on visiting or enjoying a brand. Premium and confident, never salesy. Also return "
+            "5-10 'taglines' across ownership, brand association, location, aspiration, commercial activity and "
+            "(only if supported) scarcity. Create original social content using only "
             "approved project facts. Do not invent prices, dates, unit sizes, ROI, distances or brands. "
             "Also produce an image_edit_brief describing only lighting/sky/ambience/seasonal styling for "
             "the building photo -- never describe changing the building's structure, floors, windows, "
@@ -91,12 +118,14 @@ class ContentStrategistAgent:
             "approved_facts": facts,
             "preferences": preferences,
             "trend_report": trend_report or {},
+            "owner_content_strategy": content_strategy(),
             "owner_lessons_never_repeat": owner_decisions.lessons(),
             "owner_banned_phrases": owner_decisions.banned_phrases(),
             "owner_approved_examples": owner_decisions.approved_examples(),
             "required_json_fields": list(fallback.keys()),
         }, ensure_ascii=False)
         result = context.llm.complete_json(system, user, fallback)
+        result.setdefault("metadata", {})["taglines"] = result.get("taglines") or fallback["taglines"]
         return ContentDraft.from_dict(result)
 
 
@@ -119,6 +148,11 @@ class CriticAgent:
         if "premium" not in text and "commercial" not in text:
             issues.append("Creative does not strongly express premium commercial positioning.")
             score -= 1
+        # Owner strategy: the post must end by turning attention into shop ownership and an enquiry.
+        tail = draft.caption.lower()[-220:]
+        if not any(w in tail for w in OWNERSHIP_WORDS):
+            issues.append("Caption does not end on shop ownership and an enquiry (owner content strategy).")
+            score -= 2
 
         approved = score >= 8 and not issues
         return {

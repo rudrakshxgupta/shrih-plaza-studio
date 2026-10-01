@@ -90,6 +90,10 @@
     {
       "date": "2026-10-01",
       "rule": "Keep the sky behind text calm: if the top of an image is busy with clouds (often after Adobe Generative Expand), smooth the upper sky into a clean gradient in the image's own colours, fading back to the real sky well above the roofline. Never touch the building. (Owner, sunset feed, 2026-10-01)"
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Every post follows the owner's content strategy (brand-kit/content-strategy.md): BRAND -> LOCATION -> COMMERCIAL ACTIVITY -> SHOP OWNERSHIP -> ENQUIRY. The brand or visual is only the hook; the design and caption must end on owning a commercial space at Shrih Plaza and an enquiry, never on visiting or enjoying a brand."
     }
   ]
 }

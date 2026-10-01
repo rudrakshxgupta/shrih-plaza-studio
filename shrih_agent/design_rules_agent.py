@@ -191,6 +191,19 @@ def _halo_for_gold(background_region, gold_path) -> dict[str, Any] | None:
     return None
 
 
+def image_sharpness(asset_path: Path, display_width: int) -> dict[str, Any]:
+    """Owner rule: logos and brand marks must never look blurry. The source file needs at least
+    1.5x the pixels it is shown at (phones have dense screens), measured on its visible content."""
+    from PIL import Image
+    im = Image.open(asset_path).convert("RGBA")
+    box = im.getchannel("A").point(lambda v: 255 if v > 10 else 0).getbbox() or (0, 0, im.width, im.height)
+    content_w = box[2] - box[0]
+    ratio = content_w / display_width
+    return {"ok": ratio >= 1.5, "source_px": content_w, "display_px": display_width, "ratio": round(ratio, 2),
+            "fix": None if ratio >= 1.5 else "Rebuild the logo at high resolution in flat brand colours "
+                                             "(8x upscale, smooth, snap to brand colours, downsample) or get a vector file."}
+
+
 def logo_size(logo_width: int, canvas_width: int) -> dict[str, Any]:
     lo, hi = LOGO_WIDTH_SHARE
     share = logo_width / canvas_width
@@ -281,7 +294,7 @@ def banned_text(html_or_text: str) -> dict[str, Any]:
 def review(image: Path, canvas: tuple[int, int], logo_bg=None, logo_width: int | None = None,
            text_bands: list[tuple[int, int]] | None = None, building_bottom: int | None = None,
            image_top: int = 0, image_height: int | None = None, pos_y: float = 0.5,
-           design_text: str | None = None) -> dict[str, Any]:
+           design_text: str | None = None, logo_file: Path | None = None) -> dict[str, Any]:
     """Run every measurable owner rule on one design and return verdicts with fixes."""
     w, h = canvas
     report: dict[str, Any] = {"palette_from_image": palette_from_image(image)}
@@ -295,5 +308,7 @@ def review(image: Path, canvas: tuple[int, int], logo_bg=None, logo_width: int |
         report["logo_size"] = logo_size(logo_width, w)
     if design_text is not None:
         report["banned_text"] = banned_text(design_text)
+    if logo_file is not None and logo_width:
+        report["logo_sharpness"] = image_sharpness(logo_file, logo_width)
     report["ok"] = all(v.get("ok", True) for v in report.values() if isinstance(v, dict))
     return report
