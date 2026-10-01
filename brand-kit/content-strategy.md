@@ -59,3 +59,12 @@ Every content set has three pieces:
 1. **Shrih Plaza only**: the project, location and ownership, no brands.
 2. **One big brand x Shrih Plaza**: one of the approved 12, brand first, ending on owning a shop. Rotate the featured brand each set.
 3. **All 12 brands x Shrih Plaza**: every signed brand's logo with the Shrih Plaza logo, ending on ownership and enquiry.
+
+## Posting cadence (owner plan, 2026-10-02)
+
+One piece per day: a feed post **or** a reel. The profile grid builds pictures in blocks of
+**3, 6, 3, 9, 3** days (a 24-day cycle): a one-row panorama strip, a 3×2 picture, a strip, a 3×3
+picture, a strip. Every block is a new picture with a new theme. Within a block, the bottom-right tile is posted first
+and the top-left last. Posts are carousels (slide 1 = grid piece, slide 2 = the design); reels use
+the grid piece as their cover. Mix posts and reels about half and half, and rotate the content
+mix day by day.
