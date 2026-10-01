@@ -114,6 +114,10 @@
     {
       "date": "2026-10-01",
       "rule": "Vary the call-to-action design every post. Don't repeat the same bottom block (headline, gold rule, ENQUIRE + phone row, small facts line). Use a design element that fits the piece, e.g. an SH-11 highway road sign, a search bar or a logo sheet. Owner: 'be creative, you are free to use any design element'."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Puzzle grid: every 9 posts/reels form one big 3x3 picture on the profile (one Shrih Plaza render, logo in row 1, building in row 2, CTA in row 3). Each tile opens the real content: posts are carousels (slide 1 = grid piece, slide 2 = design), reels use the grid piece as cover. Slice 4:5 pieces at 1012 px visible width plus 34 px hidden edges for the 3:4 grid crop."
     }
   ]
 }

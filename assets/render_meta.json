@@ -85,6 +85,11 @@
       "building_top": 0.365,
       "building_bottom": 0.53,
       "source": "Adobe 9:16 expand, measured by eye 2026-10-01"
+    },
+    "outputs/adobe/grid-big-calm.png": {
+      "building_top": 0.47,
+      "building_bottom": 0.7,
+      "source": "Adobe expand of ai-15, measured by eye 2026-10-01"
     }
   }
 }
