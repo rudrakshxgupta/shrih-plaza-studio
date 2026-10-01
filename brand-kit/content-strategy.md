@@ -51,3 +51,11 @@ Only the 12 approved brands may be featured (Domino's, The Brew Estate, Basant I
 VW Mart 24x7 Cafe & Grocery Store, Octave, Barista, Sagar Ratna, Tress Lounge Salon, Jockey, Elini,
 Purple Kids, Baba's Chicken). The owner's brief also names Monte Carlo, which is not on the approved
 list: do not feature it until the owner confirms it is signed.
+
+## Content mix (owner rule, 2026-10-01)
+
+Every content set has three pieces:
+
+1. **Shrih Plaza only**: the project, location and ownership, no brands.
+2. **One big brand x Shrih Plaza**: one of the approved 12, brand first, ending on owning a shop. Rotate the featured brand each set.
+3. **All 12 brands x Shrih Plaza**: every signed brand's logo with the Shrih Plaza logo, ending on ownership and enquiry.
