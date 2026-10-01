@@ -110,6 +110,10 @@
     {
       "date": "2026-10-01",
       "rule": "Whenever content mentions the 12 brands, all 12 brand logos must be shown on it. Otherwise drop the 12-brands wording. (check: all_brand_logos)"
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Vary the call-to-action design every post. Don't repeat the same bottom block (headline, gold rule, ENQUIRE + phone row, small facts line). Use a design element that fits the piece, e.g. an SH-11 highway road sign, a search bar or a logo sheet. Owner: 'be creative, you are free to use any design element'."
     }
   ]
 }

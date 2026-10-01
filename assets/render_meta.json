@@ -70,6 +70,21 @@
       "building_top": 0.25,
       "building_bottom": 0.56,
       "source": "Adobe expand, measured by eye 2026-10-01"
+    },
+    "outputs/adobe/reel-kinetic-calm-9x16.png": {
+      "building_top": 0.475,
+      "building_bottom": 0.64,
+      "source": "Adobe 9:16 expand, measured by eye 2026-10-01"
+    },
+    "outputs/adobe/reel-jockey-calm-9x16.png": {
+      "building_top": 0.475,
+      "building_bottom": 0.63,
+      "source": "Adobe 9:16 expand, measured by eye 2026-10-01"
+    },
+    "outputs/adobe/reel-brands12-calm-9x16.png": {
+      "building_top": 0.365,
+      "building_bottom": 0.53,
+      "source": "Adobe 9:16 expand, measured by eye 2026-10-01"
     }
   }
 }
