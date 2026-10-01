@@ -106,6 +106,10 @@
     {
       "date": "2026-10-01",
       "rule": "Content mix: every set has three pieces: (1) Shrih Plaza only, no brands; (2) one big brand from the approved 12 x Shrih Plaza (brand first, ends on owning a shop); (3) all 12 signed brands with their logos x Shrih Plaza. Rotate the featured brand each time."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Whenever content mentions the 12 brands, all 12 brand logos must be shown on it. Otherwise drop the 12-brands wording. (check: all_brand_logos)"
     }
   ]
 }

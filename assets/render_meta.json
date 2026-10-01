@@ -55,6 +55,21 @@
       "building_top": 0.5,
       "building_bottom": 0.8,
       "source": "Adobe expand of ai-01, measured 2026-10-01"
+    },
+    "outputs/adobe/plaza-sh11-calm-4x5.png": {
+      "building_top": 0.44,
+      "building_bottom": 0.72,
+      "source": "Adobe expand, measured by eye 2026-10-01"
+    },
+    "outputs/adobe/barista-dusk-calm-4x5.png": {
+      "building_top": 0.4,
+      "building_bottom": 0.68,
+      "source": "Adobe expand, measured by eye 2026-10-01"
+    },
+    "outputs/adobe/brands12-day-4x5.png": {
+      "building_top": 0.25,
+      "building_bottom": 0.56,
+      "source": "Adobe expand, measured by eye 2026-10-01"
     }
   }
 }

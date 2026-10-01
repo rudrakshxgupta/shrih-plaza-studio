@@ -10,6 +10,7 @@ return the fix (a logo shade, a palette, a safe text zone) instead of just compl
         --logo-bg "#006491" --logo-width 390 --text "30-190,204-460,1200-1300"
 """
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -124,6 +125,10 @@ def logo_variant(dark_hex: str, light_hex: str) -> Path:
 GOLD_FAMILY = ("official", "deep", "light", "rich", "champagne")
 
 
+# Deep antique gold for pale day skies, where the brighter golds wash out.
+ANTIQUE_GOLD = ("#3D2706", "#7A5210")
+
+
 def best_logo_for_region(background_region, palette: list[tuple[str, str]] | None = None) -> dict[str, Any]:
     """Owner rule: the logo may take any colour that looks best on that content. Tries every
     gold shade, white, and logo versions in the piece's own palette colours (dark, light hex
@@ -131,6 +136,7 @@ def best_logo_for_region(background_region, palette: list[tuple[str, str]] | Non
     crisp (not washed out), and gold when gold reads as well, to keep the brand's identity."""
     candidates = {name: path for name, path in LOGO_SHADES.items() if path.exists()}
     candidates["white"] = logo_variant("#E9EEF6", "#FFFFFF")
+    candidates["antique"] = logo_variant(*ANTIQUE_GOLD)
     for dark, light in palette or []:
         candidates[f"palette {dark}"] = logo_variant(dark, light)
     results = {}
@@ -138,7 +144,7 @@ def best_logo_for_region(background_region, palette: list[tuple[str, str]] | Non
         r = logo_legibility(path, background_region)
         c = logo_colour(path)
         sat = (max(c) - min(c)) / max(c) if max(c) else 0
-        identity = 0.6 if name in GOLD_FAMILY else 0.0
+        identity = 0.6 if name in GOLD_FAMILY or name == "antique" else 0.0
         r["score"] = round(min(r["weakest_10pct"], 6) * (0.6 + 0.4 * sat) + identity, 2)
         r["file"] = str(path)
         results[name] = r
@@ -150,8 +156,12 @@ def best_logo_for_region(background_region, palette: list[tuple[str, str]] | Non
     # are so pale they read as cream/white (owner, courtyard story), so only vivid golds count first.
     vivid = [n for n in passing if n in GOLD_FAMILY and passing[n]["saturation"] >= 0.5]
     comfy_vivid = [n for n in vivid if passing[n]["weakest_10pct"] >= 3.0]
+    antique_ok = "antique" in passing and passing["antique"]["weakest_10pct"] >= 3.0
     if comfy_vivid:
         best = max(comfy_vivid, key=lambda n: passing[n]["saturation"])
+    elif antique_ok:
+        # Pale day sky (owner, 12-brands post): a deep antique gold reads without darkening the sky.
+        best = "antique"
     else:
         # No vivid gold reads here: deepen the sky behind the logo with a soft halo in the image's own
         # colour until rich gold reads, instead of settling for a pale shade.
@@ -291,10 +301,23 @@ def banned_text(html_or_text: str) -> dict[str, Any]:
     return {"ok": not found, "found": found}
 
 
+TWELVE_BRANDS = re.compile(r"\b(12|twelve)\b[^.]{0,30}\bbrands?\b", re.I)
+
+
+def all_brand_logos(design_text: str, brand_logos: list[str] | None) -> dict[str, Any]:
+    """Owner rule (2026-10-01): content that talks about the 12 brands shows all 12 brand logos."""
+    if not TWELVE_BRANDS.search(design_text):
+        return {"ok": True, "mentions_12_brands": False}
+    shown = len(set(brand_logos or []))
+    return {"ok": shown >= 12, "mentions_12_brands": True, "logos_shown": shown,
+            "fix": None if shown >= 12 else "show all 12 brand logos, or drop the 12-brands wording"}
+
+
 def review(image: Path, canvas: tuple[int, int], logo_bg=None, logo_width: int | None = None,
            text_bands: list[tuple[int, int]] | None = None, building_bottom: int | None = None,
            image_top: int = 0, image_height: int | None = None, pos_y: float = 0.5,
-           design_text: str | None = None, logo_file: Path | None = None) -> dict[str, Any]:
+           design_text: str | None = None, logo_file: Path | None = None,
+           brand_logos: list[str] | None = None) -> dict[str, Any]:
     """Run every measurable owner rule on one design and return verdicts with fixes."""
     w, h = canvas
     report: dict[str, Any] = {"palette_from_image": palette_from_image(image)}
@@ -304,10 +327,16 @@ def review(image: Path, canvas: tuple[int, int], logo_bg=None, logo_width: int |
         report["text_off_building"] = text_clear_of_building(text_bands, band["top"], building_bottom or band["bottom"])
     if logo_bg is not None:
         report["logo_shade"] = pick_logo_shade(logo_bg)
+        if logo_file is not None:
+            # Judge the logo actually used (e.g. a palette or antique-gold variant), not only the stock shades.
+            used = round(contrast(logo_colour(logo_file), logo_bg), 2)
+            report["logo_shade"]["used_contrast"] = used
+            report["logo_shade"]["ok"] = used >= MIN_LOGO_CONTRAST
     if logo_width:
         report["logo_size"] = logo_size(logo_width, w)
     if design_text is not None:
         report["banned_text"] = banned_text(design_text)
+        report["all_brand_logos"] = all_brand_logos(design_text, brand_logos)
     if logo_file is not None and logo_width:
         report["logo_sharpness"] = image_sharpness(logo_file, logo_width)
     report["ok"] = all(v.get("ok", True) for v in report.values() if isinstance(v, dict))
