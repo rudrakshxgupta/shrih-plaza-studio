@@ -47,7 +47,7 @@
     },
     {
       "date": "2026-10-01",
-      "rule": "Quality bar (owner was impressed, 2026-10-01): the 'Dusk Issue' magazine-cover carousel, where Adobe cuts out the sky so a giant masthead sits behind the roofline and the building stands in front of the text. Aim for this level of idea and depth on every post, but never reuse it as a template."
+      "rule": "Quality bar (owner was impressed, 2026-10-01): the 'Dusk Issue' magazine-cover carousel, where Adobe cuts out the sky so a giant masthead sits behind the roofline and the building stands in front of the text. Aim for this level of idea and depth on every post, but never reuse it as a template. Update 2026-10-01: the owner wants the masthead letters fully readable, so the word now sits fully in the sky above the roofline instead of half behind it."
     },
     {
       "date": "2026-10-01",
@@ -98,6 +98,10 @@
     {
       "date": "2026-10-01",
       "rule": "Stories and reels: keep the call-to-action and phone number above Instagram's bottom reply bar (at least 230 px from the bottom of a 1920 px canvas) and away from the top 150 px, and when the photo changes, rebuild the whole piece's palette (panels too) from the new image."
+    },
+    {
+      "date": "2026-10-01",
+      "rule": "Text must always be fully readable: never hide parts of letters behind the building, trees or other objects, even as a depth effect."
     }
   ]
 }
