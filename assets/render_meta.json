@@ -105,6 +105,21 @@
       "building_top": 0.47,
       "building_bottom": 0.63,
       "source": "Adobe expand of ai-12, 2026-10-02"
+    },
+    "outputs/adobe/blockB-big-calm.png": {
+      "building_top": 0.53,
+      "building_bottom": 0.85,
+      "source": "Adobe expand of ai-06 (top only), 2026-10-02"
+    },
+    "outputs/adobe/blockB-day4-4x5.png": {
+      "building_top": 0.45,
+      "building_bottom": 0.7,
+      "source": "Adobe expand of ai-04"
+    },
+    "outputs/adobe/blockB-day5-9x16.png": {
+      "building_top": 0.43,
+      "building_bottom": 0.55,
+      "source": "Adobe expand of ai-13"
     }
   }
 }
