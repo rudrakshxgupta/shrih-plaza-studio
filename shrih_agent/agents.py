@@ -225,6 +225,9 @@ class FactCheckerAgent:
         return [item.strip() for item in re.split(r"(?<=[.!?])\s+", text) if item.strip()]
 
     def _is_verified(self, lowered: str, approved_text: str, project: dict[str, Any]) -> bool:
+        # A floor-by-floor layout claim needs its own approved fact, even inside an otherwise true sentence.
+        if any(w in lowered for w in ("floor", "storey", "basement", "mezzanine")):
+            return any(w in approved_text for w in ("floor", "storey", "basement", "mezzanine"))
         if "shrih plaza" in lowered:
             return True
         if "sh-11" in lowered or "dhuri" in lowered:
