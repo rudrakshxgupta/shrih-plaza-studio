@@ -18,7 +18,7 @@ and the enquiry stays small.
 
 ## Rules
 
-0. Every festival gets **one feed post and one story**, in the same design adapted to each format. Make it premium and richly crafted (ornate frames, foil lettering, lamps, florals, fireworks), never a basic greeting card. The owner rejected a simple first draft as "too basic"; the jharokha version (canvas F1-Dussehra) is the bar.
+0. Every festival gets **one feed post, one story and one reel**, in the same design adapted to each format. Make it premium and richly crafted (ornate frames, foil lettering, lamps, florals, fireworks), never a basic greeting card. The owner rejected a simple first draft as "too basic"; the jharokha version (canvas F1-Dussehra) is the bar.
 
 1. The building stays the hero and untouched. Festive elements live in the sky, the frame or the foreground.
 2. Greeting first. Ownership line soft ("This festive season, begin your own story on SH-11."), then the enquiry.
