@@ -134,6 +134,10 @@
     {
       "date": "2026-10-02",
       "rule": "Cadence: one piece per day (a feed post OR a reel). Profile pictures build in blocks of 3, 6, 3, 9, 3 days (24-day cycle): one-row strip, 3x2, one-row strip, 3x3, one-row strip. Each block is a brand-new picture and theme (never reuse a look); post the bottom-right tile first; posts are carousels (grid piece, then design), reels use the grid piece as cover."
+    },
+    {
+      "date": "2026-10-03",
+      "rule": "Every reel gets suitable music: export the reel as MP4 with an original, royalty-free soundtrack timed to the animation (music bed + sound effects on the key moments). Never use copyrighted songs; a trending track may only be added from Instagram's own licensed music library at upload."
     }
   ]
 }
