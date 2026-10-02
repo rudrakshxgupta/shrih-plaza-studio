@@ -142,6 +142,10 @@
     {
       "date": "2026-10-03",
       "rule": "Text must never touch or overlap drawn graphics (keys, icons, pins, signs, logos) or each other. Leave at least 40 px clear space around every graphic element, and check the rendered frame for collisions before publishing."
+    },
+    {
+      "date": "2026-10-03",
+      "rule": "Reel soundtracks are real music only: melody, chords, bass and a light groove. Never use sound effects (rattles, chimes, whooshes, clicks), even to match the animation. Vary key and tempo per reel."
     }
   ]
 }
