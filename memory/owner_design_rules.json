@@ -146,6 +146,10 @@
     {
       "date": "2026-10-03",
       "rule": "Reel soundtracks are real music only: melody, chords, bass and a light groove. Never use sound effects (rattles, chimes, whooshes, clicks), even to match the animation. Vary key and tempo per reel."
+    },
+    {
+      "date": "2026-10-03",
+      "rule": "Reel music comes from Instagram's own licensed music library (real artists), added by the owner in the Instagram app at upload. Deliver reels as silent MP4s with 2-3 suggested songs each; never bake copyrighted songs into files."
     }
   ]
 }
