@@ -138,6 +138,10 @@
     {
       "date": "2026-10-03",
       "rule": "Every reel gets suitable music: export the reel as MP4 with an original, royalty-free soundtrack timed to the animation (music bed + sound effects on the key moments). Never use copyrighted songs; a trending track may only be added from Instagram's own licensed music library at upload."
+    },
+    {
+      "date": "2026-10-03",
+      "rule": "Text must never touch or overlap drawn graphics (keys, icons, pins, signs, logos) or each other. Leave at least 40 px clear space around every graphic element, and check the rendered frame for collisions before publishing."
     }
   ]
 }
