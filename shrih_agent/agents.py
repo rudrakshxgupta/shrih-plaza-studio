@@ -188,6 +188,8 @@ class FactCheckerAgent:
             risky_fact_word = any(word in lowered for word in [
                 "price", "possession", "roi", "return", "rental", "km", "minute", "sq", "rera",
                 "approved", "brand", "signed", "domino", "barista", "sagar", "jockey",
+                # owner (2026-10-02): no unverified layout claims such as which floor holds shops or offices
+                "floor", "storey", "basement", "mezzanine",
             ])
             verified = self._is_verified(lowered, approved_text, project)
             soft = not has_number and any(word in lowered for word in allowed_soft_words)
