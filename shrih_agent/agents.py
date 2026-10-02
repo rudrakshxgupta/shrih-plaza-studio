@@ -39,7 +39,11 @@ OWNERSHIP_WORDS = ("own ", "owning", "ownership", "own your", "own a", "commerci
 
 def content_strategy() -> str:
     """The owner's content strategy: brand -> location -> commercial activity -> ownership -> enquiry."""
-    return STRATEGY_PATH.read_text(encoding="utf-8") if STRATEGY_PATH.exists() else ""
+    text = STRATEGY_PATH.read_text(encoding="utf-8") if STRATEGY_PATH.exists() else ""
+    festive = STRATEGY_PATH.with_name("festive-playbook.md")  # owner (2026-10-03): festive x Shrih Plaza content
+    if festive.exists():
+        text += "\n\n" + festive.read_text(encoding="utf-8")
+    return text
 
 
 @dataclass

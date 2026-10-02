@@ -1,0 +1,13 @@
+{
+  "note": "Verified festival dates for festive x Shrih Plaza content. Check each new year's dates before use. Cadence day 1 = 2026-10-02.",
+  "festivals": [
+    {"name": "Navratri begins (Ghatasthapana)", "date": "2026-10-11", "cadence_day": 10, "source": "https://shrimahalaxmicalendar.com/navratri/"},
+    {"name": "Durga Ashtami", "date": "2026-10-18", "cadence_day": 17, "source": "https://shrimahalaxmicalendar.com/navratri/"},
+    {"name": "Maha Navami", "date": "2026-10-19", "cadence_day": 18, "source": "https://shrimahalaxmicalendar.com/navratri/"},
+    {"name": "Dussehra (Vijayadashami)", "date": "2026-10-20", "cadence_day": 19, "source": "https://www.indiabonds.com/kuchbhi/when-is-dussehra/"},
+    {"name": "Dhanteras", "date": "2026-11-06", "cadence_day": 36, "source": "https://en.wikipedia.org/wiki/Dhanteras"},
+    {"name": "Diwali (Lakshmi Puja) / Bandi Chhor Divas", "date": "2026-11-08", "cadence_day": 38, "source": "https://samvat.in/festivals/diwali-2026/"},
+    {"name": "Bhai Dooj", "date": "2026-11-10", "cadence_day": 40, "source": "https://samvat.in/festivals/diwali-2026/"},
+    {"name": "Guru Nanak Jayanti (Gurpurab)", "date": "2026-11-24", "cadence_day": 54, "source": "https://www.borntobanger.in/blog/holidays-in-november-2026-india"}
+  ]
+}
